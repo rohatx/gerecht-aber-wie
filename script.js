@@ -39,7 +39,6 @@ let tellerKekseIds;
 
 function createScene() {
     container.innerHTML = "";
-    hideAverageInput();
     tellerKekseIds = [];
 
     const radius = 250;
@@ -49,6 +48,11 @@ function createScene() {
         const y = radius * Math.sin(angle);
 
         const person = document.createElement("div");
+
+        const img = document.createElement("img");
+        img.src = `img/person${personIndex + 1}.png`;
+        img.className = "person-img";
+
         person.className = "person";
         person.style.left = `${x + 300 - 20}px`;
         person.style.top = `${150 - y - 20}px`;
@@ -62,6 +66,7 @@ function createScene() {
         teller.ondrop = handleDrop;
         teller.ondragover = (e) => e.preventDefault();
 
+        person.appendChild(img);
         person.appendChild(teller);
         container.appendChild(person);
     }
@@ -147,17 +152,12 @@ function checkVictory(withMessage) {
     if (allEqual) {
         if (withMessage) {
             message.textContent = "Aufgabe gelöst!";
-
             eingabeContainer.style.display = "block";
-
-
         }
         return true;
     } else {
-        if (withMessage) {
-            message.textContent = "";
-            hideAverageInput();
-        }
+        message.textContent = "";
+        hideAverageInput();
         return false;
     }
 }
