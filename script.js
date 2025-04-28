@@ -1,5 +1,4 @@
 const personenSlider = document.getElementById("personenSlider");
-//const keksSlider = document.getElementById("keksSlider");
 const personenAnzahlAnzeige = document.getElementById("personenAnzahlAnzeige");
 const keksAnzahlAnzeige = document.getElementById("keksAnzahlAnzeige");
 
@@ -13,29 +12,19 @@ const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const antwortFeedback = document.getElementById("antwortFeedback");
 
 let personCount = parseInt(personenSlider.value);
-// let keksCount = parseInt(keksSlider.value);
-let randomKeksMultiplicator = Math.floor(Math.random() * 4 + 1);
-let keksCount = personCount * randomKeksMultiplicator;
+let keksCount = personCount * randKeksMultiplikator();
 personenAnzahlAnzeige.textContent = personCount;
 keksAnzahlAnzeige.textContent = keksCount;
 let kekseProPerson = keksCount / personCount
 
 personenSlider.addEventListener("input", () => {
     personCount = parseInt(personenSlider.value);
-    randomKeksMultiplicator = Math.floor(Math.random() * 4 + 1);
-    keksCount = personCount * randomKeksMultiplicator;
+    keksCount = personCount * randKeksMultiplikator();
     kekseProPerson = keksCount / personCount
     personenAnzahlAnzeige.textContent = personCount;
     keksAnzahlAnzeige.textContent = keksCount;
     createScene();
 });
-
-// keksSlider.addEventListener("input", () => {
-//     keksCount = parseInt(keksSlider.value);
-//     kekseProPerson = keksCount / personCount
-//     keksAnzahlAnzeige.textContent = keksCount;
-//     createScene();
-// });
 
 const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
@@ -182,6 +171,10 @@ function hideAverageInput() {
     eingabeContainer.style.display = "none";
     keksEingabe.value = "";
     antwortFeedback.textContent = "";
+}
+
+function randKeksMultiplikator(){
+    return Math.floor(Math.random() * 4 + 1);
 }
 
 createScene();
