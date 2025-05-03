@@ -52,6 +52,9 @@ function createScene() {
         person.style.top = `${150 - y - 20}px`;
 
         const teller = document.createElement("div");
+        const tellerBild = document.createElement("img");
+        tellerBild.src = `img/teller.png`;
+        tellerBild.className = "tellerBild";
         teller.className = "teller";
         teller.id = `teller-${personIndex}`;
 
@@ -62,6 +65,7 @@ function createScene() {
 
         person.appendChild(img);
         person.appendChild(teller);
+        teller.appendChild(tellerBild);
         container.appendChild(person);
     }
 
@@ -87,7 +91,8 @@ function distributeKekse() {
 
 function createKeks(keksIndex, tellerIndex) {
     const teller = document.getElementById(`teller-${tellerIndex}`);
-    const keks = document.createElement("div");
+    const keks = document.createElement("img");
+    keks.src = `img/cookie.png`;
     keks.className = "keks";
     keks.id = tellerKekseIds[tellerIndex][keksIndex];
     keks.draggable = true;

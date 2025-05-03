@@ -28,6 +28,11 @@ body {
     position: absolute;
 }
 
+.tellerBild {
+    width: 76px;
+    height: 76px;
+}
+
 .keks {
     width: 18px;
     height: 18px;
@@ -48,3 +53,11 @@ body {
     color: green;
     margin-top: 20px;
 }
+
+body {
+    background-image: url("img/hintergrund.png"); 
+    background-size: cover;                      
+    background-repeat: no-repeat;                
+    background-position: center center;          
+    background-attachment: fixed;                
+  }
