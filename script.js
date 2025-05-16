@@ -1,8 +1,3 @@
-const personenSlider = document.getElementById("personenSlider");
-const personenAnzahlAnzeige = document.getElementById("personenAnzahlAnzeige");
-const keksAnzahlAnzeige = document.getElementById("keksAnzahlAnzeige");
-
-
 const container = document.getElementById("circle-container");
 const message = document.getElementById("message");
 
@@ -11,20 +6,10 @@ const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const antwortFeedback = document.getElementById("antwortFeedback");
 
-let personCount = parseInt(personenSlider.value);
+let personCount = 0;
 let keksCount = personCount * randKeksMultiplikator();
-personenAnzahlAnzeige.textContent = personCount;
-keksAnzahlAnzeige.textContent = keksCount;
-let kekseProPerson = keksCount / personCount
 
-personenSlider.addEventListener("input", () => {
-    personCount = parseInt(personenSlider.value);
-    keksCount = personCount * randKeksMultiplikator();
-    kekseProPerson = keksCount / personCount
-    personenAnzahlAnzeige.textContent = personCount;
-    keksAnzahlAnzeige.textContent = keksCount;
-    createScene();
-});
+let kekseProPerson = keksCount / personCount
 
 const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
@@ -182,4 +167,18 @@ function randKeksMultiplikator(){
     return Math.floor(Math.random() * 4 + 1);
 }
 
-createScene();
+function changePerson(geklickterButton, i){
+    personCount = i;
+    keksCount = personCount * randKeksMultiplikator();
+    kekseProPerson = keksCount / personCount
+
+    const buttons = document.querySelectorAll('.image-button');
+      buttons.forEach(button => {
+        if (button === geklickterButton) {
+          button.classList.remove('inactive');
+        } else {
+          button.classList.add('inactive');
+        }
+    });
+    createScene();
+}

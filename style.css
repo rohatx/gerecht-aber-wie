@@ -60,4 +60,50 @@ body {
     background-repeat: no-repeat;                
     background-position: center center;          
     background-attachment: fixed;                
-  }
+}
+
+.image-button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 10px;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.image-button img {
+    width: 100px;
+    height: auto;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.inactive img {
+    filter: grayscale(100%);
+    transform: scale(0.75);
+    opacity: 0.7;
+}
+
+h2 {
+position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+}
+
+#button-leiste {
+  position: fixed;
+  top: 5;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  z-index: 1000;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Spalten */
+  gap: 10px;
+  max-width: 330px;
+}
+
+
