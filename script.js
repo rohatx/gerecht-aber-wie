@@ -1,8 +1,3 @@
-const personenSlider = document.getElementById("personenSlider");
-const personenAnzahlAnzeige = document.getElementById("personenAnzahlAnzeige");
-const keksAnzahlAnzeige = document.getElementById("keksAnzahlAnzeige");
-
-
 const container = document.getElementById("circle-container");
 const message = document.getElementById("message");
 
@@ -11,20 +6,10 @@ const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const antwortFeedback = document.getElementById("antwortFeedback");
 
-let personCount = parseInt(personenSlider.value);
+let personCount = 0;
 let keksCount = personCount * randKeksMultiplikator();
-personenAnzahlAnzeige.textContent = personCount;
-keksAnzahlAnzeige.textContent = keksCount;
-let kekseProPerson = keksCount / personCount
 
-personenSlider.addEventListener("input", () => {
-    personCount = parseInt(personenSlider.value);
-    keksCount = personCount * randKeksMultiplikator();
-    kekseProPerson = keksCount / personCount
-    personenAnzahlAnzeige.textContent = personCount;
-    keksAnzahlAnzeige.textContent = keksCount;
-    createScene();
-});
+let kekseProPerson = keksCount / personCount
 
 const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
@@ -52,6 +37,9 @@ function createScene() {
         person.style.top = `${150 - y - 20}px`;
 
         const teller = document.createElement("div");
+        const tellerBild = document.createElement("img");
+        tellerBild.src = `img/teller.png`;
+        tellerBild.className = "tellerBild";
         teller.className = "teller";
         teller.id = `teller-${personIndex}`;
 
@@ -62,6 +50,7 @@ function createScene() {
 
         person.appendChild(img);
         person.appendChild(teller);
+        teller.appendChild(tellerBild);
         container.appendChild(person);
     }
 
@@ -87,7 +76,8 @@ function distributeKekse() {
 
 function createKeks(keksIndex, tellerIndex) {
     const teller = document.getElementById(`teller-${tellerIndex}`);
-    const keks = document.createElement("div");
+    const keks = document.createElement("img");
+    keks.src = `img/cookie.png`;
     keks.className = "keks";
     keks.id = tellerKekseIds[tellerIndex][keksIndex];
     keks.draggable = true;
@@ -177,4 +167,18 @@ function randKeksMultiplikator(){
     return Math.floor(Math.random() * 4 + 1);
 }
 
-createScene();
+function changePerson(geklickterButton, i){
+    personCount = i;
+    keksCount = personCount * randKeksMultiplikator();
+    kekseProPerson = keksCount / personCount
+
+    const buttons = document.querySelectorAll('.image-button');
+      buttons.forEach(button => {
+        if (button === geklickterButton) {
+          button.classList.remove('inactive');
+        } else {
+          button.classList.add('inactive');
+        }
+    });
+    createScene();
+}

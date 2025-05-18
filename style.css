@@ -28,6 +28,11 @@ body {
     position: absolute;
 }
 
+.tellerBild {
+    width: 76px;
+    height: 76px;
+}
+
 .keks {
     width: 18px;
     height: 18px;
@@ -48,3 +53,67 @@ body {
     color: green;
     margin-top: 20px;
 }
+
+body {
+    background-image: url("img/hintergrund.png"); 
+    background-size: cover;                      
+    background-repeat: no-repeat;                
+    background-position: center center;          
+    background-attachment: fixed;                
+}
+
+.image-button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 10px;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.image-button img {
+    width: 100px;
+    height: auto;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.inactive img {
+    filter: grayscale(100%);
+    transform: scale(0.75);
+    opacity: 0.7;
+}
+
+h2#anzahlPersonen {
+position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+  font-size: 1.8rem;
+  color: white;
+  font-weight: 800;
+  background-color: rgba(0, 0, 0, 0.7); 
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px; /* Abstand zur Button-Leiste */
+  margin-left: 15px;    /* kleiner Abstand zum Rand */
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#button-leiste {
+  position: fixed;
+  top: 5;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  z-index: 1000;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Spalten */
+  gap: 10px;
+  max-width: 330px;
+}
+
+
