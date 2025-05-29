@@ -5,6 +5,7 @@ const eingabeContainer = document.getElementById("eingabeContainer");
 const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const antwortFeedback = document.getElementById("antwortFeedback");
+const buttonLeiste = document.getElementById("button-leiste");
 
 let personCount = 0;
 let keksCount = personCount * randKeksMultiplikator();
@@ -15,6 +16,8 @@ const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
 
 let tellerKekseIds;
+let verschoben = false;
+
 
 function createScene() {
     container.innerHTML = "";
@@ -135,7 +138,6 @@ function checkVictory(withMessage) {
     const allEqual = counts.every(count => count == counts[0]);
     if (allEqual) {
         if (withMessage) {
-            message.textContent = "Aufgabe gelöst!";
             eingabeContainer.style.display = "block";
         }
         return true;
@@ -149,6 +151,8 @@ function checkVictory(withMessage) {
 checkAntwortBtn.onclick = () => {
     const eingabe = parseInt(keksEingabe.value);
     if (eingabe == kekseProPerson) {
+        message.style.display = "block";
+        message.textContent = "Aufgabe gelöst!";
         antwortFeedback.textContent = "Richtig!";
         antwortFeedback.style.color = "green";
     } else {
@@ -171,6 +175,13 @@ function changePerson(geklickterButton, i){
     personCount = i;
     keksCount = personCount * randKeksMultiplikator();
     kekseProPerson = keksCount / personCount
+    message.style.display = "none";
+
+    if (!verschoben) {
+    buttonLeiste.classList.remove("centered");
+    buttonLeiste.classList.add("default");
+    verschoben = true;
+  }
 
     const buttons = document.querySelectorAll('.image-button');
       buttons.forEach(button => {
