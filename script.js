@@ -4,8 +4,8 @@ const message = document.getElementById("message");
 const eingabeContainer = document.getElementById("eingabeContainer");
 const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
-const antwortFeedback = document.getElementById("antwortFeedback");
 const buttonLeiste = document.getElementById("button-leiste");
+const aufgabenStellung = document.getElementById("aufgabenstellung");
 
 let personCount = 0;
 let keksCount = personCount * randKeksMultiplikator();
@@ -16,7 +16,6 @@ const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
 
 let tellerKekseIds;
-let verschoben = false;
 
 
 function createScene() {
@@ -152,19 +151,20 @@ checkAntwortBtn.onclick = () => {
     const eingabe = parseInt(keksEingabe.value);
     if (eingabe == kekseProPerson) {
         message.style.display = "block";
+        message.style.color = "#2e8b57";
+        message.style.border = "2px solid #3cb371";
         message.textContent = "Aufgabe gelöst!";
-        antwortFeedback.textContent = "Richtig!";
-        antwortFeedback.style.color = "green";
     } else {
-        antwortFeedback.textContent = "Leider falsch. Versuche es nochmal.";
-        antwortFeedback.style.color = "red";
+        message.style.display = "block";
+        message.style.color = "red";
+        message.style.border = "2px solid rgb(199, 12, 12)";
+        message.textContent = "Leider falsch. Versuche es nochmal";
     }
 };
 
 function hideAverageInput() {
     eingabeContainer.style.display = "none";
     keksEingabe.value = "";
-    antwortFeedback.textContent = "";
 }
 
 function randKeksMultiplikator(){
@@ -176,12 +176,7 @@ function changePerson(geklickterButton, i){
     keksCount = personCount * randKeksMultiplikator();
     kekseProPerson = keksCount / personCount
     message.style.display = "none";
-
-    if (!verschoben) {
-    buttonLeiste.classList.remove("centered");
-    buttonLeiste.classList.add("default");
-    verschoben = true;
-  }
+    aufgabenStellung.style.display = "inline-block";
 
     const buttons = document.querySelectorAll('.image-button');
       buttons.forEach(button => {
