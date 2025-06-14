@@ -3,29 +3,68 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Keksverteiler</title>
+    <title>GerechtAberWie</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Keksverteiler</h1>
-    👤 Personen: <span id="personenAnzahlAnzeige"></span>
-    <input type="range" id="personenSlider" min="2" max="5" value="3">
-    <br>
-    🍪 Anzahl Kekse: <span id="keksAnzahlAnzeige"></span>
-    <!-- <input type="range" id="keksSlider" min="1" max="20" value="9"> -->
+    <h1 style="display: none;" id="aufgabenstellung">Verteile die Kekse</h1>
+    <h2 id="anzahlPersonen">Wähle Personenanzahl</h2>
+    <div class="tools">
 
-    <div id="message"></div>
+        <div id="button-leiste" class="default">
+            <button class="image-button" onclick="changePerson(this,2)">
+            <img src="img/2personen.png" alt="Auswahl 2 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,3)">
+                <img src="img/3personen.png" alt="Auswahl 3 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,4)">
+                <img src="img/4personen.png" alt="Auswahl 4 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,5)">
+                <img src="img/5personen.png" alt="Auswahl 5 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,6)">
+                <img src="img/6personen.png" alt="Auswahl 6 Personen" >
+            </button>
+        </div>
+
+        <fieldset id="toolbox" class="toolbox" style="display: none;">
+        <legend>Toolbox</legend>
+            <form id="toolboxForm">
+                <label>
+                    <input type="radio" name="tool" value="move" checked>
+                    Verschiebe ausgewählte Kekse auf Teller
+                </label>
+                <label>
+                    <input type="radio" name="tool" value="select">
+                    Wähle mehrere Kekse aus, um sie gleichzeitig zu verschieben.
+                </label>
+                <label>
+                    <input type="radio" name="tool" value="break">
+                    Zerbreche einen Keks.
+                </label>
+            </form>
+        </fieldset>
+
+    </div>
+    
+    
+    
 
     <div id="circle-container">
     </div>
 
+    <div id="message" style="display: none;"></div>
     <div id="eingabeContainer" style="display: none; margin-top: 10px;">
         Wie viele Kekse hat jede Person?
         <input type="number" id="keksEingabe" min="0">
         <button id="checkAntwortBtn">Antwort prüfen</button>
+        
     </div>
-    <div id="antwortFeedback"></div>
+    
+
 </body>
 
 </html>

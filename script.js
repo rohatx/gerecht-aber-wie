@@ -1,35 +1,23 @@
-const personenSlider = document.getElementById("personenSlider");
-const personenAnzahlAnzeige = document.getElementById("personenAnzahlAnzeige");
-const keksAnzahlAnzeige = document.getElementById("keksAnzahlAnzeige");
-
-
 const container = document.getElementById("circle-container");
 const message = document.getElementById("message");
 
 const eingabeContainer = document.getElementById("eingabeContainer");
 const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
-const antwortFeedback = document.getElementById("antwortFeedback");
+const buttonLeiste = document.getElementById("button-leiste");
+const aufgabenStellung = document.getElementById("aufgabenstellung");
+const toolbox = document.getElementById("toolbox");
 
-let personCount = parseInt(personenSlider.value);
+let personCount = 0;
 let keksCount = personCount * randKeksMultiplikator();
-personenAnzahlAnzeige.textContent = personCount;
-keksAnzahlAnzeige.textContent = keksCount;
-let kekseProPerson = keksCount / personCount
 
-personenSlider.addEventListener("input", () => {
-    personCount = parseInt(personenSlider.value);
-    keksCount = personCount * randKeksMultiplikator();
-    kekseProPerson = keksCount / personCount
-    personenAnzahlAnzeige.textContent = personCount;
-    keksAnzahlAnzeige.textContent = keksCount;
-    createScene();
-});
+let kekseProPerson = keksCount / personCount
 
 const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
 
 let tellerKekseIds;
+
 
 function createScene() {
     container.innerHTML = "";
@@ -52,6 +40,9 @@ function createScene() {
         person.style.top = `${150 - y - 20}px`;
 
         const teller = document.createElement("div");
+        const tellerBild = document.createElement("img");
+        tellerBild.src = `img/teller.png`;
+        tellerBild.className = "tellerBild";
         teller.className = "teller";
         teller.id = `teller-${personIndex}`;
 
@@ -62,6 +53,7 @@ function createScene() {
 
         person.appendChild(img);
         person.appendChild(teller);
+        teller.appendChild(tellerBild);
         container.appendChild(person);
     }
 
@@ -87,7 +79,8 @@ function distributeKekse() {
 
 function createKeks(keksIndex, tellerIndex) {
     const teller = document.getElementById(`teller-${tellerIndex}`);
-    const keks = document.createElement("div");
+    const keks = document.createElement("img");
+    keks.src = `img/cookie.png`;
     keks.className = "keks";
     keks.id = tellerKekseIds[tellerIndex][keksIndex];
     keks.draggable = true;
@@ -145,7 +138,6 @@ function checkVictory(withMessage) {
     const allEqual = counts.every(count => count == counts[0]);
     if (allEqual) {
         if (withMessage) {
-            message.textContent = "Aufgabe gelöst!";
             eingabeContainer.style.display = "block";
         }
         return true;
@@ -159,22 +151,42 @@ function checkVictory(withMessage) {
 checkAntwortBtn.onclick = () => {
     const eingabe = parseInt(keksEingabe.value);
     if (eingabe == kekseProPerson) {
-        antwortFeedback.textContent = "Richtig!";
-        antwortFeedback.style.color = "green";
+        message.style.display = "block";
+        message.style.color = "#2e8b57";
+        message.style.border = "2px solid #3cb371";
+        message.textContent = "Aufgabe gelöst!";
     } else {
-        antwortFeedback.textContent = "Leider falsch. Versuche es nochmal.";
-        antwortFeedback.style.color = "red";
+        message.style.display = "block";
+        message.style.color = "red";
+        message.style.border = "2px solid rgb(199, 12, 12)";
+        message.textContent = "Leider falsch. Versuche es nochmal";
     }
 };
 
 function hideAverageInput() {
     eingabeContainer.style.display = "none";
     keksEingabe.value = "";
-    antwortFeedback.textContent = "";
 }
 
 function randKeksMultiplikator(){
     return Math.floor(Math.random() * 4 + 1);
 }
 
-createScene();
+function changePerson(geklickterButton, i){
+    personCount = i;
+    keksCount = personCount * randKeksMultiplikator();
+    kekseProPerson = keksCount / personCount
+    message.style.display = "none";
+    aufgabenStellung.style.display = "inline-block";
+    toolbox.style.display = "inline-block";
+
+    const buttons = document.querySelectorAll('.image-button');
+      buttons.forEach(button => {
+        if (button === geklickterButton) {
+          button.classList.remove('inactive');
+        } else {
+          button.classList.add('inactive');
+        }
+    });
+    createScene();
+}

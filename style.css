@@ -28,6 +28,11 @@ body {
     position: absolute;
 }
 
+.tellerBild {
+    width: 76px;
+    height: 76px;
+}
+
 .keks {
     width: 18px;
     height: 18px;
@@ -43,8 +48,215 @@ body {
     top: -40px;
 }
 
+body {
+    background-image: url("img/hintergrund.png"); 
+    background-size: cover;                      
+    background-repeat: no-repeat;                
+    background-position: center center;          
+    background-attachment: fixed;                
+}
+
+.image-button {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 10px;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.image-button img {
+    width: 100px;
+    height: auto;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+.inactive img {
+    filter: grayscale(100%);
+    transform: scale(0.75);
+    opacity: 0.7;
+}
+
+h2#anzahlPersonen {
+position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  padding: 10px;
+  font-size: 1.8rem;
+  color: white;
+  font-weight: 800;
+  background-color: #9e020293; 
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px; 
+  margin-left: 15px;   
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  color: white;
+  font-weight: 800;
+  background-color: #9e020293; 
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px; 
+  margin-left: 15px;   
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#button-leiste {
+  position: fixed;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 330px;
+  padding: 10px;
+}
+
+#button-leiste.default {
+  top: 80px;
+  left: 20px;
+  transform: translate(0, 0);
+}
+
+
+#eingabeContainer {
+  display: none;
+  margin-top: 20px;
+  padding: 1.5rem;
+  background-color: #ffffffcc; 
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+  animation: fadeIn 0.6s ease;
+}
+
+#eingabeContainer input[type="number"] {
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  margin: 0 0.5rem;
+  width: 80px;
+}
+
+#checkAntwortBtn {
+  padding: 0.5rem 1rem;
+  background-color: #9e0202d8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#checkAntwortBtn:hover { 
+  background-color: #7b0101;
+  transform: scale(1.05);
+}
+
+#antwortFeedback {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
 #message {
-    font-size: 1.5rem;
-    color: green;
-    margin-top: 20px;
+  margin-top: 20px;
+  padding: 1rem 1.5rem;
+  background-color: white; 
+  border-radius: 10px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: none;
+  animation: fadeInMessage 0.4s ease-out forwards;
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  gap: 20px;
+  position: fixed;
+  top: 80px;
+  left: 20px;
+  z-index: 1000;
+}
+
+/* Toolbox Styling */
+.toolbox {
+    display: block; /* Sichtbarkeit per JS steuern */
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    max-width: 420px;
+    margin-top: 60%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    animation: fadeIn 0.6s ease;
+}
+
+/* Toolbox-Legend */
+.toolbox legend {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* Toolbox-Labels */
+.toolbox label {
+    display: block;
+    margin-bottom: 12px;
+    padding-left: 26px;
+    position: relative;
+    color: #222;
+    font-size: 0.95rem;
+    line-height: 1.3rem;
+    cursor: pointer;
+}
+
+/* Radio Buttons */
+.toolbox input[type="radio"] {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    accent-color: #4f46e5;
+    transform: scale(1.1);
 }
