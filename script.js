@@ -6,6 +6,7 @@ const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const buttonLeiste = document.getElementById("button-leiste");
 const aufgabenStellung = document.getElementById("aufgabenstellung");
+const toolbox = document.getElementById("toolbox");
 
 let personCount = 0;
 let keksCount = personCount * randKeksMultiplikator();
@@ -177,6 +178,7 @@ function changePerson(geklickterButton, i){
     kekseProPerson = keksCount / personCount
     message.style.display = "none";
     aufgabenStellung.style.display = "inline-block";
+    toolbox.style.display = "inline-block";
 
     const buttons = document.querySelectorAll('.image-button');
       buttons.forEach(button => {

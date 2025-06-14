@@ -10,24 +10,49 @@
 <body>
     <h1 style="display: none;" id="aufgabenstellung">Verteile die Kekse</h1>
     <h2 id="anzahlPersonen">Wähle Personenanzahl</h2>
-    <div id="button-leiste" class="default">
-        <button class="image-button" onclick="changePerson(this,2)">
-        <img src="img/2personen.png" alt="Auswahl 2 Personen" >
-        </button>
-        <button class="image-button" onclick="changePerson(this,3)">
-            <img src="img/3personen.png" alt="Auswahl 3 Personen" >
-        </button>
-        <button class="image-button" onclick="changePerson(this,4)">
-            <img src="img/4personen.png" alt="Auswahl 4 Personen" >
-        </button>
-        <button class="image-button" onclick="changePerson(this,5)">
-            <img src="img/5personen.png" alt="Auswahl 5 Personen" >
-        </button>
-        <button class="image-button" onclick="changePerson(this,6)">
-            <img src="img/6personen.png" alt="Auswahl 6 Personen" >
-        </button>
+    <div class="tools">
+
+        <div id="button-leiste" class="default">
+            <button class="image-button" onclick="changePerson(this,2)">
+            <img src="img/2personen.png" alt="Auswahl 2 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,3)">
+                <img src="img/3personen.png" alt="Auswahl 3 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,4)">
+                <img src="img/4personen.png" alt="Auswahl 4 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,5)">
+                <img src="img/5personen.png" alt="Auswahl 5 Personen" >
+            </button>
+            <button class="image-button" onclick="changePerson(this,6)">
+                <img src="img/6personen.png" alt="Auswahl 6 Personen" >
+            </button>
+        </div>
+
+        <fieldset id="toolbox" class="toolbox" style="display: none;">
+        <legend>Toolbox</legend>
+            <form id="toolboxForm">
+                <label>
+                    <input type="radio" name="tool" value="move" checked>
+                    Verschiebe ausgewählte Kekse auf Teller
+                </label>
+                <label>
+                    <input type="radio" name="tool" value="select">
+                    Wähle mehrere Kekse aus, um sie gleichzeitig zu verschieben.
+                </label>
+                <label>
+                    <input type="radio" name="tool" value="break">
+                    Zerbreche einen Keks.
+                </label>
+            </form>
+        </fieldset>
+
     </div>
     
+    
+    
+
     <div id="circle-container">
     </div>
 
