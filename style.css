@@ -13,12 +13,14 @@ body {
 
 #grid-wrapper {
   display: grid;
+  grid-template-columns: 12.5% 12.5% repeat(1, 1fr);
   grid-template-areas:
-    'ueberschrift ueberschrift ueberschrift ueberschrift ueberschrift'
-    'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel'
-    'twoPersons threePersons fourPersons fivePersons sixPersons'
-    'toolbox toolbox toolbox toolbox toolbox'
-    'table table table table table';
+    'personenAnzahlLabel personenAnzahlLabel ueberschrift'
+    'twoPersons threePersons table'
+    'fourPersons fivePersons table'
+    'sixPersons sixPersons table'
+    'toolbox toolbox ergebnis'
+    'toolbox toolbox AntwortEingabe';
 }
 
 #circle-container {
@@ -114,8 +116,8 @@ body {
 }
 
 h2#anzahlPersonen {
-  top: 0;
-  left: 0;
+  /* top: 0;
+  left: 0; */
   /*display: flex;*/
   padding: 10px;
   font-size: 1.8rem;
@@ -127,9 +129,9 @@ h2#anzahlPersonen {
   margin-bottom: 10px;
   margin-left: 15px;
   margin-right: 15px;
-  /*display: inline-block;*/
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   grid-area: personenAnzahlLabel;
+  align-self: start;
 }
 
 h1 {
@@ -141,7 +143,6 @@ h1 {
   margin-bottom: 10px;
   margin-left: 15px;
   margin-right: 15px;
-  /*display: inline-block;*/
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   grid-area: ueberschrift;
 }
@@ -162,6 +163,8 @@ h1 {
   font-weight: 500;
   color: #333;
   animation: fadeIn 0.6s ease;
+  grid-area: AntwortEingabe;
+  align-self: start;
 }
 
 #eingabeContainer input[type="number"] {
@@ -224,6 +227,8 @@ h1 {
   text-align: center;
   display: none;
   animation: fadeInMessage 0.4s ease-out forwards;
+  grid-area: ergebnis;
+  align-self: start;
 }
 
 @keyframes fadeInMessage {
@@ -241,18 +246,21 @@ h1 {
 /* Toolbox Styling */
 .toolbox {
   display: none;
-  /* Sichtbarkeit per JS steuern */
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #ccc;
   border-radius: 10px;
   padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   margin-left: 15px;
-  margin-right: 15px;
+  /* margin-right: 15px; */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   animation: fadeIn 0.6s ease;
   grid-area: toolbox;
   cursor: pointer;
+
+  width: 100%; 
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .radio-row {
@@ -278,7 +286,7 @@ h1 {
 /* Toolbox-Labels */
 .toolbox label {
   display: block;
-  width: 200px;
+  /* width: 200px; */
   margin-bottom: 12px;
   position: relative;
   color: #222;
