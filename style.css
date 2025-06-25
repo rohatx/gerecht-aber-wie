@@ -1,133 +1,156 @@
 body {
-    font-family: sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    background: #f4f4f4;
+  font-family: sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f4;
+  background-image: url("img/hintergrund.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+}
+
+#grid-wrapper {
+  display: grid;
+  grid-template-areas:
+    'ueberschrift ueberschrift ueberschrift ueberschrift ueberschrift'
+    'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel'
+    'twoPersons threePersons fourPersons fivePersons sixPersons'
+    'toolbox toolbox toolbox toolbox toolbox'
+    'table table table table table';
 }
 
 #circle-container {
-    position: relative;
-    width: 600px;
-    height: 300px;
-    margin: 0 auto;
-    margin-top: 200px;
+  position: relative;
+  width: 600px;
+  height: 300px;
+  margin: 0 auto;
+  margin-top: 150px;
+  grid-area: table;
 }
 
 .person {
-    position: absolute;
+  position: absolute;
 }
 
 .teller {
-    width: 76px;
-    height: 76px;
-    top: 40px;
-    background: #fff8dc;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 80px;
+  position: absolute;
 }
 
 .tellerBild {
-    width: 76px;
-    height: 76px;
+  width: 120px;
+  height: 120px;
+}
+
+.keks_wrapper {
+  position: absolute;
 }
 
 .keks {
-    width: 18px;
-    height: 18px;
-    background: chocolate;
-    border-radius: 50%;
-    position: absolute;
-    cursor: grab;
+  width: 36px;
+  height: 36px;
+  position: absolute;
+}
+
+.half_keks {
+  width: 18px;
+  height: 36px;
+  position: absolute;
+}
+
+.keks.markiert,
+.half_keks.markiert {
+  border: 2px solid red;
 }
 
 .person-img {
-    width: 80px;
-    position: absolute;
-    top: -40px;
-}
-
-body {
-    background-image: url("img/hintergrund.png"); 
-    background-size: cover;                      
-    background-repeat: no-repeat;                
-    background-position: center center;          
-    background-attachment: fixed;                
+  width: 80px;
+  left: 20px;
+  position: absolute;
 }
 
 .image-button {
-    border: none;
-    background: none;
-    padding: 0;
-    margin: 10px;
-    transition: transform 0.3s, filter 0.3s;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 10px;
+  transition: transform 0.3s, filter 0.3s;
+}
+
+#two-persons {
+  grid-area: twoPersons;
+}
+
+#three-persons {
+  grid-area: threePersons;
+}
+
+#four-persons {
+  grid-area: fourPersons;
+}
+
+#five-persons {
+  grid-area: fivePersons;
+}
+
+#six-persons {
+  grid-area: sixPersons;
 }
 
 .image-button img {
-    width: 100px;
-    height: auto;
-    transition: transform 0.3s, filter 0.3s;
+  width: 100px;
+  height: auto;
+  transition: transform 0.3s, filter 0.3s;
 }
 
 .inactive img {
-    filter: grayscale(100%);
-    transform: scale(0.75);
-    opacity: 0.7;
+  filter: grayscale(100%);
+  transform: scale(0.75);
+  opacity: 0.7;
 }
 
 h2#anzahlPersonen {
-position: fixed;
   top: 0;
   left: 0;
-  display: flex;
+  /*display: flex;*/
   padding: 10px;
   font-size: 1.8rem;
   color: white;
   font-weight: 800;
-  background-color: #9e020293; 
+  background-color: #9e020293;
   padding: 8px 12px;
   border-radius: 8px;
-  margin-bottom: 10px; 
-  margin-left: 15px;   
-  display: inline-block;
+  margin-bottom: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+  /*display: inline-block;*/
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  grid-area: personenAnzahlLabel;
 }
 
 h1 {
   color: white;
   font-weight: 800;
-  background-color: #9e020293; 
+  background-color: #9e020293;
   padding: 8px 12px;
   border-radius: 8px;
-  margin-bottom: 10px; 
-  margin-left: 15px;   
-  display: inline-block;
+  margin-bottom: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
+  /*display: inline-block;*/
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  grid-area: ueberschrift;
 }
-
-#button-leiste {
-  position: fixed;
-  z-index: 1000;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  max-width: 330px;
-  padding: 10px;
-}
-
-#button-leiste.default {
-  top: 80px;
-  left: 20px;
-  transform: translate(0, 0);
-}
-
 
 #eingabeContainer {
   display: none;
   margin-top: 20px;
   padding: 1.5rem;
-  background-color: #ffffffcc; 
+  background-color: #ffffffcc;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: fit-content;
@@ -161,7 +184,7 @@ h1 {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-#checkAntwortBtn:hover { 
+#checkAntwortBtn:hover {
   background-color: #7b0101;
   transform: scale(1.05);
 }
@@ -175,15 +198,22 @@ h1 {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
 #message {
   margin-top: 20px;
   padding: 1rem 1.5rem;
-  background-color: white; 
+  background-color: white;
   border-radius: 10px;
   font-size: 1.4rem;
   font-weight: 600;
@@ -201,62 +231,68 @@ h1 {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.tools {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; 
-  gap: 20px;
-  position: fixed;
-  top: 80px;
-  left: 20px;
-  z-index: 1000;
-}
-
 /* Toolbox Styling */
 .toolbox {
-    display: block; /* Sichtbarkeit per JS steuern */
-    background: rgba(255, 255, 255, 0.95);
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 16px 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    max-width: 420px;
-    margin-top: 60%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    animation: fadeIn 0.6s ease;
+  display: none;
+  /* Sichtbarkeit per JS steuern */
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  margin-left: 15px;
+  margin-right: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: fadeIn 0.6s ease;
+  grid-area: toolbox;
+  cursor: pointer;
+}
+
+.radio-row {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 0.5em;
 }
 
 /* Toolbox-Legend */
 .toolbox legend {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.toolbox img {
+  margin-left: 20px;
+  cursor: pointer;
 }
 
 /* Toolbox-Labels */
 .toolbox label {
-    display: block;
-    margin-bottom: 12px;
-    padding-left: 26px;
-    position: relative;
-    color: #222;
-    font-size: 0.95rem;
-    line-height: 1.3rem;
-    cursor: pointer;
+  display: block;
+  width: 200px;
+  margin-bottom: 12px;
+  position: relative;
+  color: #222;
+  font-size: 0.95rem;
+  line-height: 1.3rem;
+  cursor: pointer;
 }
 
 /* Radio Buttons */
 .toolbox input[type="radio"] {
-    position: absolute;
-    left: 0;
-    top: 2px;
-    accent-color: #4f46e5;
-    transform: scale(1.1);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  accent-color: #4f46e5;
+  transform: scale(1.1);
+  cursor: pointer;
 }
