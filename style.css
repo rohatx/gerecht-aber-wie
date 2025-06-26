@@ -13,20 +13,53 @@ body {
 
 #grid-wrapper {
   display: grid;
-  grid-template-columns: 12.5% 12.5% repeat(1, 1fr);
+  grid-template-columns: 8% 8% 8% 1fr;
   grid-template-areas:
-    'personenAnzahlLabel personenAnzahlLabel ueberschrift'
-    'twoPersons threePersons table'
-    'fourPersons fivePersons table'
-    'sixPersons sixPersons table'
-    'toolbox toolbox ergebnis'
-    'toolbox toolbox AntwortEingabe';
+    'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel ueberschrift'
+    'twoPersons threePersons fourPersons table'
+    'fivePersons sixPersons . table'
+    'config config config table'
+    'toolbox toolbox toolbox table'
+    'toolbox toolbox toolbox checkVerteilungBtn'
+    'toolbox toolbox toolbox ergebnis'
+    'toolbox toolbox toolbox AntwortEingabe';
+}
+
+#einsammelButton {
+  position: absolute;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: 800;
+  background-color: #9e0202d8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 140px;
+  height: 60px;
+  top: 120px;
+  left: 290px;
+  cursor: pointer;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.dose {
+  display: none;
+  background-color: blue;
+  position: absolute;
+  width: 240px;
+  height: 160px;
+  top: 190px;
+  left: 240px;
 }
 
 #circle-container {
   position: relative;
-  width: 600px;
-  height: 300px;
+  width: 720px;
+  height: 360px;
   margin: 0 auto;
   margin-top: 150px;
   grid-area: table;
@@ -67,6 +100,7 @@ body {
 .keks.markiert,
 .half_keks.markiert {
   border: 2px solid red;
+  border-radius: 20px;
 }
 
 .person-img {
@@ -135,6 +169,7 @@ h2#anzahlPersonen {
 }
 
 h1 {
+  display: none;
   color: white;
   font-weight: 800;
   background-color: #9e020293;
@@ -176,6 +211,25 @@ h1 {
   width: 80px;
 }
 
+#checkVerteilungBtn {
+  font-size: 1.2rem;
+  color: white;
+  font-weight: 800;
+  background-color: #9e0202d8;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-left: 15px;
+  margin-right: 15px;
+  cursor: pointer;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  grid-area: checkVerteilungBtn;
+}
+
+
 #checkAntwortBtn {
   padding: 0.5rem 1rem;
   background-color: #9e0202d8;
@@ -187,7 +241,9 @@ h1 {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-#checkAntwortBtn:hover {
+#checkAntwortBtn:hover,
+#einsammelButton:hover,
+#checkVerteilungBtn:hover {
   background-color: #7b0101;
   transform: scale(1.05);
 }
@@ -244,29 +300,27 @@ h1 {
 }
 
 /* Toolbox Styling */
-.toolbox {
+.toolbox,
+.config {
   display: none;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #ccc;
   border-radius: 10px;
-  padding: 16px 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   margin-left: 15px;
-  /* margin-right: 15px; */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   animation: fadeIn 0.6s ease;
-  grid-area: toolbox;
   cursor: pointer;
-
-  width: 100%; 
-  max-width: 100%;
-  box-sizing: border-box;
+  height: fit-content;
+  width: 100%;
 }
 
-.radio-row {
-  display: flex;
-  gap: 1em;
-  margin-bottom: 0.5em;
+.toolbox {
+  grid-area: toolbox;
+}
+
+.config {
+  grid-area: config;
 }
 
 /* Toolbox-Legend */
@@ -278,16 +332,10 @@ h1 {
   cursor: pointer;
 }
 
-.toolbox img {
-  margin-left: 20px;
-  cursor: pointer;
-}
-
 /* Toolbox-Labels */
-.toolbox label {
-  display: block;
-  /* width: 200px; */
-  margin-bottom: 12px;
+.toolbox label,
+.config label {
+  display: flex;
   position: relative;
   color: #222;
   font-size: 0.95rem;
@@ -296,11 +344,10 @@ h1 {
 }
 
 /* Radio Buttons */
-.toolbox input[type="radio"] {
-  position: absolute;
-  left: 0;
-  top: 2px;
+.toolbox input[type="radio"],
+.config input[type="checkbox"] {
   accent-color: #4f46e5;
   transform: scale(1.1);
+  margin-right: 10px;
   cursor: pointer;
 }

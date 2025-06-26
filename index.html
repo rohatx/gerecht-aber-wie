@@ -24,32 +24,40 @@
         <button class="image-button" id="six-persons" onclick="changePerson(this,6)">
             <img src="img/6personen.png" alt="Auswahl 6 Personen">
         </button>
-        <h1 style="display: none;" id="aufgabenstellung">Verteile die Kekse</h1>
+        <h1 id="aufgabenstellung">Verteile die Kekse</h1>
         <h2 id="anzahlPersonen">Anzahl Personen</h2>
+
+        <fieldset id="config" class="config">
+            <label>
+                <input type="checkbox" id="collectionConfig" name="collectionConfig">
+                Kekse einsammeln m&ouml;glich
+            </label>
+            <br>
+            <label>
+                <input type="checkbox" id="advancedConfig" name="advancedConfig">
+                Fortgeschrittener Modus
+            </label>
+        </fieldset>
 
         <fieldset id="toolbox" class="toolbox">
             <legend>Toolbox</legend>
             <form id="toolboxForm">
-                <div class="radio-row">
-                    <label>
-                        <input type="radio" class="radio" name="tool" value="move" checked>
-                        <img src="img/keksSchieben.png" width="200px" alt="Keks verschieben">
-                    </label>
-                    <label>
-                        <input type="radio" class="radio" name="tool" value="select">
-                        Wähle mehrere Kekse aus, um sie gleichzeitig zu verschieben.
-                    </label>
-                </div>
-                <div class="radio-row">
-                    <label>
-                        <input type="radio" class="radio" name="tool" value="break">
-                        <img src="img/keksBrechen.png" width="150px" alt="Keks zerbrechen">
-                    </label>
-                    <label>
-                        <input type="radio" class="radio" name="tool" value="merge">
-                        <img src="img/keksMergen.png" width="150px" alt="Keks zusammenf&uuml;gen">
-                    </label>
-                </div>
+                <label>
+                    <input type="radio" class="radio" name="tool" value="move" checked>
+                    <img src="img/keksSchieben.png" width="200px" alt="Keks verschieben">
+                </label>
+                <label>
+                    <input type="radio" class="radio" name="tool" value="select">
+                    Mehrere Kekse gleichzeitig ausw&auml;hlen.
+                </label>
+                <label>
+                    <input type="radio" class="radio" name="tool" value="break">
+                    <img src="img/keksBrechen.png" width="150px" alt="Keks zerbrechen">
+                </label>
+                <label>
+                    <input type="radio" class="radio" name="tool" value="merge">
+                    <img src="img/keksMergen.png" width="150px" alt="Keks zusammenf&uuml;gen">
+                </label>
             </form>
         </fieldset>
 
@@ -58,11 +66,13 @@
         <div id="circle-container">
         </div>
 
+        <button id="checkVerteilungBtn">Verteilung pr&uuml;fen</button>
+
         <div id="message" style="display: none;"></div>
-        <div id="eingabeContainer" style="display: none; margin-top: 10px;">
-            Wie viele Kekse hat jede Person?
+        <div id="eingabeContainer" style="margin-top: 10px;">
+            Richtig! Jede Person hat jetzt die gleiche Anzahl an Keksen. Wie viele Kekse hat jeder?
             <input type="number" id="keksEingabe" min="0">
-            <button id="checkAntwortBtn">Antwort prüfen</button>
+            <button id="checkAntwortBtn">Antwort pr&uuml;fen</button>
 
         </div>
 

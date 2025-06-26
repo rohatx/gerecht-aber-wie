@@ -7,11 +7,15 @@ const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const buttonLeiste = document.getElementById("button-leiste");
 const aufgabenStellung = document.getElementById("aufgabenstellung");
 const toolbox = document.getElementById("toolbox");
+const configbox = document.getElementById("config");
+const collectionCheckbox = document.getElementById("collectionConfig");
+const advancedCheckbox = document.getElementById("advancedConfig");
+const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
 
 let personCount = 0;
-let keksCount = personCount * randKeksMultiplikator();
+let keksCount = 0;
 
-let kekseProPerson = keksCount / personCount
+let kekseProPerson = 0;
 
 const KEKSE_PRO_REIHE = 4;
 const PLATZ_PRO_KEKS = 20;
@@ -19,12 +23,27 @@ const PLATZ_PRO_KEKS = 20;
 let tellerKekseIds;
 
 let currentTool = "move"; // Standard
-let selectedKekse = new Set(); // IDs der markierten Kekse
 let cookieImageNumber = keksCount;
 
 window.addEventListener("load", () => {
     document.getElementById("toolboxForm").reset();
+    collectionCheckbox.checked = false;
+    advancedCheckbox.checked = false;
     document.body.style.cursor = 'grab';
+});
+
+collectionCheckbox.addEventListener('change', function () {
+    const dose = document.getElementsByClassName("dose")[0];
+    const einsammelButton = document.getElementById("einsammelButton");
+    if (dose != null) {
+        if (collectionCheckbox.checked) {
+            dose.style.display = 'flex';
+            einsammelButton.style.display = 'flex';
+        } else {
+            dose.style.display = 'none';
+            einsammelButton.style.display = 'none';
+        }
+    }
 });
 
 // Werkzeug-Auswahl
@@ -75,7 +94,7 @@ function createScene() {
         img.className = "person-img";
 
         person.className = "person";
-        person.style.left = `${x + 300 - 60}px`;
+        person.style.left = `${x + 360 - 60}px`;
         person.style.top = `${150 - y}px`;
 
         const teller = document.createElement("div");
@@ -95,6 +114,34 @@ function createScene() {
         teller.appendChild(tellerBild);
         container.appendChild(person);
     }
+
+    const dose = document.createElement("div");
+    dose.className = "dose";
+    dose.id = `teller-${personCount}`;
+    container.appendChild(dose);
+    dose.ondrop = handleDrop;
+    dose.ondragover = (e) => e.preventDefault();
+
+    const einsammelButton = document.createElement("button");
+    einsammelButton.className = "dose";
+    einsammelButton.id = "einsammelButton";
+    einsammelButton.textContent = "Kekse einsammeln"
+    einsammelButton.onclick = function () {
+        document.querySelectorAll('.keks, .half_keks').forEach(keks => {
+            const zielTellerIndex = personCount; // letzte liste im Array ist die Dose
+            tellerKekseIds[keks.dataset.tellerIndex] = tellerKekseIds[keks.dataset.tellerIndex].filter(id => id.localeCompare(keks.id) != 0);
+            tellerKekseIds[zielTellerIndex].push(keks.id);
+            keks.dataset.tellerIndex = zielTellerIndex;
+            showCookies();
+        });
+    };
+    container.appendChild(einsammelButton);
+    if (collectionCheckbox.checked) {
+        dose.style.display = 'flex';
+        einsammelButton.style.display = 'flex';
+    }
+
+    tellerKekseIds.push([]); // fuer die Dose
 
     distributeKekse();
 }
@@ -129,6 +176,17 @@ function distributeKekse() {
             }
         }
     }
+    const dose = document.getElementById(`teller-${personCount}`);
+    for (let keksIndex = 0; keksIndex < 24; keksIndex++) {
+        const keks_wrapper = document.createElement("div");
+        keks_wrapper.className = "keks_wrapper";
+        keks_wrapper.classList.add(`number-${keksIndex}`);
+
+        keks_wrapper.style.left = `${(keksIndex % 6) * 40}px`;
+        keks_wrapper.style.top = `${Math.floor(keksIndex / 6) * 40}px`;
+
+        dose.appendChild(keks_wrapper);
+    }
     showCookies();
 }
 
@@ -150,12 +208,9 @@ function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
 
     keks.addEventListener('click', (e) => {
         if (currentTool == 'select') {
-            const id = keks.id;
-            if (selectedKekse.has(id)) {
-                selectedKekse.delete(id);
+            if (keks.classList.contains('markiert')) {
                 keks.classList.remove('markiert');
             } else {
-                selectedKekse.add(id);
                 keks.classList.add('markiert');
             }
         } else if (currentTool == 'break') {
@@ -214,8 +269,9 @@ function handleDrop(e) {
     const fromTeller = document.getElementById(`teller-${startTellerIndex}`);
     const toTeller = e.currentTarget;
 
-    if (selectedKekse.has(movingKeksId)) {
-        document.querySelectorAll('.keks.markiert, .half_keks.markiert').forEach(keks => {
+    markedCookies = document.querySelectorAll('.keks.markiert, .half_keks.markiert');
+    if (markedCookies.length > 0) {
+        markedCookies.forEach(keks => {
             tellerKekseIds[keks.dataset.tellerIndex] = tellerKekseIds[keks.dataset.tellerIndex].filter(id => id.localeCompare(keks.id) != 0);
             tellerKekseIds[zielTellerIndex].push(keks.id);
             if (checkCookieDistribution(true)) {
@@ -243,26 +299,36 @@ function handleDrop(e) {
         }
     }
 
-    checkVictory(true, true);
+
+    hideEvaluation();
 }
 
 function checkVictory(withMessage, withHalfCookies) {
     const counts = calculateCookieCounts(withHalfCookies);
-    const allEqual = counts.every(count => count == counts[0]);
-    if (allEqual) {
+    const allEqual = counts.slice(0, -1).every(count => count == counts[0]);
+    const sum = counts.slice(0, -1).reduce((acc, value) => acc + value, 0);
+    if (allEqual && sum == keksCount) {
         if (withMessage) {
             eingabeContainer.style.display = "block";
         }
         return true;
     } else {
-        message.textContent = "";
-        hideAverageInput();
+        if (withMessage) {
+            message.style.display = "block";
+            message.style.color = "red";
+            message.style.border = "2px solid rgb(199, 12, 12)";
+            message.textContent = "Leider falsch. Versuche es nochmal";
+        }
         return false;
     }
 }
 
+checkVerteilungBtn.onclick = () => {
+    checkVictory(true, true);
+};
+
 checkAntwortBtn.onclick = () => {
-    const eingabe = parseInt(keksEingabe.value);
+    const eingabe = parseFloat(keksEingabe.value);
     if (eingabe == kekseProPerson) {
         message.style.display = "block";
         message.style.color = "#2e8b57";
@@ -278,16 +344,13 @@ checkAntwortBtn.onclick = () => {
 
 function showCookies() {
     const gespeicherteKekse = [];
-    console.log(cookieImageNumber)
     for (let keksIndex = 0; keksIndex < cookieImageNumber; keksIndex++) {
         const keks = document.getElementById(`keks-${keksIndex}`);
-        console.log(keks)
         if (keks != null) {
             gespeicherteKekse.push(keks);     // Speichere Referenz
             keks.remove();
         }
     }
-    console.log(gespeicherteKekse);
     for (let tellerIndex = 0; tellerIndex < tellerKekseIds.length; tellerIndex++) {
         for (let keksIndex = 0; keksIndex < tellerKekseIds[tellerIndex].length; keksIndex++) {
             const keks = gespeicherteKekse.find(keks => keks.id == tellerKekseIds[tellerIndex][keksIndex]);
@@ -315,7 +378,7 @@ function showCookies() {
 
 function checkCookieDistribution(withHalfCookies) {
     const counts = calculateCookieCounts(withHalfCookies);
-    if (counts.some(count => count > 8)) {
+    if (counts.slice(0, -1).some(count => count > 8)) {
         return false;
     }
     return true;
@@ -343,23 +406,29 @@ function calculateCookieCounts(withHalfCookies) {
     return counts;
 }
 
-function hideAverageInput() {
+function hideEvaluation() {
+    message.style.display = "none";
     eingabeContainer.style.display = "none";
     keksEingabe.value = "";
 }
 
 function randKeksMultiplikator() {
+    if (advancedCheckbox.checked) {
+        return Math.floor(Math.random() * 8 + 1) / 2;
+    }
     return Math.floor(Math.random() * 4 + 1);
 }
 
 function changePerson(geklickterButton, i) {
     personCount = i;
-    keksCount = personCount * randKeksMultiplikator();
+    keksCount = Math.floor(personCount * randKeksMultiplikator());
     kekseProPerson = keksCount / personCount
     cookieImageNumber = keksCount;
-    message.style.display = "none";
+    hideEvaluation();
     aufgabenStellung.style.display = "inline-block";
     toolbox.style.display = "inline-block";
+    configbox.style.display = "inline-block";
+    checkVerteilungBtn.style.display = "inline-block";
 
     const buttons = document.querySelectorAll('.image-button');
     buttons.forEach(button => {
