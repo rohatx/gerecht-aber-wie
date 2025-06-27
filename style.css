@@ -19,11 +19,11 @@ body {
     'untertitelLabel untertitelLabel untertitelLabel table'
     'twoPersons threePersons fourPersons table'
     'fivePersons sixPersons . table'
+    'config config config table'
     'toolbox toolbox toolbox table'
     'toolbox toolbox toolbox table'
     'toolbox toolbox toolbox table'
     'toolbox toolbox toolbox ergebnis'
-    'config config config ergebnis'
     'checkVerteilungBtn . . AntwortEingabe';
 }
 
@@ -230,6 +230,7 @@ h1 {
 #checkVerteilungBtn {
   padding: 15px;
   width: fit-content;
+  height: fit-content;
   font-size: 1.2rem;
   color: white;
   font-weight: 800;

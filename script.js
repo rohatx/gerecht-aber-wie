@@ -8,8 +8,7 @@ const buttonLeiste = document.getElementById("button-leiste");
 const aufgabenStellung = document.getElementById("aufgabenstellung");
 const toolbox = document.getElementById("toolbox");
 const configbox = document.getElementById("config");
-const collectionCheckbox = document.getElementById("collectionConfig");
-const advancedCheckbox = document.getElementById("advancedConfig");
+
 const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
 const nameEingabe = document.getElementById("nameInput");
 
@@ -42,9 +41,7 @@ let cookieImageNumber = keksCount;
 
 window.addEventListener("load", () => {
     document.getElementById("toolboxForm").reset();
-    // collectionCheckbox.checked = false;
-    
-    advancedCheckbox.checked = false;
+
     document.querySelectorAll("*").forEach(el => {
         el.setAttribute("draggable", "false");
     });
@@ -147,7 +144,7 @@ function createScene() {
         collectionClicks += 1
     };
     container.appendChild(einsammelButton);
-    if (collectionCheckbox.checked) {
+    if (keksEinsammelnMoglich != null) {
         dose.style.display = 'flex';
         einsammelButton.style.display = 'flex';
     }
@@ -156,8 +153,6 @@ function createScene() {
     checkAntwortBtn.disabled = false;
 
     tellerKekseIds.push([]); // fuer die Dose
-
-    // isAdvanced = advancedCheckbox.checked;
 
     if (keksEinsammelnMoglich != null)
     {
@@ -458,7 +453,7 @@ function hideEvaluation() {
 }
 
 function randKeksMultiplikator() {
-    if (advancedCheckbox.checked && (personCount % 2 == 0)) {
+    if (isAdvanced !== null && (personCount % 2 == 0)) {
         return Math.floor(Math.random() * 8 + 1) / 2;
     }
     return Math.floor(Math.random() * 4 + 1);
