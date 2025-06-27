@@ -11,6 +11,19 @@ const configbox = document.getElementById("config");
 const collectionCheckbox = document.getElementById("collectionConfig");
 const advancedCheckbox = document.getElementById("advancedConfig");
 const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
+const nameEingabe = document.getElementById("nameInput");
+
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbwnnInHSxcvNn7ykgIEQmmUMe8mgxFF_fpMLri3Qfby8aLSVMLFBTycdu3mpOL2wqwG/exec';
+async function sendData() {
+    const name = nameEingabe.value;
+    const res = await fetch(scriptUrl + `?name=${encodeURIComponent(name)}&count=${collectionClicks}&isAdvanced=${isAdvanced}`, {
+        method: 'POST'
+    });
+}
+
+
+let collectionClicks = 0;
+let isAdvanced = false;
 
 let personCount = 0;
 let keksCount = 0;
@@ -29,6 +42,9 @@ window.addEventListener("load", () => {
     document.getElementById("toolboxForm").reset();
     collectionCheckbox.checked = false;
     advancedCheckbox.checked = false;
+    document.querySelectorAll("*").forEach(el => {
+        el.setAttribute("draggable", "false");
+    });
     document.body.style.cursor = 'grab';
 });
 
@@ -50,7 +66,7 @@ collectionCheckbox.addEventListener('change', function () {
 document.querySelectorAll('input[name="tool"]').forEach(radio => {
     radio.addEventListener('change', () => {
         currentTool = radio.value;
-        if (currentTool == "move") {
+        if (currentTool === "move") {
             document.body.style.cursor = 'grab';
             document.querySelectorAll('.keks').forEach(keks => {
                 if (keks.dataset.isWhole) {
@@ -61,7 +77,7 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
                 keks.draggable = true;
             });
         } else {
-            if (currentTool == "select") {
+            if (currentTool === "select") {
                 document.body.style.cursor = 'pointer';
             } else {
                 document.body.style.cursor = 'cell';
@@ -80,6 +96,7 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
 function createScene() {
     container.innerHTML = "";
     tellerKekseIds = [];
+    collectionClicks = 0;
 
     const radius = 300;
     for (let personIndex = 0; personIndex < personCount; personIndex++) {
@@ -134,16 +151,30 @@ function createScene() {
             keks.dataset.tellerIndex = zielTellerIndex;
             showCookies();
         });
+        collectionClicks += 1
     };
     container.appendChild(einsammelButton);
     if (collectionCheckbox.checked) {
         dose.style.display = 'flex';
         einsammelButton.style.display = 'flex';
     }
+    einsammelButton.disabled = false;
+    keksEingabe.disabled = false;
+    checkAntwortBtn.disabled = false;
 
     tellerKekseIds.push([]); // fuer die Dose
 
+    isAdvanced = advancedCheckbox.checked;
+
     distributeKekse();
+    document.querySelectorAll('.keks').forEach(keks => {
+        if (keks.dataset.isWhole) {
+            keks.draggable = true;
+        }
+    });
+    document.querySelectorAll('.half_keks').forEach(keks => {
+        keks.draggable = true;
+    });
 }
 
 function distributeKekse() {
@@ -207,28 +238,28 @@ function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
     keks.dataset.isWhole = !shouldBeHalf;
 
     keks.addEventListener('click', (e) => {
-        if (currentTool == 'select') {
+        if (currentTool === 'select') {
             if (keks.classList.contains('markiert')) {
                 keks.classList.remove('markiert');
             } else {
                 keks.classList.add('markiert');
             }
-        } else if (currentTool == 'break') {
-            if (keks.dataset.isWhole == "false") {
+        } else if (currentTool === 'break') {
+            if (keks.dataset.isWhole === "false") {
                 alert("Ein halber Keks kann nicht noch einmal gebrochen werden!");
             } else {
-                const keksIndexNeu = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId == keks.id);
+                const keksIndexNeu = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId === keks.id);
                 createKeks(keksIndexNeu + 1, keks.dataset.tellerIndex, true);
                 keks.dataset.isWhole = false;
                 keks.src = `img/cookie_left.png`;
                 keks.className = "half_keks";
                 showCookies();
             }
-        } else if (currentTool == 'merge') {
-            if (keks.dataset.isWhole == "false") {
+        } else if (currentTool === 'merge') {
+            if (keks.dataset.isWhole === "false") {
                 const cookieWrapper = keks.parentElement;
                 const otherHalf = Array.from(cookieWrapper.children).find(cookieHalf => cookieHalf !== keks);
-                const otherHalfIndex = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId == otherHalf.id);
+                const otherHalfIndex = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId === otherHalf.id);
                 tellerKekseIds[keks.dataset.tellerIndex].splice(otherHalfIndex, 1);
                 cookieWrapper.removeChild(otherHalf);
                 keks.dataset.isWhole = true;
@@ -243,7 +274,7 @@ function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
 
     // Drag Start
     keks.addEventListener('dragstart', (e) => {
-        if (currentTool == 'move') {
+        if (currentTool === 'move') {
             e.dataTransfer.setData("text/plain", JSON.stringify({
                 id: keks.id,
                 from: keks.dataset.tellerIndex
@@ -299,7 +330,6 @@ function handleDrop(e) {
         }
     }
 
-
     hideEvaluation();
 }
 
@@ -310,6 +340,15 @@ function checkVictory(withMessage, withHalfCookies) {
     if (allEqual && sum == keksCount) {
         if (withMessage) {
             eingabeContainer.style.display = "block";
+            document.getElementById("einsammelButton").disabled = true;
+            document.querySelectorAll('.keks').forEach(keks => {
+                if (keks.dataset.isWhole) {
+                    keks.draggable = false;
+                }
+            });
+            document.querySelectorAll('.half_keks').forEach(keks => {
+                keks.draggable = false;
+            });
         }
         return true;
     } else {
@@ -334,6 +373,9 @@ checkAntwortBtn.onclick = () => {
         message.style.color = "#2e8b57";
         message.style.border = "2px solid #3cb371";
         message.textContent = "Aufgabe gelöst!";
+        keksEingabe.disabled = true;
+        checkAntwortBtn.disabled = true;
+        sendData();
     } else {
         message.style.display = "block";
         message.style.color = "red";
@@ -353,18 +395,18 @@ function showCookies() {
     }
     for (let tellerIndex = 0; tellerIndex < tellerKekseIds.length; tellerIndex++) {
         for (let keksIndex = 0; keksIndex < tellerKekseIds[tellerIndex].length; keksIndex++) {
-            const keks = gespeicherteKekse.find(keks => keks.id == tellerKekseIds[tellerIndex][keksIndex]);
+            const keks = gespeicherteKekse.find(keks => keks.id === tellerKekseIds[tellerIndex][keksIndex]);
             for (let positionIndex = 0; positionIndex < tellerKekseIds[tellerIndex].length; positionIndex++) {
                 const keks_wrapper = document.getElementById(`teller-${tellerIndex}`).querySelector(`.number-${positionIndex}`);
                 const keks_wrapper_children = keks_wrapper.children;
                 if (keks_wrapper_children.length == 0) {
-                    if (keks.dataset.isWhole == "false") {
+                    if (keks.dataset.isWhole === "false") {
                         keks.src = `img/cookie_left.png`;
                         keks.style.left = '-4px';
                     }
                     keks_wrapper.appendChild(keks);
                     break;
-                } else if (keks_wrapper_children.length == 1 && keks_wrapper_children[0].dataset.isWhole == "false" && keks.dataset.isWhole == "false") {
+                } else if (keks_wrapper_children.length == 1 && keks_wrapper_children[0].dataset.isWhole === "false" && keks.dataset.isWhole === "false") {
                     keks.src = `img/cookie_right.png`;
                     keks_wrapper.appendChild(keks);
                     keks.style.left = '14px';
@@ -392,7 +434,7 @@ function calculateCookieCounts(withHalfCookies) {
             for (let keksIndex = 0; keksIndex < tellerKekseIds[tellerIndex].length; keksIndex++) {
                 const keksId = tellerKekseIds[tellerIndex][keksIndex];
                 const keks = document.getElementById(keksId);
-                if (keks.dataset.isWhole == "true") {
+                if (keks.dataset.isWhole === "true") {
                     sum += 1;
                 } else {
                     sum += 0.5;
@@ -413,7 +455,7 @@ function hideEvaluation() {
 }
 
 function randKeksMultiplikator() {
-    if (advancedCheckbox.checked) {
+    if (advancedCheckbox.checked && (personCount % 2 == 0)) {
         return Math.floor(Math.random() * 8 + 1) / 2;
     }
     return Math.floor(Math.random() * 4 + 1);
