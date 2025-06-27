@@ -5,11 +5,11 @@ Die Statistiken können sich unter https://docs.google.com/spreadsheets/d/1GjGhB
 
 **Verschiedene Modis** 
 
-    Will man halbe Keks benutzen setzt man in der URL den Parameter: halbe-kekse. 
+    Will man halbe Keks benutzen setzt man in der URL den Parameter: halbe. 
 
-    Will man die Kekse einsammeln können setzt man in der URL den Parameter: kekse-sammeln. 
+    Will man die Kekse einsammeln können setzt man in der URL den Parameter: sammelbar. 
     
     Der Inhalt ist dabei egal
 
     Beispiel URL wenn beides gesetzt
-    ...index.html?kekse-sammeln=1&halbe-kekse=1
+    ...index.html?kekse-sammelbar=1&halbe=1

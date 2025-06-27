@@ -81,9 +81,6 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
 
 
 function createScene() {
-    keksEinsammelnMoglich = params.get("kekse-sammeln");
-    isAdvanced = params.get("halbe-kekse");
-
     container.innerHTML = "";
     tellerKekseIds = [];
     collectionClicks = 0;
@@ -99,6 +96,29 @@ function createScene() {
         const img = document.createElement("img");
         img.src = `img/person${personIndex + 1}.png`;
         img.className = "person-img";
+
+        const name = document.createElement("div");
+        name.id = "name";
+        switch (personIndex) {
+        case 0:
+            name.textContent = "Marvin";
+            break;
+        case 1:
+            name.textContent = "Emil";
+            break;
+        case 2:
+            name.textContent = "Emma";
+            break;
+        case 3:
+            name.textContent = "Nico";
+            break;
+        case 4:
+            name.textContent = "Mia";
+            break;
+        case 5:
+            name.textContent = "Jan";
+            break;
+        }
 
         person.className = "person";
         person.style.left = `${x + 360 - 60}px`;
@@ -118,6 +138,7 @@ function createScene() {
 
         person.appendChild(img);
         person.appendChild(teller);
+        person.appendChild(name);
         teller.appendChild(tellerBild);
         container.appendChild(person);
     }
@@ -144,7 +165,7 @@ function createScene() {
         collectionClicks += 1
     };
     container.appendChild(einsammelButton);
-    if (keksEinsammelnMoglich != null) {
+    if (params.has("sammelbar")) {
         dose.style.display = 'flex';
         einsammelButton.style.display = 'flex';
     }
@@ -154,7 +175,7 @@ function createScene() {
 
     tellerKekseIds.push([]); // fuer die Dose
 
-    if (keksEinsammelnMoglich != null)
+    if (params.has("sammelbar"))
     {
         const dose = document.getElementsByClassName("dose")[0];
         const einsammelButton = document.getElementById("einsammelButton");
@@ -354,7 +375,7 @@ function checkVictory(withMessage, withHalfCookies) {
             message.style.display = "block";
             message.style.color = "red";
             message.style.border = "2px solid rgb(199, 12, 12)";
-            message.textContent = "Leider falsch. Versuche es nochmal";
+            message.textContent = "Leider falsch. Person x hat mehr als y";
         }
         return false;
     }
@@ -378,7 +399,7 @@ checkAntwortBtn.onclick = () => {
         message.style.display = "block";
         message.style.color = "red";
         message.style.border = "2px solid rgb(199, 12, 12)";
-        message.textContent = "Leider falsch. Versuche es nochmal";
+        message.textContent = "Leider falsch. Schau es dir nochmal an";
     }
 };
 
@@ -453,8 +474,8 @@ function hideEvaluation() {
 }
 
 function randKeksMultiplikator() {
-    if (isAdvanced !== null && (personCount % 2 == 0)) {
-        return Math.floor(Math.random() * 8 + 1) / 2;
+    if (isAdvanced && (personCount % 2 == 0)) {
+        return (Math.floor(Math.random() * 6) * 2 + 1) / 2;
     }
     return Math.floor(Math.random() * 4 + 1);
 }
@@ -480,3 +501,35 @@ function changePerson(geklickterButton, i) {
     });
     createScene();
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    if (params.has("halbe")) {
+        //Modus mit halben Keksen
+        isAdvanced = true;
+        document.body.classList.add("isAdvanced");
+        personCount = 4;
+        keksCount = Math.floor(personCount * randKeksMultiplikator());
+        kekseProPerson = keksCount / personCount
+        cookieImageNumber = keksCount;
+        hideEvaluation();
+        aufgabenStellung.style.display = "inline-block";
+        toolbox.style.display = "inline-block";
+        configbox.style.display = "inline-block";
+        checkVerteilungBtn.style.display = "inline-block";        
+        
+        createScene();
+    } else {
+        //standart fall
+        isAdvanced = false;
+        const personenauswahl = document.getElementById("anzahlPersonen");
+        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
+        personenauswahl.style.display = "block";
+        personenauswahlsub.style.display = "block";
+
+        const elements = document.getElementsByClassName("image-button");
+        for (let i = 0; i < elements.length; i++) {
+            elements[i].style.display = "inline-block";
+        }
+        
+    }
+});
