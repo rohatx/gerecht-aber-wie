@@ -16,13 +16,15 @@ body {
   grid-template-columns: 8% 8% 8% 1fr;
   grid-template-areas:
     'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel ueberschrift'
+    'untertitelLabel untertitelLabel untertitelLabel table'
     'twoPersons threePersons fourPersons table'
     'fivePersons sixPersons . table'
-    'config config config table'
     'toolbox toolbox toolbox table'
-    'toolbox toolbox toolbox checkVerteilungBtn'
+    'toolbox toolbox toolbox table'
+    'toolbox toolbox toolbox table'
     'toolbox toolbox toolbox ergebnis'
-    'toolbox toolbox toolbox AntwortEingabe';
+    'config config config ergebnis'
+    'checkVerteilungBtn . . AntwortEingabe';
 }
 
 #einsammelButton {
@@ -48,7 +50,8 @@ body {
 
 .dose {
   display: none;
-  background-color: blue;
+  background-image: url("img/tellerEinsammeln.png");
+  background-size: cover;
   position: absolute;
   width: 240px;
   height: 160px;
@@ -168,6 +171,19 @@ h2#anzahlPersonen {
   align-self: start;
 }
 
+h3 {
+  font-size: 1.2rem;
+  color: #ffff; 
+  font-weight: 600;
+  margin: -5px 15px 15px 15px;
+  grid-area: untertitelLabel;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
+}
+
 h1 {
   display: none;
   color: white;
@@ -212,7 +228,8 @@ h1 {
 }
 
 #checkVerteilungBtn {
-  padding: 0.5rem 0rem;
+  padding: 15px;
+  width: fit-content;
   font-size: 1.2rem;
   color: white;
   font-weight: 800;

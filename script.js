@@ -21,9 +21,11 @@ async function sendData() {
     });
 }
 
+const params = new URLSearchParams(window.location.search);
 
 let collectionClicks = 0;
-let isAdvanced = false;
+let isAdvanced;
+let keksEinsammelnMoglich;
 
 let personCount = 0;
 let keksCount = 0;
@@ -40,7 +42,8 @@ let cookieImageNumber = keksCount;
 
 window.addEventListener("load", () => {
     document.getElementById("toolboxForm").reset();
-    collectionCheckbox.checked = false;
+    // collectionCheckbox.checked = false;
+    
     advancedCheckbox.checked = false;
     document.querySelectorAll("*").forEach(el => {
         el.setAttribute("draggable", "false");
@@ -48,19 +51,6 @@ window.addEventListener("load", () => {
     document.body.style.cursor = 'grab';
 });
 
-collectionCheckbox.addEventListener('change', function () {
-    const dose = document.getElementsByClassName("dose")[0];
-    const einsammelButton = document.getElementById("einsammelButton");
-    if (dose != null) {
-        if (collectionCheckbox.checked) {
-            dose.style.display = 'flex';
-            einsammelButton.style.display = 'flex';
-        } else {
-            dose.style.display = 'none';
-            einsammelButton.style.display = 'none';
-        }
-    }
-});
 
 // Werkzeug-Auswahl
 document.querySelectorAll('input[name="tool"]').forEach(radio => {
@@ -94,6 +84,9 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
 
 
 function createScene() {
+    keksEinsammelnMoglich = params.get("kekse-sammeln");
+    isAdvanced = params.get("halbe-kekse");
+
     container.innerHTML = "";
     tellerKekseIds = [];
     collectionClicks = 0;
@@ -140,7 +133,7 @@ function createScene() {
     dose.ondragover = (e) => e.preventDefault();
 
     const einsammelButton = document.createElement("button");
-    einsammelButton.className = "dose";
+    // einsammelButton.className = "dose";
     einsammelButton.id = "einsammelButton";
     einsammelButton.textContent = "Kekse einsammeln"
     einsammelButton.onclick = function () {
@@ -164,7 +157,17 @@ function createScene() {
 
     tellerKekseIds.push([]); // fuer die Dose
 
-    isAdvanced = advancedCheckbox.checked;
+    // isAdvanced = advancedCheckbox.checked;
+
+    if (keksEinsammelnMoglich != null)
+    {
+        const dose = document.getElementsByClassName("dose")[0];
+        const einsammelButton = document.getElementById("einsammelButton");
+        if (dose != null) {
+                dose.style.display = 'flex';
+                einsammelButton.style.display = 'flex';
+        }
+    }
 
     distributeKekse();
     document.querySelectorAll('.keks').forEach(keks => {
