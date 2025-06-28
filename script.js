@@ -48,6 +48,12 @@ window.addEventListener("load", () => {
         el.setAttribute("draggable", "false");
     });
     document.body.style.cursor = 'grab';
+
+    const selectedToolRadio = document.querySelector(`input[name="tool"][value="${currentTool}"]`);
+    if (selectedToolRadio) {
+        selectedToolRadio.checked = true;
+        selectedToolRadio.dispatchEvent(new Event("change"));
+    }
 });
 
 
