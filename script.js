@@ -29,6 +29,8 @@ let keksEinsammelnMoglich;
 let personCount = 0;
 let keksCount = 0;
 
+const namen = ["Marvin", "Emil", "Emma", "Nico", "Mia", "Jan"];
+
 let kekseProPerson = 0;
 
 const KEKSE_PRO_REIHE = 4;
@@ -99,26 +101,7 @@ function createScene() {
 
         const name = document.createElement("div");
         name.id = "name";
-        switch (personIndex) {
-        case 0:
-            name.textContent = "Marvin";
-            break;
-        case 1:
-            name.textContent = "Emil";
-            break;
-        case 2:
-            name.textContent = "Emma";
-            break;
-        case 3:
-            name.textContent = "Nico";
-            break;
-        case 4:
-            name.textContent = "Mia";
-            break;
-        case 5:
-            name.textContent = "Jan";
-            break;
-        }
+        name.textContent = namen[personIndex];
 
         person.className = "person";
         person.style.left = `${x + 360 - 60}px`;
@@ -151,7 +134,6 @@ function createScene() {
     dose.ondragover = (e) => e.preventDefault();
 
     const einsammelButton = document.createElement("button");
-    // einsammelButton.className = "dose";
     einsammelButton.id = "einsammelButton";
     einsammelButton.textContent = "Kekse einsammeln"
     einsammelButton.onclick = function () {
@@ -372,10 +354,34 @@ function checkVictory(withMessage, withHalfCookies) {
         return true;
     } else {
         if (withMessage) {
+            let personAindex = null;
+            let personBindex = null;
+
+            for (let i = 0; i < counts.length-1; i++) {
+                for (let j = i + 1; j < counts.length-1; j++) {
+                    if (counts[i] !== counts[j]) {
+                        personAindex = i;
+                        personBindex = j;
+                    }
+                }
+            }
+
+            let name1, name2;
+            let kekszahl1, kekszahl2;
+
+            name1 = namen[personAindex];
+            name2 = namen[personBindex];
+
+            if (counts[personAindex] === 1) kekszahl1 = "1 Keks";
+            else kekszahl1 = `${counts[personAindex]} Kekse`;
+
+            if (counts[personBindex] === 1) kekszahl2 = "1 Keks";
+            else kekszahl2 = `${counts[personBindex]} Kekse`;
+
             message.style.display = "block";
             message.style.color = "red";
             message.style.border = "2px solid rgb(199, 12, 12)";
-            message.textContent = "Leider falsch. Person x hat mehr als y";
+            message.textContent = `Leider falsch. ${name1} hat ${kekszahl1} und ${name2} hat ${kekszahl2}. Das ist nicht gerecht. Versuche es noch einmal.`;
         }
         return false;
     }
