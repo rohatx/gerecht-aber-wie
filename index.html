@@ -9,37 +9,29 @@
 
 <body>
     <div id="grid-wrapper">
-        <button class="image-button" id="two-persons" onclick="changePerson(this,2)">
+        <button class="image-button" id="two-persons" onclick="changePerson(this,2)" style="display: none;">
             <img src="img/2personen.png" alt="Auswahl 2 Personen">
         </button>
-        <button class="image-button" id="three-persons" onclick="changePerson(this,3)">
+        <button class="image-button" id="three-persons" onclick="changePerson(this,3)" style="display: none;">
             <img src="img/3personen.png" alt="Auswahl 3 Personen">
         </button>
-        <button class="image-button" id="four-persons" onclick="changePerson(this,4)">
+        <button class="image-button" id="four-persons" onclick="changePerson(this,4)" style="display: none;">
             <img src="img/4personen.png" alt="Auswahl 4 Personen">
         </button>
-        <button class="image-button" id="five-persons" onclick="changePerson(this,5)">
+        <button class="image-button" id="five-persons" onclick="changePerson(this,5)" style="display: none;">
             <img src="img/5personen.png" alt="Auswahl 5 Personen">
         </button>
-        <button class="image-button" id="six-persons" onclick="changePerson(this,6)">
+        <button class="image-button" id="six-persons" onclick="changePerson(this,6)" style="display: none;">
             <img src="img/6personen.png" alt="Auswahl 6 Personen">
         </button>
-        <h1 id="aufgabenstellung">Verteile die Kekse</h1>
-        <h2 id="anzahlPersonen">Anzahl Personen</h2>
+        <h1 id="aufgabenstellung">Verteile die Kekse gerecht an alle Personen</h1>
+        <h2 id="anzahlPersonen" style="display: none;">Anzahl Personen</h2>
+        <h3 id="anzahlPersonenSubtitle" style="display: none;">Wähle die Anzahl der Personen aus</h3>
 
         <fieldset id="config" class="config">
             <label>
                 Dein Name:
                 <input type="text" id="nameInput">
-            </label>
-            <label>
-                <input type="checkbox" id="collectionConfig" name="collectionConfig">
-                Kekse einsammeln m&ouml;glich
-            </label>
-            <br>
-            <label>
-                <input type="checkbox" id="advancedConfig" name="advancedConfig">
-                Fortgeschrittener Modus
             </label>
         </fieldset>
 
@@ -70,7 +62,7 @@
         <div id="circle-container">
         </div>
 
-        <button id="checkVerteilungBtn">Verteilung pr&uuml;fen</button>
+        <button id="checkVerteilungBtn">Pr&uuml;fen</button>
 
         <div id="message" style="display: none;"></div>
         <div id="eingabeContainer" style="margin-top: 10px;">

@@ -8,8 +8,7 @@ const buttonLeiste = document.getElementById("button-leiste");
 const aufgabenStellung = document.getElementById("aufgabenstellung");
 const toolbox = document.getElementById("toolbox");
 const configbox = document.getElementById("config");
-const collectionCheckbox = document.getElementById("collectionConfig");
-const advancedCheckbox = document.getElementById("advancedConfig");
+
 const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
 const nameEingabe = document.getElementById("nameInput");
 
@@ -21,12 +20,16 @@ async function sendData() {
     });
 }
 
+const params = new URLSearchParams(window.location.search);
 
 let collectionClicks = 0;
-let isAdvanced = false;
+let isAdvanced;
+let keksEinsammelnMoglich;
 
 let personCount = 0;
 let keksCount = 0;
+
+const namen = ["Marvin", "Emil", "Emma", "Nico", "Mia", "Jan"];
 
 let kekseProPerson = 0;
 
@@ -40,27 +43,19 @@ let cookieImageNumber = keksCount;
 
 window.addEventListener("load", () => {
     document.getElementById("toolboxForm").reset();
-    collectionCheckbox.checked = false;
-    advancedCheckbox.checked = false;
+
     document.querySelectorAll("*").forEach(el => {
         el.setAttribute("draggable", "false");
     });
     document.body.style.cursor = 'grab';
-});
 
-collectionCheckbox.addEventListener('change', function () {
-    const dose = document.getElementsByClassName("dose")[0];
-    const einsammelButton = document.getElementById("einsammelButton");
-    if (dose != null) {
-        if (collectionCheckbox.checked) {
-            dose.style.display = 'flex';
-            einsammelButton.style.display = 'flex';
-        } else {
-            dose.style.display = 'none';
-            einsammelButton.style.display = 'none';
-        }
+    const selectedToolRadio = document.querySelector(`input[name="tool"][value="${currentTool}"]`);
+    if (selectedToolRadio) {
+        selectedToolRadio.checked = true;
+        selectedToolRadio.dispatchEvent(new Event("change"));
     }
 });
+
 
 // Werkzeug-Auswahl
 document.querySelectorAll('input[name="tool"]').forEach(radio => {
@@ -110,6 +105,10 @@ function createScene() {
         img.src = `img/person${personIndex + 1}.png`;
         img.className = "person-img";
 
+        const name = document.createElement("div");
+        name.id = "name";
+        name.textContent = namen[personIndex];
+
         person.className = "person";
         person.style.left = `${x + 360 - 60}px`;
         person.style.top = `${150 - y}px`;
@@ -128,6 +127,7 @@ function createScene() {
 
         person.appendChild(img);
         person.appendChild(teller);
+        person.appendChild(name);
         teller.appendChild(tellerBild);
         container.appendChild(person);
     }
@@ -140,7 +140,6 @@ function createScene() {
     dose.ondragover = (e) => e.preventDefault();
 
     const einsammelButton = document.createElement("button");
-    einsammelButton.className = "dose";
     einsammelButton.id = "einsammelButton";
     einsammelButton.textContent = "Kekse einsammeln"
     einsammelButton.onclick = function () {
@@ -154,7 +153,7 @@ function createScene() {
         collectionClicks += 1
     };
     container.appendChild(einsammelButton);
-    if (collectionCheckbox.checked) {
+    if (params.has("sammelbar")) {
         dose.style.display = 'flex';
         einsammelButton.style.display = 'flex';
     }
@@ -164,7 +163,15 @@ function createScene() {
 
     tellerKekseIds.push([]); // fuer die Dose
 
-    isAdvanced = advancedCheckbox.checked;
+    if (params.has("sammelbar"))
+    {
+        const dose = document.getElementsByClassName("dose")[0];
+        const einsammelButton = document.getElementById("einsammelButton");
+        if (dose != null) {
+                dose.style.display = 'flex';
+                einsammelButton.style.display = 'flex';
+        }
+    }
 
     distributeKekse();
     document.querySelectorAll('.keks').forEach(keks => {
@@ -353,10 +360,34 @@ function checkVictory(withMessage, withHalfCookies) {
         return true;
     } else {
         if (withMessage) {
+            let personAindex = null;
+            let personBindex = null;
+
+            for (let i = 0; i < counts.length-1; i++) {
+                for (let j = i + 1; j < counts.length-1; j++) {
+                    if (counts[i] !== counts[j]) {
+                        personAindex = i;
+                        personBindex = j;
+                    }
+                }
+            }
+
+            let name1, name2;
+            let kekszahl1, kekszahl2;
+
+            name1 = namen[personAindex];
+            name2 = namen[personBindex];
+
+            if (counts[personAindex] === 1) kekszahl1 = "1 Keks";
+            else kekszahl1 = `${counts[personAindex]} Kekse`;
+
+            if (counts[personBindex] === 1) kekszahl2 = "1 Keks";
+            else kekszahl2 = `${counts[personBindex]} Kekse`;
+
             message.style.display = "block";
             message.style.color = "red";
             message.style.border = "2px solid rgb(199, 12, 12)";
-            message.textContent = "Leider falsch. Versuche es nochmal";
+            message.textContent = `Leider falsch. ${name1} hat ${kekszahl1} und ${name2} hat ${kekszahl2}. Das ist nicht gerecht. Versuche es noch einmal.`;
         }
         return false;
     }
@@ -380,7 +411,7 @@ checkAntwortBtn.onclick = () => {
         message.style.display = "block";
         message.style.color = "red";
         message.style.border = "2px solid rgb(199, 12, 12)";
-        message.textContent = "Leider falsch. Versuche es nochmal";
+        message.textContent = "Leider falsch. Schau es dir nochmal an";
     }
 };
 
@@ -455,8 +486,8 @@ function hideEvaluation() {
 }
 
 function randKeksMultiplikator() {
-    if (advancedCheckbox.checked && (personCount % 2 == 0)) {
-        return Math.floor(Math.random() * 8 + 1) / 2;
+    if (isAdvanced && (personCount % 2 == 0)) {
+        return (Math.floor(Math.random() * 6) * 2 + 1) / 2;
     }
     return Math.floor(Math.random() * 4 + 1);
 }
@@ -482,3 +513,35 @@ function changePerson(geklickterButton, i) {
     });
     createScene();
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    if (params.has("halbe")) {
+        //Modus mit halben Keksen
+        isAdvanced = true;
+        document.body.classList.add("isAdvanced");
+        personCount = 4;
+        keksCount = Math.floor(personCount * randKeksMultiplikator());
+        kekseProPerson = keksCount / personCount
+        cookieImageNumber = keksCount;
+        hideEvaluation();
+        aufgabenStellung.style.display = "inline-block";
+        toolbox.style.display = "inline-block";
+        configbox.style.display = "inline-block";
+        checkVerteilungBtn.style.display = "inline-block";        
+        
+        createScene();
+    } else {
+        //standart fall
+        isAdvanced = false;
+        const personenauswahl = document.getElementById("anzahlPersonen");
+        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
+        personenauswahl.style.display = "block";
+        personenauswahlsub.style.display = "block";
+
+        const elements = document.getElementsByClassName("image-button");
+        for (let i = 0; i < elements.length; i++) {
+            elements[i].style.display = "inline-block";
+        }
+        
+    }
+});
