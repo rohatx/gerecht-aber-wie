@@ -26,6 +26,7 @@ body {
     'toolbox toolbox toolbox ergebnis'
     '. . . AntwortEingabe';
 }
+
 body.isAdvanced #grid-wrapper {
   display: grid;
   grid-template-columns: 8% 8% 8% 1fr;
@@ -39,31 +40,21 @@ body.isAdvanced #grid-wrapper {
 }
 
 #einsammelButton {
-  position: absolute;
-  font-size: 1.2rem;
-  color: white;
-  font-weight: 800;
-  background-color: #9e0202d8;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  width: 140px;
-  height: 60px;
-  top: 120px;
-  left: 290px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  width: 100%;
+  border: 2px solid #4A90E2;
+  margin-bottom: 8px;
   cursor: pointer;
   display: none;
   justify-content: center;
   align-items: center;
-  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .dose {
   display: none;
-  background-image: url("img/tellerEinsammeln.png");
-  background-size: 120%;
-  background-position: -20px -20px; 
+  background-image: url("img/tisch.png");
+  background-size: 100%;
   position: absolute;
   width: 240px;
   height: 160px;
@@ -197,15 +188,15 @@ h2#anzahlPersonen {
 
 h3 {
   font-size: 1.2rem;
-  color: #ffff; 
+  color: #ffff;
   font-weight: 600;
   margin: -5px 15px 15px 15px;
   grid-area: untertitelLabel;
   text-shadow:
     -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000;
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 h1 {
@@ -289,6 +280,11 @@ h1 {
 #checkAntwortBtn:hover,
 #einsammelButton:hover,
 #checkVerteilungBtn:hover {
+  background-color: #7b0101;
+  transform: scale(1.05);
+}
+
+#einsammelButton:hover {
   background-color: #7b0101;
   transform: scale(1.05);
 }
@@ -385,6 +381,7 @@ h1 {
   color: #222;
   font-size: 0.95rem;
   line-height: 1.3rem;
+  margin-bottom: 8px;
   cursor: pointer;
 }
 
@@ -394,6 +391,7 @@ h1 {
   accent-color: #4f46e5;
   transform: scale(1.1);
   margin-right: 10px;
+  margin-bottom: 8px;
   cursor: pointer;
 }
 

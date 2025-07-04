@@ -23,11 +23,13 @@ async function sendData() {
 const params = new URLSearchParams(window.location.search);
 
 let collectionClicks = 0;
-let isAdvanced;
-let keksEinsammelnMoglich;
+let isAdvanced = false;
+let modus = "ausgleichen";
 
 let personCount = 0;
 let keksCount = 0;
+let minAnzahlKekse = 1;
+let maxAnzahlKekse = 20;
 
 const namen = ["Marvin", "Emil", "Emma", "Nico", "Mia", "Jan"];
 
@@ -44,9 +46,6 @@ let cookieImageNumber = keksCount;
 window.addEventListener("load", () => {
     document.getElementById("toolboxForm").reset();
 
-    document.querySelectorAll("*").forEach(el => {
-        el.setAttribute("draggable", "false");
-    });
     document.body.style.cursor = 'grab';
 
     const selectedToolRadio = document.querySelector(`input[name="tool"][value="${currentTool}"]`);
@@ -54,7 +53,82 @@ window.addEventListener("load", () => {
         selectedToolRadio.checked = true;
         selectedToolRadio.dispatchEvent(new Event("change"));
     }
+
+    if (params.has("anzahl-kekse")) {
+        const angaben = params.get("anzahl-kekse").split(",").map(str => str.trim());
+
+        if (angaben.length == 2) {
+            const min = parseFloat(angaben[0], 10);
+            const max = parseFloat(angaben[1], 10);
+
+
+            const istGueltig = !isNaN(min) && !isNaN(max) && Number.isInteger(min) && Number.isInteger(max) && min >= 1 && max >= min && max <= 20;
+
+            if (istGueltig) {
+                minAnzahlKekse = min;
+                maxAnzahlKekse = max;
+            } else {
+                alert("Der Parameter \"anzahl-kekse\" enthält mindestens einen ungültigen Wert: Bitte ein gültiges Intervall *min,max* von ganzen Keksen angeben, wobei 1 ≤ min ≤ max ≤ 20. Es wird nun mit dem Intervall [1,20] gearbeitet.");
+            }
+        } else {
+            alert("Der Parameter \"anzahl-kekse\" enthält einen ungültigen Wert. Bitte zwei Zahlen wie *3,8* durch Komma getrennt angeben. Es wird nun mit dem Intervall [1,20] gearbeitet.");
+        }
+    }
+
+    if (params.has("modus")) {
+        modusInput = params.get("modus");
+        if (modusInput === "ausgleichen" || modusInput === "verteilen" || modusInput === "ausgleichen-verteilen") {
+            modus = modusInput;
+        } else {
+            alert("Der Parameter \"modus\" enthält einen ungültigen Wert: Bitte zwischen *ausgleichen*, *verteilen* und *ausgleichen-verteilen* wählen. Es wird nun mit *ausgleichen* gearbeitet.");
+        }
+    }
+
+    mitHalbenKeksen = params.get("mit-halben-keksen");
+    if (mitHalbenKeksen === "true") {
+        //Modus mit halben Keksen
+        isAdvanced = true;
+        document.body.classList.add("isAdvanced");
+        personCount = 4;
+        keksCount = Math.floor(personCount * determineCookieMultiplikator());
+        kekseProPerson = keksCount / personCount
+        cookieImageNumber = keksCount;
+        hideEvaluation();
+        aufgabenStellung.style.display = "inline-block";
+        toolbox.style.display = "inline-block";
+        configbox.style.display = "inline-block";
+        checkVerteilungBtn.style.display = "inline-block";
+
+        createScene();
+    } else {
+        //Modus mit ganzen Keksen
+        const personenauswahl = document.getElementById("anzahlPersonen");
+        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
+        personenauswahl.style.display = "block";
+        personenauswahlsub.style.display = "block";
+
+        const elements = document.getElementsByClassName("image-button");
+        for (let i = 0; i < elements.length; i++) {
+            elements[i].style.display = "inline-block";
+        }
+
+        if (mitHalbenKeksen !== "false" && mitHalbenKeksen != null) {
+            alert("Der Parameter \"mit-halben-keksen\" enthält einen ungültigen Wert. Bitte entweder *true* oder *false* angeben. Es wird nun mit ganzen Keksen gearbeitet.");
+        }
+    }
 });
+
+
+function kekseEinsammeln() {
+    document.querySelectorAll('.keks, .half_keks').forEach(keks => {
+        const zielTellerIndex = personCount; // letzte liste im Array ist die Dose
+        tellerKekseIds[keks.dataset.tellerIndex] = tellerKekseIds[keks.dataset.tellerIndex].filter(id => id.localeCompare(keks.id) != 0);
+        tellerKekseIds[zielTellerIndex].push(keks.id);
+        keks.dataset.tellerIndex = zielTellerIndex;
+        showCookies();
+    });
+    collectionClicks += 1
+}
 
 
 // Werkzeug-Auswahl
@@ -139,41 +213,25 @@ function createScene() {
     dose.ondrop = handleDrop;
     dose.ondragover = (e) => e.preventDefault();
 
-    const einsammelButton = document.createElement("button");
-    einsammelButton.id = "einsammelButton";
-    einsammelButton.textContent = "Kekse einsammeln"
-    einsammelButton.onclick = function () {
-        document.querySelectorAll('.keks, .half_keks').forEach(keks => {
-            const zielTellerIndex = personCount; // letzte liste im Array ist die Dose
-            tellerKekseIds[keks.dataset.tellerIndex] = tellerKekseIds[keks.dataset.tellerIndex].filter(id => id.localeCompare(keks.id) != 0);
-            tellerKekseIds[zielTellerIndex].push(keks.id);
-            keks.dataset.tellerIndex = zielTellerIndex;
-            showCookies();
-        });
-        collectionClicks += 1
-    };
-    container.appendChild(einsammelButton);
-    if (params.has("sammelbar")) {
-        dose.style.display = 'flex';
-        einsammelButton.style.display = 'flex';
-    }
     einsammelButton.disabled = false;
     keksEingabe.disabled = false;
     checkAntwortBtn.disabled = false;
 
     tellerKekseIds.push([]); // fuer die Dose
 
-    if (params.has("sammelbar"))
-    {
-        const dose = document.getElementsByClassName("dose")[0];
-        const einsammelButton = document.getElementById("einsammelButton");
-        if (dose != null) {
-                dose.style.display = 'flex';
-                einsammelButton.style.display = 'flex';
-        }
+    if (modus === "ausgleichen-verteilen") {
+        dose.style.display = 'flex';
+        einsammelButton.style.display = 'flex';
     }
-
-    distributeKekse();
+    if (modus === "verteilen") {
+        dose.style.display = 'flex';
+        distributeKekse(true);
+    } else {
+        distributeKekse(false);
+    }
+    document.querySelectorAll("*").forEach(el => {
+        el.setAttribute("draggable", "false");
+    });
     document.querySelectorAll('.keks').forEach(keks => {
         if (keks.dataset.isWhole) {
             keks.draggable = true;
@@ -184,12 +242,15 @@ function createScene() {
     });
 }
 
-function distributeKekse() {
+function distributeKekse(startOnTable) {
     do {
         tellerKekseIds.forEach((_, i) => tellerKekseIds[i] = []);
         for (let i = 0; i < keksCount; i++) {
             keksId = `keks-${i}`;
-            const tellerIndex = Math.floor(Math.random() * personCount);
+            let tellerIndex = tellerKekseIds.length - 1;
+            if (!startOnTable) {
+                tellerIndex = Math.floor(Math.random() * personCount);
+            }
             tellerKekseIds[tellerIndex].push(keksId);
         }
     } while (!checkCookieDistribution(false) || checkVictory(false, false))
@@ -224,6 +285,9 @@ function distributeKekse() {
         keks_wrapper.style.top = `${Math.floor(keksIndex / 6) * 40}px`;
 
         dose.appendChild(keks_wrapper);
+        if (keksIndex < tellerKekseIds[tellerKekseIds.length - 1].length) {
+            createKeks(keksIndex, tellerKekseIds.length - 1);
+        }
     }
     showCookies();
 }
@@ -360,34 +424,38 @@ function checkVictory(withMessage, withHalfCookies) {
         return true;
     } else {
         if (withMessage) {
-            let personAindex = null;
-            let personBindex = null;
+            if (!allEqual) {
+                let personAindex = null;
+                let personBindex = null;
 
-            for (let i = 0; i < counts.length-1; i++) {
-                for (let j = i + 1; j < counts.length-1; j++) {
-                    if (counts[i] !== counts[j]) {
-                        personAindex = i;
-                        personBindex = j;
+                for (let i = 0; i < counts.length - 1; i++) {
+                    for (let j = i + 1; j < counts.length - 1; j++) {
+                        if (counts[i] !== counts[j]) {
+                            personAindex = i;
+                            personBindex = j;
+                        }
                     }
                 }
+
+                let name1, name2;
+                let kekszahl1, kekszahl2;
+
+                name1 = namen[personAindex];
+                name2 = namen[personBindex];
+
+                if (counts[personAindex] === 1) kekszahl1 = "1 Keks";
+                else kekszahl1 = `${counts[personAindex]} Kekse`;
+
+                if (counts[personBindex] === 1) kekszahl2 = "1 Keks";
+                else kekszahl2 = `${counts[personBindex]} Kekse`;
+
+                message.textContent = `Leider falsch. Du solltest die Kekse gerecht verteilen. ${name1} hat ${kekszahl1} und ${name2} hat ${kekszahl2}. Das ist nicht gerecht. Versuche es noch einmal.`;
+            } else {
+                message.textContent = `Leider falsch. Du solltest alle Kekse gerecht verteilen. Aktuell liegen noch Kekse auf dem Tisch. Versuche es noch einmal.`;
             }
-
-            let name1, name2;
-            let kekszahl1, kekszahl2;
-
-            name1 = namen[personAindex];
-            name2 = namen[personBindex];
-
-            if (counts[personAindex] === 1) kekszahl1 = "1 Keks";
-            else kekszahl1 = `${counts[personAindex]} Kekse`;
-
-            if (counts[personBindex] === 1) kekszahl2 = "1 Keks";
-            else kekszahl2 = `${counts[personBindex]} Kekse`;
-
             message.style.display = "block";
             message.style.color = "red";
             message.style.border = "2px solid rgb(199, 12, 12)";
-            message.textContent = `Leider falsch. ${name1} hat ${kekszahl1} und ${name2} hat ${kekszahl2}. Das ist nicht gerecht. Versuche es noch einmal.`;
         }
         return false;
     }
@@ -411,7 +479,7 @@ checkAntwortBtn.onclick = () => {
         message.style.display = "block";
         message.style.color = "red";
         message.style.border = "2px solid rgb(199, 12, 12)";
-        message.textContent = "Leider falsch. Schau es dir nochmal an";
+        message.textContent = "Leider falsch. Schau es dir nochmal an.";
     }
 };
 
@@ -485,16 +553,65 @@ function hideEvaluation() {
     keksEingabe.value = "";
 }
 
-function randKeksMultiplikator() {
-    if (isAdvanced && (personCount % 2 == 0)) {
-        return (Math.floor(Math.random() * 6) * 2 + 1) / 2;
+function determineCookieMultiplikator() {
+    let minKekseMultiplikator = 0;
+    let maxKekseMultiplikator = 0;
+    if (isAdvanced) {
+        for (let totalCookies = minAnzahlKekse; totalCookies <= maxAnzahlKekse; totalCookies++) {
+            let perPerson = totalCookies / personCount;
+            if (Number.isInteger(perPerson * 2)) {
+                if (minKekseMultiplikator == 0 || perPerson < minKekseMultiplikator) minKekseMultiplikator = perPerson;
+                if (maxKekseMultiplikator == 0 || perPerson > maxKekseMultiplikator) maxKekseMultiplikator = perPerson;
+            }
+        }
+        if (minKekseMultiplikator == 0 && maxKekseMultiplikator == 0) {
+            alert(`Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * 7.5, 20)}] gesetzt.`);
+            minKekseMultiplikator = 0.5;
+            maxKekseMultiplikator = Math.min(7.5, Math.floor(20 * 2 / personCount) / 2)
+        }
+        if (minKekseMultiplikator == 0) {
+            alert(`Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 0.5} gesetzt.`);
+            minKekseMultiplikator = Math.max(minKekseMultiplikator, 0.5);
+            maxKekseMultiplikator = Math.max(maxKekseMultiplikator, 0.5);
+        }
+        if (maxKekseMultiplikator > 7.5) {
+            alert(`Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7.5, 20)} gesetzt.`);
+            minKekseMultiplikator = Math.min(minKekseMultiplikator, 7.5);
+            maxKekseMultiplikator = Math.min(maxKekseMultiplikator, 7.5);
+        }
+        return Math.floor(Math.random() * ((maxKekseMultiplikator - minKekseMultiplikator) * 2 + 1)) / 2 + minKekseMultiplikator;
     }
-    return Math.floor(Math.random() * 4 + 1);
+    for (let totalCookies = minAnzahlKekse; totalCookies <= maxAnzahlKekse; totalCookies++) {
+        let perPerson = totalCookies / personCount;
+        if (Number.isInteger(perPerson)) {
+            if (minKekseMultiplikator == 0 || perPerson < minKekseMultiplikator) minKekseMultiplikator = perPerson;
+            if (maxKekseMultiplikator == 0 || perPerson > maxKekseMultiplikator) maxKekseMultiplikator = perPerson;
+        }
+    }
+    if (minKekseMultiplikator == 0 && maxKekseMultiplikator == 0) {
+        alert(`Fuer die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * 7, 20)}] gesetzt.`);
+        minKekseMultiplikator = 1;
+        maxKekseMultiplikator = Math.min(7, Math.floor(20 / personCount));
+    }
+    if (minKekseMultiplikator == 0) {
+        alert(`Fuer die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 1} gesetzt.`);
+        minKekseMultiplikator = Math.max(minKekseMultiplikator, 1);
+        maxKekseMultiplikator = Math.max(maxKekseMultiplikator, 1);
+    }
+    if (maxKekseMultiplikator > 7) {
+        alert(`Fuer die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7, 20)} gesetzt.`);
+        minKekseMultiplikator = Math.min(minKekseMultiplikator, 7);
+        maxKekseMultiplikator = Math.min(maxKekseMultiplikator, 7);
+    }
+    let m = Math.floor(Math.random() * (maxKekseMultiplikator - minKekseMultiplikator + 1)) + minKekseMultiplikator;
+    console.log(m);
+    return m;
 }
 
 function changePerson(geklickterButton, i) {
     personCount = i;
-    keksCount = Math.floor(personCount * randKeksMultiplikator());
+    const keksMultiplikator = determineCookieMultiplikator();
+    keksCount = Math.floor(personCount * keksMultiplikator);
     kekseProPerson = keksCount / personCount
     cookieImageNumber = keksCount;
     hideEvaluation();
@@ -513,35 +630,3 @@ function changePerson(geklickterButton, i) {
     });
     createScene();
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-    if (params.has("halbe")) {
-        //Modus mit halben Keksen
-        isAdvanced = true;
-        document.body.classList.add("isAdvanced");
-        personCount = 4;
-        keksCount = Math.floor(personCount * randKeksMultiplikator());
-        kekseProPerson = keksCount / personCount
-        cookieImageNumber = keksCount;
-        hideEvaluation();
-        aufgabenStellung.style.display = "inline-block";
-        toolbox.style.display = "inline-block";
-        configbox.style.display = "inline-block";
-        checkVerteilungBtn.style.display = "inline-block";        
-        
-        createScene();
-    } else {
-        //standart fall
-        isAdvanced = false;
-        const personenauswahl = document.getElementById("anzahlPersonen");
-        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
-        personenauswahl.style.display = "block";
-        personenauswahlsub.style.display = "block";
-
-        const elements = document.getElementsByClassName("image-button");
-        for (let i = 0; i < elements.length; i++) {
-            elements[i].style.display = "inline-block";
-        }
-        
-    }
-});
