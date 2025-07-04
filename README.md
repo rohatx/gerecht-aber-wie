@@ -3,13 +3,15 @@ Die Seite kann dann durch öffnen von index.html gestartet werden.
 
 Die Statistiken können sich unter https://docs.google.com/spreadsheets/d/1GjGhB_S6cC2IItTOOFI2fMfYYZxeP8p-U5fMrY6jrKQ/ angesehen werden.
 
-**Verschiedene Modis** 
+**Einstellungen per URL vornehmen** 
 
-    Will man halbe Keks benutzen setzt man in der URL den Parameter: halbe. 
+    Wenn mit halben Keksen gearbeitet werden soll: mit-halben-keksen=true (sonst =false oder weglassen)
 
-    Will man die Kekse einsammeln können setzt man in der URL den Parameter: sammelbar. 
+    Modus 1: Kekse ausgleichen: modus=ausgleichen
+    Modus 2: Kekse verteilen: modus=verteilen
+    MOdus 3: Kekse ausgleichen mit beliebig oft einsammeln: modus=ausgleichen-verteilen
     
-    Der Inhalt ist dabei egal
+    Keksanzahl-Intervall einstellen: anzahl-kekse=minKeksanzahl,maxKeksanzahl
 
-    Beispiel URL wenn beides gesetzt
-    ...index.html?kekse-sammelbar=1&halbe=1
+    Beispiel URL:
+    ...index.html?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16
