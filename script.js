@@ -12,17 +12,11 @@ const configbox = document.getElementById("config");
 const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
 const nameEingabe = document.getElementById("nameInput");
 
-const scriptUrl = 'https://script.google.com/macros/s/AKfycbwnnInHSxcvNn7ykgIEQmmUMe8mgxFF_fpMLri3Qfby8aLSVMLFBTycdu3mpOL2wqwG/exec';
-async function sendData() {
-    const name = nameEingabe.value;
-    const res = await fetch(scriptUrl + `?name=${encodeURIComponent(name)}&count=${collectionClicks}&isAdvanced=${isAdvanced}`, {
-        method: 'POST'
-    });
-}
-
 const params = new URLSearchParams(window.location.search);
 
 let collectionClicks = 0;
+let gleichmaessigkeitsfehler = 0;
+let zaehlfehler = 0;
 let isAdvanced = false;
 let modus = "ausgleichen";
 
@@ -166,6 +160,8 @@ function createScene() {
     container.innerHTML = "";
     tellerKekseIds = [];
     collectionClicks = 0;
+    gleichmaessigkeitsfehler = 0;
+    zaehlfehler = 0;
 
     const radius = 300;
     for (let personIndex = 0; personIndex < personCount; personIndex++) {
@@ -309,7 +305,7 @@ function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
     keks.dataset.isWhole = !shouldBeHalf;
 
     keks.addEventListener('click', (e) => {
-        if (currentTool === 'select') {
+        if (currentTool === 'move') {
             if (keks.classList.contains('markiert')) {
                 keks.classList.remove('markiert');
             } else {
@@ -453,12 +449,32 @@ function checkVictory(withMessage, withHalfCookies) {
             } else {
                 message.textContent = `Leider falsch. Du solltest alle Kekse gerecht verteilen. Aktuell liegen noch Kekse auf dem Tisch. Versuche es noch einmal.`;
             }
+            gleichmaessigkeitsfehler += 1;
             message.style.display = "block";
             message.style.color = "red";
             message.style.border = "2px solid rgb(199, 12, 12)";
         }
         return false;
     }
+}
+
+function sendData() {
+    const name = nameEingabe.value.trim();
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('mode', modus);
+    formData.append('withHalf', isAdvanced);
+    formData.append('gFehler', gleichmaessigkeitsfehler);
+    formData.append('zFehler', zaehlfehler);
+    formData.append('collectionClicks', collectionClicks);
+
+    fetch('writeData.php', {
+        method: 'POST',
+        body: formData
+    }).then(r => r.text())
+        .then(console.log)
+        .catch(console.error);
 }
 
 checkVerteilungBtn.onclick = () => {
@@ -480,6 +496,7 @@ checkAntwortBtn.onclick = () => {
         message.style.color = "red";
         message.style.border = "2px solid rgb(199, 12, 12)";
         message.textContent = "Leider falsch. Schau es dir nochmal an.";
+        zaehlfehler += 1;
     }
 };
 
@@ -565,17 +582,23 @@ function determineCookieMultiplikator() {
             }
         }
         if (minKekseMultiplikator == 0 && maxKekseMultiplikator == 0) {
-            alert(`Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * 7.5, 20)}] gesetzt.`);
+            if (params.has("anzahl-kekse")) {
+                alert(`Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * 7.5, 20)}] gesetzt.`);
+            }
             minKekseMultiplikator = 0.5;
             maxKekseMultiplikator = Math.min(7.5, Math.floor(20 * 2 / personCount) / 2)
         }
         if (minKekseMultiplikator == 0) {
-            alert(`Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 0.5} gesetzt.`);
+            if (params.has("anzahl-kekse")) {
+                alert(`Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 0.5} gesetzt.`);
+            }
             minKekseMultiplikator = Math.max(minKekseMultiplikator, 0.5);
             maxKekseMultiplikator = Math.max(maxKekseMultiplikator, 0.5);
         }
         if (maxKekseMultiplikator > 7.5) {
-            alert(`Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7.5, 20)} gesetzt.`);
+            if (params.has("anzahl-kekse")) {
+                alert(`Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7.5, 20)} gesetzt.`);
+            }
             minKekseMultiplikator = Math.min(minKekseMultiplikator, 7.5);
             maxKekseMultiplikator = Math.min(maxKekseMultiplikator, 7.5);
         }
@@ -589,23 +612,27 @@ function determineCookieMultiplikator() {
         }
     }
     if (minKekseMultiplikator == 0 && maxKekseMultiplikator == 0) {
-        alert(`Fuer die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * 7, 20)}] gesetzt.`);
+        if (params.has("anzahl-kekse")) {
+            alert(`Fuer die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * 7, 20)}] gesetzt.`);
+        }
         minKekseMultiplikator = 1;
         maxKekseMultiplikator = Math.min(7, Math.floor(20 / personCount));
     }
     if (minKekseMultiplikator == 0) {
-        alert(`Fuer die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 1} gesetzt.`);
+        if (params.has("anzahl-kekse")) {
+            alert(`Fuer die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 1} gesetzt.`);
+        }
         minKekseMultiplikator = Math.max(minKekseMultiplikator, 1);
         maxKekseMultiplikator = Math.max(maxKekseMultiplikator, 1);
     }
     if (maxKekseMultiplikator > 7) {
-        alert(`Fuer die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7, 20)} gesetzt.`);
+        if (params.has("anzahl-kekse")) {
+            alert(`Fuer die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7, 20)} gesetzt.`);
+        }
         minKekseMultiplikator = Math.min(minKekseMultiplikator, 7);
         maxKekseMultiplikator = Math.min(maxKekseMultiplikator, 7);
     }
-    let m = Math.floor(Math.random() * (maxKekseMultiplikator - minKekseMultiplikator + 1)) + minKekseMultiplikator;
-    console.log(m);
-    return m;
+    return Math.floor(Math.random() * (maxKekseMultiplikator - minKekseMultiplikator + 1)) + minKekseMultiplikator;
 }
 
 function changePerson(geklickterButton, i) {
