@@ -12,4 +12,9 @@ Die Seite kann dann durch öffnen von index.html gestartet werden.
     Keksanzahl-Intervall einstellen: anzahl-kekse=minKeksanzahl,maxKeksanzahl
 
     Beispiel URL:
-    ...index.html?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16
+    ...?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16
+
+**Statistiken ansehen**
+
+    Der URL Folgendes anfügen:
+    ...createTable.php

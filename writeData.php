@@ -52,7 +52,7 @@ $indexCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-
 
 // Bestehenden Namen suchen
 foreach ($daten as &$row) {
-    if (mb_strtolower($row[0]) === mb_strtolower($name)) {
+    if ($row[0] === $name) {
         $row[$indexGesamtAnzahl]++;
         $row[$indexGesamtGFehler] += $gFehler;
         $row[$indexGesamtZFehler] += $zFehler;
