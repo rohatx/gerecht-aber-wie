@@ -1,8 +1,10 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: sans-serif;
   text-align: center;
-  margin: 0;
-  padding: 0;
   background: #f4f4f4;
   background-image: url("img/hintergrund.png");
   background-size: cover;
@@ -13,42 +15,96 @@ body {
 
 #grid-wrapper {
   display: grid;
-  grid-template-columns: 8% 8% 8% 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
   grid-template-areas:
-    'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel ueberschrift'
-    'untertitelLabel untertitelLabel untertitelLabel table'
-    'twoPersons threePersons fourPersons table'
-    'fivePersons sixPersons . table'
-    'config config checkVerteilungBtn table'
-    'toolbox toolbox toolbox table'
-    'toolbox toolbox toolbox table'
-    'toolbox toolbox toolbox table'
-    'toolbox toolbox toolbox ergebnis'
-    '. . . AntwortEingabe';
+    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    'config table table table'
+    'toolbox table table table'
+    'toolbox checkVerteilungBtn ergebnis ergebnis'
+    'toolbox . . .'
 }
 
 body.isAdvanced #grid-wrapper {
-  display: grid;
-  grid-template-columns: 8% 8% 8% 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    '. . . ueberschrift'
-    'config config checkVerteilungBtn table'
-    'toolbox toolbox toolbox table'
-    'toolbox toolbox toolbox table'
-    '. . . ergebnis'
-    '. . . AntwortEingabe';
+    'config ueberschrift ueberschrift ueberschrift'
+    'toolbox table table table'
+    'toolbox checkVerteilungBtn ergebnis ergebnis'
+    'toolbox . . .'
 }
 
-#einsammelButton {
-  position: relative;
-  background: rgba(255, 255, 255, 0.95);
-  width: 100%;
-  border: 2px solid #4A90E2;
-  margin-bottom: 8px;
-  cursor: pointer;
-  display: none;
-  justify-content: center;
-  align-items: center;
+#grid-wrapper.twoPersonGrid {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    'config table table table'
+    'config checkVerteilungBtn ergebnis ergebnis'
+    'config . . .'
+    'toolbox . . .'
+}
+
+#grid-wrapper.checkCount {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    'config table table table'
+    'toolbox table table table'
+    'toolbox checkVerteilungBtn antwortEingabe ergebnis'
+    'toolbox . . .';
+}
+
+body.isAdvanced #grid-wrapper.checkCount {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    'config ueberschrift ueberschrift ueberschrift'
+    'toolbox table table table'
+    'toolbox checkVerteilungBtn antwortEingabe ergebnis'
+    'toolbox . . .'
+}
+
+#grid-wrapper.checkCount.twoPersonGrid {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    'config table table table'
+    'config checkVerteilungBtn antwortEingabe ergebnis'
+    'config . . .'
+    'toolbox . . .'
+}
+
+#config-grid-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    'untertitelLabel untertitelLabel untertitelLabel'
+    'twoPersons threePersons fourPersons'
+    'fivePersons sixPersons .'
+    'nameInputWrapper newTaskBtn newTaskBtn';
+}
+
+body.isAdvanced #config-grid-wrapper {
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'nameInputWrapper  newTaskBtn';
+}
+
+#toolbox-grid-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB";
+}
+
+#toolbox-grid-wrapper.anotherTool {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB"
+    "collectRB";
 }
 
 .dose {
@@ -58,16 +114,15 @@ body.isAdvanced #grid-wrapper {
   position: absolute;
   width: 240px;
   height: 160px;
-  top: 190px;
+  top: 340px;
   left: 240px;
 }
 
 #circle-container {
   position: relative;
   width: 720px;
-  height: 360px;
-  margin: 0 auto;
-  margin-top: 150px;
+  height: 500px;
+  margin: 0px auto;
   grid-area: table;
 }
 
@@ -80,10 +135,10 @@ body.isAdvanced #grid-wrapper {
   margin-top: 40px;
   padding: 10px;
   color: white;
-  font-weight: 800;
+  font-weight: 600;
   background-color: #75757593;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -130,7 +185,6 @@ body.isAdvanced #grid-wrapper {
 .image-button {
   border: none;
   background: none;
-  padding: 0;
   margin: 10px;
   transition: transform 0.3s, filter 0.3s;
 }
@@ -167,134 +221,127 @@ body.isAdvanced #grid-wrapper {
   opacity: 0.7;
 }
 
-h2#anzahlPersonen {
-  /* top: 0;
-  left: 0; */
-  /*display: flex;*/
-  padding: 10px;
-  font-size: 1.8rem;
-  color: white;
-  font-weight: 800;
-  background-color: #9e020293;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  margin-left: 15px;
-  margin-right: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  grid-area: personenAnzahlLabel;
-  align-self: start;
-}
-
-h3 {
-  font-size: 1.2rem;
-  color: #ffff;
-  font-weight: 600;
-  margin: -5px 15px 15px 15px;
-  grid-area: untertitelLabel;
-  text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-}
-
 h1 {
   display: none;
   color: white;
   font-weight: 800;
   background-color: #9e020293;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  margin-left: 15px;
-  margin-right: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 0px;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  justify-content: center;
   grid-area: ueberschrift;
 }
 
+h1#anzahlPersonen {
+  grid-area: personenAnzahlLabel;
+}
+
+h1#aufgabenstellung {
+  grid-area: ueberschrift;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 5px;
+  grid-area: untertitelLabel;
+}
+
 #eingabeContainer {
+  margin: 0 auto;
   display: none;
-  margin-top: 20px;
-  padding: 1.5rem;
+  padding: 10px;
   background-color: #ffffffcc;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   width: fit-content;
-  margin-left: 15px;
-  margin-right: 15px;
   text-align: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
   animation: fadeIn 0.6s ease;
-  grid-area: AntwortEingabe;
-  align-self: start;
+  grid-area: antwortEingabe;
 }
 
-#eingabeContainer input[type="number"] {
-  padding: 0.4rem 0.8rem;
+#nameInputWrapper {
+  margin: auto;
+  height: fit-content;
+  width: fit-content;
+  grid-area: nameInputWrapper;
+}
+
+#nameTag {
   font-size: 1rem;
-  border-radius: 8px;
+  font-weight: 600;
+}
+
+input[type="number"],
+input[type="text"] {
+  padding: 5px;
+  font-size: 1rem;
+  border-radius: 10px;
   border: 1px solid #aaa;
-  margin: 0 0.5rem;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+input[type="number"] {
   width: 80px;
 }
 
-#checkVerteilungBtn {
-  padding: 15px;
-  width: fit-content;
-  height: fit-content;
-  font-size: 1.2rem;
-  color: white;
-  font-weight: 800;
-  background-color: #9e0202d8;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-left: 15px;
-  margin-right: 15px;
-  margin-top: 3px;
-  cursor: pointer;
+input[type="text"] {
+  width: 100px;
+}
+
+#newTaskBtn {
+  margin: auto;
   display: none;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  grid-area: newTaskBtn;
+}
+
+#checkVerteilungBtn {
+  margin: 0 auto;
+  display: none;
+  font-weight: 600;
   grid-area: checkVerteilungBtn;
 }
 
-
-#checkAntwortBtn {
-  padding: 0.5rem 1rem;
-  background-color: #9e0202d8;
+.button {
+  background: #006000;
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  padding: 10px;
+  font-size: 1rem;
+  justify-content: center;
+  align-items: center;
+  border: 7px solid #00e000;
+  border-radius: 10px;
   cursor: pointer;
-  animation: fadeIn 0.6s ease;
+  white-space: nowrap;
+  height: fit-content;
+  width: fit-content;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-#checkAntwortBtn:hover,
-#einsammelButton:hover,
-#checkVerteilungBtn:hover {
-  background-color: #7b0101;
+#checkAntwortBtn {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.button:hover {
   transform: scale(1.05);
+  text-decoration: underline;
 }
 
 #einsammelButton:hover {
   background-color: #7b0101;
   transform: scale(1.05);
-}
-
-#antwortFeedback {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  transition: color 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -311,53 +358,59 @@ h1 {
 
 
 #message {
-  margin-top: 20px;
-  padding: 1rem 1.5rem;
+  margin: 0 auto;
+  padding: 10px;
   background-color: white;
   border-radius: 10px;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 600;
   width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   text-align: center;
   display: none;
-  animation: fadeInMessage 0.4s ease-out forwards;
+  animation: fadeIn 0.6s ease;
   grid-area: ergebnis;
-  align-self: start;
-}
-
-@keyframes fadeInMessage {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Toolbox Styling */
 .toolbox,
 .config {
-  display: none;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  margin-left: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin: 0px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   animation: fadeIn 0.6s ease;
   cursor: pointer;
-  height: fit-content;
-  width: fit-content;
+  width: 100%;
+  height: auto;
 }
 
 .toolbox {
+  display: none;
   grid-area: toolbox;
+}
+
+#toolbox-grid-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB";
+}
+
+#toolbox-grid-wrapper.anotherTool {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB"
+    "collectRB";
 }
 
 .config {
@@ -374,27 +427,137 @@ h1 {
 }
 
 /* Toolbox-Labels */
-.toolbox label,
-.config label {
+.toolbox label {
   display: flex;
-  position: relative;
-  color: #222;
-  font-size: 0.95rem;
-  line-height: 1.3rem;
   margin-bottom: 8px;
   cursor: pointer;
+}
+
+.img-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#moveRB {
+  grid-area: moveRB;
+}
+
+#move-img-wrapper {
+  display: inline-block;
+  width: 200px;
+  height: auto;
+}
+
+#moveIMG {
+  width: 200px;
+  height: auto;
+}
+
+#breakRB {
+  grid-area: breakRB;
+}
+
+#break-img-wrapper {
+  width: 120px;
+  height: auto;
+}
+
+#breakIMG {
+  width: 120px;
+  height: auto;
+}
+
+#mergeRB {
+  grid-area: mergeRB;
+}
+
+#break-img-wrapper {
+  width: 120px;
+  height: auto;
+}
+
+#mergeIMG {
+  width: 120px;
+  height: auto;
+}
+
+#collectRB {
+  grid-area: collectRB;
+  display: none;
+}
+
+#collect-img-wrapper {
+  width: 220px;
+  height: auto;
+}
+
+#collectIMG {
+  width: 220px;
+  height: auto;
 }
 
 /* Radio Buttons */
-.toolbox input[type="radio"],
-.config input[type="checkbox"] {
+.toolbox input[type="radio"] {
   accent-color: #4f46e5;
-  transform: scale(1.1);
   margin-right: 10px;
-  margin-bottom: 8px;
   cursor: pointer;
 }
 
-.config input[type="text"] {
-  margin-left: 10px;
+@media (max-width: 1200px) {
+
+  #grid-wrapper,
+  body.isAdvanced #grid-wrapper,
+  #grid-wrapper.twoPersonGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel'
+      'config config config'
+      'toolbox toolbox toolbox'
+      'ueberschrift ueberschrift ueberschrift'
+      'table table table'
+      'checkVerteilungBtn ergebnis ergebnis';
+  }
+
+  #grid-wrapper.checkCount,
+  body.isAdvanced #grid-wrapper.checkCount,
+  #grid-wrapper.checkCount.twoPersonGrid {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel'
+      'config config config'
+      'toolbox toolbox toolbox'
+      'ueberschrift ueberschrift ueberschrift'
+      'table table table'
+      'checkVerteilungBtn antwortEingabe ergebnis';
+  }
+
+  #config-grid-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
+      'twoPersons threePersons fourPersons fivePersons sixPersons'
+      'nameInputWrapper  newTaskBtn . . .';
+  }
+
+  body.isAdvanced #config-grid-wrapper {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'nameInputWrapper  newTaskBtn';
+  }
+
+  #toolbox-grid-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      "moveRB breakRB mergeRB";
+  }
+
+  #toolbox-grid-wrapper.anotherTool {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      "moveRB breakRB mergeRB collectRB";
+  }
 }

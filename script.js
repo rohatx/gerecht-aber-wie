@@ -6,11 +6,15 @@ const keksEingabe = document.getElementById("keksEingabe");
 const checkAntwortBtn = document.getElementById("checkAntwortBtn");
 const buttonLeiste = document.getElementById("button-leiste");
 const aufgabenStellung = document.getElementById("aufgabenstellung");
+const gridWrapper = document.getElementById("grid-wrapper");
 const toolbox = document.getElementById("toolbox");
+const toolboxWrapper = document.getElementById("toolbox-grid-wrapper");
+const collectRB = document.getElementById("collectRB");
 const configbox = document.getElementById("config");
 
 const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
 const nameEingabe = document.getElementById("nameInput");
+const newTaskBtn = document.getElementById("newTaskBtn");
 
 const params = new URLSearchParams(window.location.search);
 
@@ -84,21 +88,21 @@ window.addEventListener("load", () => {
         isAdvanced = true;
         document.body.classList.add("isAdvanced");
         personCount = 4;
-        keksCount = Math.floor(personCount * determineCookieMultiplikator());
-        kekseProPerson = keksCount / personCount
-        cookieImageNumber = keksCount;
-        hideEvaluation();
-        aufgabenStellung.style.display = "inline-block";
-        toolbox.style.display = "inline-block";
-        configbox.style.display = "inline-block";
-        checkVerteilungBtn.style.display = "inline-block";
+        const personenauswahl = document.getElementById("anzahlPersonen");
+        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
+        personenauswahl.style.display = "none";
+        personenauswahlsub.style.display = "none";
+        const imageButtons = document.querySelectorAll('.image-button');
+        imageButtons.forEach(el => {
+            el.style.display = 'none';
+        });
 
-        createScene();
+        createNewTask();
     } else {
         //Modus mit ganzen Keksen
         const personenauswahl = document.getElementById("anzahlPersonen");
         const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
-        personenauswahl.style.display = "block";
+        personenauswahl.style.display = "flex";
         personenauswahlsub.style.display = "block";
 
         const elements = document.getElementsByClassName("image-button");
@@ -139,6 +143,11 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
             document.querySelectorAll('.half_keks').forEach(keks => {
                 keks.draggable = true;
             });
+        } else if (currentTool === "collect") {
+            kekseEinsammeln();
+            const moveRBInput = document.getElementById('moveRB').querySelector('input');
+            moveRBInput.checked = true;
+            moveRBInput.dispatchEvent(new Event('change', { bubbles: true }));
         } else {
             if (currentTool === "select") {
                 document.body.style.cursor = 'pointer';
@@ -181,7 +190,10 @@ function createScene() {
 
         person.className = "person";
         person.style.left = `${x + 360 - 60}px`;
-        person.style.top = `${150 - y}px`;
+        person.style.top = `${500 - y - 200}px`;
+        if (personCount == 2) {
+            person.style.top = `${y}px`;
+        }
 
         const teller = document.createElement("div");
         const tellerBild = document.createElement("img");
@@ -208,16 +220,37 @@ function createScene() {
     container.appendChild(dose);
     dose.ondrop = handleDrop;
     dose.ondragover = (e) => e.preventDefault();
+    if (personCount == 2) {
+        container.style.height = "200px";
+        dose.style.top = "40px";
+        if (!gridWrapper.classList.contains('twoPersonGrid')) {
+            gridWrapper.classList.add('twoPersonGrid');
+        }
+    }
+    else {
+        container.style.height = "500px";
+        dose.style.top = "340px";
+        if (gridWrapper.classList.contains('twoPersonGrid')) {
+            gridWrapper.classList.remove('twoPersonGrid');
+        }
+    }
 
-    einsammelButton.disabled = false;
     keksEingabe.disabled = false;
     checkAntwortBtn.disabled = false;
+    newTaskBtn.style.display = "flex";
+    aufgabenStellung.style.display = "flex";
+    toolbox.style.display = "inline-block";
+    configbox.style.display = "inline-block";
+    checkVerteilungBtn.style.display = "inline-block";
 
     tellerKekseIds.push([]); // fuer die Dose
 
     if (modus === "ausgleichen-verteilen") {
-        dose.style.display = 'flex';
-        einsammelButton.style.display = 'flex';
+        dose.style.display = "flex";
+        collectRB.style.display = "flex";
+        if (!toolboxWrapper.classList.contains('anotherTool')) {
+            toolboxWrapper.classList.add('anotherTool');
+        }
     }
     if (modus === "verteilen") {
         dose.style.display = 'flex';
@@ -236,6 +269,13 @@ function createScene() {
     document.querySelectorAll('.half_keks').forEach(keks => {
         keks.draggable = true;
     });
+    if (gridWrapper.classList.contains('checkCount')) {
+        gridWrapper.classList.remove('checkCount');
+    }
+
+    const moveRBInput = document.getElementById('moveRB').querySelector('input');
+    moveRBInput.checked = true;
+    moveRBInput.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 function distributeKekse(startOnTable) {
@@ -368,21 +408,26 @@ function handleDrop(e) {
     const toTeller = e.currentTarget;
 
     markedCookies = document.querySelectorAll('.keks.markiert, .half_keks.markiert');
-    if (markedCookies.length > 0) {
-        markedCookies.forEach(keks => {
-            tellerKekseIds[keks.dataset.tellerIndex] = tellerKekseIds[keks.dataset.tellerIndex].filter(id => id.localeCompare(keks.id) != 0);
-            tellerKekseIds[zielTellerIndex].push(keks.id);
+    if (markedCookies.length > 1) {
+        for (let i = 0; i < markedCookies.length; i++) {
+            currentCookie = markedCookies[i];
+            tellerKekseIds[currentCookie.dataset.tellerIndex] = tellerKekseIds[currentCookie.dataset.tellerIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
+            tellerKekseIds[zielTellerIndex].push(currentCookie.id);
             if (checkCookieDistribution(true)) {
-                keks.dataset.tellerIndex = zielTellerIndex;
-                keks.classList.remove('markiert');
+                currentCookie.dataset.tellerIndex = zielTellerIndex;
+                currentCookie.classList.remove('markiert');
                 showCookies()
             } else {
-                tellerKekseIds[zielTellerIndex] = tellerKekseIds[zielTellerIndex].filter(id => id.localeCompare(keks.id) != 0);
-                tellerKekseIds[keks.dataset.tellerIndex].push(keks.id);
-                alert("Es können nicht alle Kekse auf diesen Teller verschoben werden");
+                tellerKekseIds[zielTellerIndex] = tellerKekseIds[zielTellerIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
+                tellerKekseIds[currentCookie.dataset.tellerIndex].push(currentCookie.id);
+                if (i == 0) {
+                    alert("Der Zielteller ist schon voll!");
+                } else {
+                    alert("Es können nicht alle Kekse auf diesen Teller verschoben werden");
+                }
                 return;
             }
-        });
+        }
     } else {
         tellerKekseIds[startTellerIndex] = tellerKekseIds[startTellerIndex].filter(id => id.localeCompare(movingKeksId) != 0);
         tellerKekseIds[zielTellerIndex].push(movingKeksId);
@@ -407,7 +452,6 @@ function checkVictory(withMessage, withHalfCookies) {
     if (allEqual && sum == keksCount) {
         if (withMessage) {
             eingabeContainer.style.display = "block";
-            document.getElementById("einsammelButton").disabled = true;
             document.querySelectorAll('.keks').forEach(keks => {
                 if (keks.dataset.isWhole) {
                     keks.draggable = false;
@@ -416,6 +460,10 @@ function checkVictory(withMessage, withHalfCookies) {
             document.querySelectorAll('.half_keks').forEach(keks => {
                 keks.draggable = false;
             });
+            const gridWrapper = document.getElementById("grid-wrapper");
+            if (!gridWrapper.classList.contains('checkCount')) {
+                gridWrapper.classList.add('checkCount');
+            }
         }
         return true;
     } else {
@@ -637,15 +685,6 @@ function determineCookieMultiplikator() {
 
 function changePerson(geklickterButton, i) {
     personCount = i;
-    const keksMultiplikator = determineCookieMultiplikator();
-    keksCount = Math.floor(personCount * keksMultiplikator);
-    kekseProPerson = keksCount / personCount
-    cookieImageNumber = keksCount;
-    hideEvaluation();
-    aufgabenStellung.style.display = "inline-block";
-    toolbox.style.display = "inline-block";
-    configbox.style.display = "inline-block";
-    checkVerteilungBtn.style.display = "inline-block";
 
     const buttons = document.querySelectorAll('.image-button');
     buttons.forEach(button => {
@@ -655,5 +694,14 @@ function changePerson(geklickterButton, i) {
             button.classList.add('inactive');
         }
     });
+    createNewTask();
+}
+
+function createNewTask() {
+    const keksMultiplikator = determineCookieMultiplikator();
+    keksCount = Math.floor(personCount * keksMultiplikator);
+    kekseProPerson = keksCount / personCount
+    cookieImageNumber = keksCount;
+    hideEvaluation();
     createScene();
 }

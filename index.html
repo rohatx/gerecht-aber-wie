@@ -9,68 +9,82 @@
 
 <body>
     <div id="grid-wrapper">
-        <button class="image-button" id="two-persons" onclick="changePerson(this,2)" style="display: none;">
-            <img src="img/2personen.png" alt="Auswahl 2 Personen">
-        </button>
-        <button class="image-button" id="three-persons" onclick="changePerson(this,3)" style="display: none;">
-            <img src="img/3personen.png" alt="Auswahl 3 Personen">
-        </button>
-        <button class="image-button" id="four-persons" onclick="changePerson(this,4)" style="display: none;">
-            <img src="img/4personen.png" alt="Auswahl 4 Personen">
-        </button>
-        <button class="image-button" id="five-persons" onclick="changePerson(this,5)" style="display: none;">
-            <img src="img/5personen.png" alt="Auswahl 5 Personen">
-        </button>
-        <button class="image-button" id="six-persons" onclick="changePerson(this,6)" style="display: none;">
-            <img src="img/6personen.png" alt="Auswahl 6 Personen">
-        </button>
-        <h1 id="aufgabenstellung">Verteile die Kekse gerecht an alle Personen</h1>
-        <h2 id="anzahlPersonen" style="display: none;">Anzahl Personen</h2>
-        <h3 id="anzahlPersonenSubtitle" style="display: none;">Wähle die Anzahl der Personen aus</h3>
+        <h1 id="anzahlPersonen">Anzahl Personen</h1>
 
         <fieldset id="config" class="config">
-            <label>
-                Dein Name:
-                <input type="text" id="nameInput">
-            </label>
+            <div id="config-grid-wrapper">
+                <h3 id="anzahlPersonenSubtitle">W&auml;hle die Anzahl der Personen aus!</h3>
+
+                <button class="image-button" id="two-persons" onclick="changePerson(this,2)">
+                    <img src="img/2personen.png" alt="Auswahl 2 Personen">
+                </button>
+                <button class="image-button" id="three-persons" onclick="changePerson(this,3)">
+                    <img src="img/3personen.png" alt="Auswahl 3 Personen">
+                </button>
+                <button class="image-button" id="four-persons" onclick="changePerson(this,4)">
+                    <img src="img/4personen.png" alt="Auswahl 4 Personen">
+                </button>
+                <button class="image-button" id="five-persons" onclick="changePerson(this,5)">
+                    <img src="img/5personen.png" alt="Auswahl 5 Personen">
+                </button>
+                <button class="image-button" id="six-persons" onclick="changePerson(this,6)">
+                    <img src="img/6personen.png" alt="Auswahl 6 Personen">
+                </button>
+
+                <label id="nameInputWrapper">
+                    <div id="nameTag">Dein Name:</div>
+                    <input type="text" id="nameInput">
+                </label>
+                <button class="button" id="newTaskBtn" onclick="createNewTask()">&gt; neue Aufgabe &lt;</button>
+            </div>
         </fieldset>
 
         <fieldset id="toolbox" class="toolbox">
             <legend>Toolbox</legend>
             <form id="toolboxForm">
-                <label>
-                    <input type="radio" class="radio" name="tool" value="move" checked>
-                    <div style="display: inline-block;"><img src="img/keksSchieben.png" width="200px"
-                            alt="Keks verschieben">
-                        <div>Kurz auf Kekse klicken, um mehrere Kekse zu bewegen.</div>
-                    </div>
-                </label>
-                <label>
-                    <input type="radio" class="radio" name="tool" value="break">
-                    <img src="img/keksBrechen.png" width="150px" alt="Keks zerbrechen">
-                </label>
-                <label>
-                    <input type="radio" class="radio" name="tool" value="merge">
-                    <img src="img/keksMergen.png" width="150px" alt="Keks zusammenf&uuml;gen">
-                </label>
+                <div id="toolbox-grid-wrapper">
+                    <label id="moveRB">
+                        <input type="radio" class="radio" name="tool" value="move" checked>
+                        <div class="img-wrapper" id="move-img-wrapper"><img id="moveIMG" src="img/keksSchieben.png"
+                                alt="Keks verschieben">
+                            <div>Tipp: Kurz auf Kekse klicken, um mehrere Kekse zu bewegen.</div>
+                        </div>
+                    </label>
+                    <label id="breakRB">
+                        <input type="radio" class="radio" name="tool" value="break">
+                        <div class="img-wrapper" id="break-img-wrapper">
+                            <img id="breakIMG" src="img/keksBrechen.png" alt="Keks zerbrechen">
+                        </div>
+                    </label>
+                    <label id="mergeRB">
+                        <input type="radio" class="radio" name="tool" value="merge">
+                        <div class="img-wrapper" id="merge-img-wrapper">
+                            <img id="mergeIMG" src="img/keksMergen.png" alt="Keks zusammenf&uuml;gen">
+                        </div>
+                    </label>
+                    <label id="collectRB">
+                        <input type="radio" class="radio" name="tool" value="collect">
+                        <div class="img-wrapper" id="collect-img-wrapper">
+                            <img id="collectIMG" src="img/einsammeln.png" alt="Kekse einsammeln">
+                        </div>
+                    </label>
+                </div>
             </form>
-            <button id="einsammelButton" onclick="kekseEinsammeln()">
-                <img src="img/einsammeln.png" width="220px" alt="Kekse einsammeln">
-            </button>
         </fieldset>
 
 
+        <h1 id="aufgabenstellung">Verteile die Kekse gerecht an alle Personen!</h1>
 
         <div id="circle-container">
         </div>
 
-        <button id="checkVerteilungBtn">Pr&uuml;fen</button>
+        <button class="button" id="checkVerteilungBtn">&gt; Verteilung Pr&uuml;fen &lt;</button>
 
-        <div id="message" style="display: none;"></div>
-        <div id="eingabeContainer" style="margin-top: 10px;">
+        <div id="message"></div>
+        <div id="eingabeContainer">
             Richtig! Jede Person hat jetzt die gleiche Anzahl an Keksen. Wie viele Kekse hat jeder?
             <input type="number" id="keksEingabe" min="0">
-            <button id="checkAntwortBtn">Antwort pr&uuml;fen</button>
+            <button class="button" id="checkAntwortBtn">&gt; Anzahl pr&uuml;fen &lt;</button>
 
         </div>
 
