@@ -18,6 +18,10 @@ const newTaskBtn = document.getElementById("newTaskBtn");
 
 const params = new URLSearchParams(window.location.search);
 
+const grabCursor = "grab";
+const knifeCursor = "url('img/knife.png') 12 12, auto";
+const glueCursor = "url('img/glue.png') 12 12, auto";
+
 let collectionClicks = 0;
 let gleichmaessigkeitsfehler = 0;
 let zaehlfehler = 0;
@@ -28,8 +32,6 @@ let personCount = 0;
 let keksCount = 0;
 let minAnzahlKekse = 1;
 let maxAnzahlKekse = 20;
-
-const namen = ["Marvin", "Emil", "Emma", "Nico", "Mia", "Jan"];
 
 let kekseProPerson = 0;
 
@@ -42,9 +44,28 @@ let currentTool = "move"; // Standard
 let cookieImageNumber = keksCount;
 
 window.addEventListener("load", () => {
+
+    const twoPersonsImage = document.getElementById("two-persons").querySelector('img');;
+    twoPersonsImage.src = getImageURL("--twoPersons-image");
+    const threePersonsImage = document.getElementById("three-persons").querySelector('img');;
+    threePersonsImage.src = getImageURL("--threePersons-image");
+    const fourPersonsImage = document.getElementById("four-persons").querySelector('img');;
+    fourPersonsImage.src = getImageURL("--fourPersons-image");
+    const fivePersonsImage = document.getElementById("five-persons").querySelector('img');;
+    fivePersonsImage.src = getImageURL("--fivePersons-image");
+    const sixPersonsImage = document.getElementById("six-persons").querySelector('img');;
+    sixPersonsImage.src = getImageURL("--sixPersons-image");
+
+    const breakIMG = document.getElementById("breakIMG");
+    breakIMG.src = getImageURL("--break-image");
+    const mergeIMG = document.getElementById("mergeIMG");
+    mergeIMG.src = getImageURL("--merge-image");
+    const collectIMG = document.getElementById("collectIMG");
+    collectIMG.src = getImageURL("--collect-image");
+
     document.getElementById("toolboxForm").reset();
 
-    document.body.style.cursor = 'grab';
+    container.style.setProperty('cursor', grabCursor, 'important');
 
     const selectedToolRadio = document.querySelector(`input[name="tool"][value="${currentTool}"]`);
     if (selectedToolRadio) {
@@ -134,7 +155,7 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
     radio.addEventListener('change', () => {
         currentTool = radio.value;
         if (currentTool === "move") {
-            document.body.style.cursor = 'grab';
+            container.style.setProperty('cursor', grabCursor, 'important');
             document.querySelectorAll('.keks').forEach(keks => {
                 if (keks.dataset.isWhole) {
                     keks.draggable = true;
@@ -149,10 +170,10 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
             moveRBInput.checked = true;
             moveRBInput.dispatchEvent(new Event('change', { bubbles: true }));
         } else {
-            if (currentTool === "select") {
-                document.body.style.cursor = 'pointer';
+            if (currentTool === "break") {
+                container.style.cursor = knifeCursor;
             } else {
-                document.body.style.cursor = 'cell';
+                container.style.cursor = glueCursor;
             }
             document.querySelectorAll('.keks').forEach(keks => {
                 keks.draggable = false;
@@ -163,6 +184,10 @@ document.querySelectorAll('input[name="tool"]').forEach(radio => {
         }
     });
 });
+
+function getImageURL(variableName) {
+    return getComputedStyle(document.documentElement).getPropertyValue(variableName).replace(/url\(["']?|["']?\)/g, '');
+}
 
 
 function createScene() {
@@ -181,12 +206,12 @@ function createScene() {
         const person = document.createElement("div");
 
         const img = document.createElement("img");
-        img.src = `img/person${personIndex + 1}.png`;
+        img.src = getImageURL(`--person${personIndex + 1}-image`);
         img.className = "person-img";
 
         const name = document.createElement("div");
         name.id = "name";
-        name.textContent = namen[personIndex];
+        name.textContent = getComputedStyle(document.documentElement).getPropertyValue(`--person${personIndex + 1}-name`);
 
         person.className = "person";
         person.style.left = `${x + 360 - 60}px`;
@@ -197,7 +222,8 @@ function createScene() {
 
         const teller = document.createElement("div");
         const tellerBild = document.createElement("img");
-        tellerBild.src = `img/teller.png`;
+        const tellerImageURL = getImageURL("--plate-image");
+        tellerBild.src = tellerImageURL;
         tellerBild.className = "tellerBild";
         teller.className = "teller";
         teller.id = `teller-${personIndex}`;
@@ -331,12 +357,12 @@ function distributeKekse(startOnTable) {
 function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
     const keks = document.createElement("img");
     if (shouldBeHalf) {
-        keks.src = `img/cookie_right.png`;
+        keks.src = getImageURL("--cookieHalfRight-image");
         keks.className = "half_keks";
         tellerKekseIds[tellerIndex].splice(keksIndex, 0, `keks-${cookieImageNumber}`);
         cookieImageNumber += 1;
     } else {
-        keks.src = `img/cookie.png`;
+        keks.src = getImageURL("--cookie-image");
         keks.className = "keks";
     }
     keks.id = tellerKekseIds[tellerIndex][keksIndex];
@@ -358,7 +384,7 @@ function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
                 const keksIndexNeu = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId === keks.id);
                 createKeks(keksIndexNeu + 1, keks.dataset.tellerIndex, true);
                 keks.dataset.isWhole = false;
-                keks.src = `img/cookie_left.png`;
+                keks.src = getImageURL("--cookieHalfLeft-image");
                 keks.className = "half_keks";
                 showCookies();
             }
@@ -499,8 +525,8 @@ function checkVictory(withMessage, withHalfCookies) {
             }
             gleichmaessigkeitsfehler += 1;
             message.style.display = "block";
-            message.style.color = "red";
-            message.style.border = "2px solid rgb(199, 12, 12)";
+            message.style.color = "var(--messageWrong-font-color)";
+            message.style.border = "0.15rem solid var(--messageWrong-border-color)";
         }
         return false;
     }
@@ -533,16 +559,16 @@ checkAntwortBtn.onclick = () => {
     const eingabe = parseFloat(keksEingabe.value);
     if (eingabe == kekseProPerson) {
         message.style.display = "block";
-        message.style.color = "#2e8b57";
-        message.style.border = "2px solid #3cb371";
+        message.style.color = "var(--messageRight-font-color)";
+        message.style.border = "0.15rem solid var(--messageRight-border-color)";
         message.textContent = "Aufgabe gelöst!";
         keksEingabe.disabled = true;
         checkAntwortBtn.disabled = true;
         sendData();
     } else {
         message.style.display = "block";
-        message.style.color = "red";
-        message.style.border = "2px solid rgb(199, 12, 12)";
+        message.style.color = "var(--messageWrong-font-color)";
+        message.style.border = "0.15rem solid var(--messageWrong-border-color)";
         message.textContent = "Leider falsch. Schau es dir nochmal an.";
         zaehlfehler += 1;
     }
