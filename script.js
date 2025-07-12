@@ -1,71 +1,73 @@
-const container = document.getElementById("circle-container");
+const circleContainer = document.getElementById("circleContainer");
+const messageContainer = document.getElementById("messageContainer");
 const message = document.getElementById("message");
-
-const eingabeContainer = document.getElementById("eingabeContainer");
-const keksEingabe = document.getElementById("keksEingabe");
-const checkAntwortBtn = document.getElementById("checkAntwortBtn");
-const buttonLeiste = document.getElementById("button-leiste");
-const aufgabenStellung = document.getElementById("aufgabenstellung");
-const gridWrapper = document.getElementById("grid-wrapper");
+const newTaskBtn = document.getElementById("newTaskBtn");;
+const cookieNumberInputContainer = document.getElementById("cookieNumberInputContainer");
+const cookieInput = document.getElementById("cookieInput");
+const checkCountBtn = document.getElementById("checkCountBtn");
+const gridWrapper = document.getElementById("gridWrapper");
 const toolbox = document.getElementById("toolbox");
-const toolboxWrapper = document.getElementById("toolbox-grid-wrapper");
+const toolboxWrapper = document.getElementById("toolboxGridWrapper");
 const collectRB = document.getElementById("collectRB");
 const configbox = document.getElementById("config");
-
-const checkVerteilungBtn = document.getElementById("checkVerteilungBtn");
-const nameEingabe = document.getElementById("nameInput");
-const newTaskBtn = document.getElementById("newTaskBtn");
+const checkEqualityBtn = document.getElementById("checkEqualityBtn");
+const personNumberButtons = document.querySelectorAll(".personNumberButton");
 
 const params = new URLSearchParams(window.location.search);
 
 const grabCursor = "grab";
-const knifeCursor = "url('img/knife.png') 12 12, auto";
-const glueCursor = "url('img/glue.png') 12 12, auto";
+const knifeCursor = `${getComputedStyle(document.documentElement).getPropertyValue("--breakCursorImage")} 12 12, auto`;
+const glueCursor = `${getComputedStyle(document.documentElement).getPropertyValue("--mergeCursorImage")} 16 12, auto`;
 
 let collectionClicks = 0;
-let gleichmaessigkeitsfehler = 0;
-let zaehlfehler = 0;
+let equalityErrors = 0;
+let countErrors = 0;
 let isAdvanced = false;
-let modus = "ausgleichen";
+let mode = "ausgleichen";
 
 let personCount = 0;
-let keksCount = 0;
-let minAnzahlKekse = 1;
-let maxAnzahlKekse = 20;
+let cookieCount = 0;
+let minCookieNumber = 1;
+let maxCookieNumber = 20;
 
-let kekseProPerson = 0;
+let cookiesPerPerson = 0;
 
-const KEKSE_PRO_REIHE = 4;
-const PLATZ_PRO_KEKS = 20;
+const COOKIES_PER_ROW = 4;
+const PERSON_COUNT_ADVANCED_MODE = 4;
+const MAX_COOKIE_NUMBER = 20;
+const MAX_COOKIES_PER_PLATE = 8;
+const MAX_COOKIES_ON_TABLE = 24;
 
-let tellerKekseIds;
+let plateCookieIds;
 
-let currentTool = "move"; // Standard
-let cookieImageNumber = keksCount;
+let currentTool = "move";
+let cookieImageNumber = cookieCount;
 
 window.addEventListener("load", () => {
+    // load images
+    const twoPersonsImage = document.getElementById("twoPersons").querySelector("img");
+    twoPersonsImage.src = getImageSRC("--twoPersonsImage");
+    const threePersonsImage = document.getElementById("threePersons").querySelector("img");
+    threePersonsImage.src = getImageSRC("--threePersonsImage");
+    const fourPersonsImage = document.getElementById("fourPersons").querySelector("img");
+    fourPersonsImage.src = getImageSRC("--fourPersonsImage");
+    const fivePersonsImage = document.getElementById("fivePersons").querySelector("img");
+    fivePersonsImage.src = getImageSRC("--fivePersonsImage");
+    const sixPersonsImage = document.getElementById("sixPersons").querySelector("img");
+    sixPersonsImage.src = getImageSRC("--sixPersonsImage");
 
-    const twoPersonsImage = document.getElementById("two-persons").querySelector('img');;
-    twoPersonsImage.src = getImageURL("--twoPersons-image");
-    const threePersonsImage = document.getElementById("three-persons").querySelector('img');;
-    threePersonsImage.src = getImageURL("--threePersons-image");
-    const fourPersonsImage = document.getElementById("four-persons").querySelector('img');;
-    fourPersonsImage.src = getImageURL("--fourPersons-image");
-    const fivePersonsImage = document.getElementById("five-persons").querySelector('img');;
-    fivePersonsImage.src = getImageURL("--fivePersons-image");
-    const sixPersonsImage = document.getElementById("six-persons").querySelector('img');;
-    sixPersonsImage.src = getImageURL("--sixPersons-image");
-
+    const moveIMG = document.getElementById("moveIMG");
+    moveIMG.src = getImageSRC("--moveImage");
     const breakIMG = document.getElementById("breakIMG");
-    breakIMG.src = getImageURL("--break-image");
+    breakIMG.src = getImageSRC("--breakImage");
     const mergeIMG = document.getElementById("mergeIMG");
-    mergeIMG.src = getImageURL("--merge-image");
+    mergeIMG.src = getImageSRC("--mergeImage");
     const collectIMG = document.getElementById("collectIMG");
-    collectIMG.src = getImageURL("--collect-image");
+    collectIMG.src = getImageSRC("--collectImage");
 
     document.getElementById("toolboxForm").reset();
 
-    container.style.setProperty('cursor', grabCursor, 'important');
+    circleContainer.style.cursor = grabCursor;
 
     const selectedToolRadio = document.querySelector(`input[name="tool"][value="${currentTool}"]`);
     if (selectedToolRadio) {
@@ -73,130 +75,122 @@ window.addEventListener("load", () => {
         selectedToolRadio.dispatchEvent(new Event("change"));
     }
 
+    // Process the URL parameters
     if (params.has("anzahl-kekse")) {
-        const angaben = params.get("anzahl-kekse").split(",").map(str => str.trim());
+        const cookieParams = params.get("anzahl-kekse").split(",").map(str => str.trim());
 
-        if (angaben.length == 2) {
-            const min = parseFloat(angaben[0], 10);
-            const max = parseFloat(angaben[1], 10);
+        if (cookieParams.length == 2) {
+            const min = parseFloat(cookieParams[0], 10);
+            const max = parseFloat(cookieParams[1], 10);
 
 
-            const istGueltig = !isNaN(min) && !isNaN(max) && Number.isInteger(min) && Number.isInteger(max) && min >= 1 && max >= min && max <= 20;
+            const istValid = !isNaN(min) && !isNaN(max) && Number.isInteger(min) && Number.isInteger(max) && min >= 1 && max >= min && max <= MAX_COOKIE_NUMBER;
 
-            if (istGueltig) {
-                minAnzahlKekse = min;
-                maxAnzahlKekse = max;
+            if (istValid) {
+                minCookieNumber = min;
+                maxCookieNumber = max;
             } else {
-                alert("Der Parameter \"anzahl-kekse\" enthält mindestens einen ungültigen Wert: Bitte ein gültiges Intervall *min,max* von ganzen Keksen angeben, wobei 1 ≤ min ≤ max ≤ 20. Es wird nun mit dem Intervall [1,20] gearbeitet.");
+                alert(`Der Parameter \"anzahl-kekse\" enthält mindestens einen ungültigen Wert: Bitte ein gültiges Intervall *min,max* von ganzen Keksen angeben, wobei 1 ≤ min ≤ max ≤ ${MAX_COOKIE_NUMBER}. Es wird nun mit dem Intervall [1,${MAX_COOKIE_NUMBER}] gearbeitet.`);
             }
         } else {
-            alert("Der Parameter \"anzahl-kekse\" enthält einen ungültigen Wert. Bitte zwei Zahlen wie *3,8* durch Komma getrennt angeben. Es wird nun mit dem Intervall [1,20] gearbeitet.");
+            alert(`Der Parameter \"anzahl-kekse\" enthält einen ungültigen Wert. Bitte zwei Zahlen wie *3,8* durch Komma getrennt angeben. Es wird nun mit dem Intervall [1,${MAX_COOKIE_NUMBER}] gearbeitet.`);
         }
     }
 
-    if (params.has("modus")) {
-        modusInput = params.get("modus");
-        if (modusInput === "ausgleichen" || modusInput === "verteilen" || modusInput === "ausgleichen-verteilen") {
-            modus = modusInput;
+    if (params.has("mode")) {
+        modeInput = params.get("mode");
+        if (modeInput === "ausgleichen" || modeInput === "verteilen" || modeInput === "ausgleichen-verteilen") {
+            mode = modeInput;
         } else {
-            alert("Der Parameter \"modus\" enthält einen ungültigen Wert: Bitte zwischen *ausgleichen*, *verteilen* und *ausgleichen-verteilen* wählen. Es wird nun mit *ausgleichen* gearbeitet.");
+            alert("Der Parameter \"mode\" enthält einen ungültigen Wert: Bitte zwischen *ausgleichen*, *verteilen* und *ausgleichen-verteilen* wählen. Es wird nun mit *ausgleichen* gearbeitet.");
         }
     }
 
-    mitHalbenKeksen = params.get("mit-halben-keksen");
-    if (mitHalbenKeksen === "true") {
-        //Modus mit halben Keksen
+    withHalfCookies = params.get("mit-halben-keksen");
+    if (withHalfCookies === "true") {
         isAdvanced = true;
         document.body.classList.add("isAdvanced");
-        personCount = 4;
-        const personenauswahl = document.getElementById("anzahlPersonen");
-        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
-        personenauswahl.style.display = "none";
-        personenauswahlsub.style.display = "none";
-        const imageButtons = document.querySelectorAll('.image-button');
-        imageButtons.forEach(el => {
-            el.style.display = 'none';
+        personCount = PERSON_COUNT_ADVANCED_MODE;
+        const personNumberHeadline = document.getElementById("personNumberTitle");
+        personNumberHeadline.style.display = "none";
+
+        // Hide the number of persons selection, as four persons are specified here.
+        personNumberButtons.forEach(button => {
+            button.style.display = "none";
         });
 
         createNewTask();
     } else {
-        //Modus mit ganzen Keksen
-        const personenauswahl = document.getElementById("anzahlPersonen");
-        const personenauswahlsub = document.getElementById("anzahlPersonenSubtitle");
-        personenauswahl.style.display = "flex";
-        personenauswahlsub.style.display = "block";
+        const personNumberHeadline = document.getElementById("personNumberTitle");
+        personNumberHeadline.style.display = "block";
 
-        const elements = document.getElementsByClassName("image-button");
-        for (let i = 0; i < elements.length; i++) {
-            elements[i].style.display = "inline-block";
-        }
+        personNumberButtons.forEach(button => {
+            button.style.display = "inline-block";
+        });
 
-        if (mitHalbenKeksen !== "false" && mitHalbenKeksen != null) {
+        if (withHalfCookies !== "false" && withHalfCookies != null) {
             alert("Der Parameter \"mit-halben-keksen\" enthält einen ungültigen Wert. Bitte entweder *true* oder *false* angeben. Es wird nun mit ganzen Keksen gearbeitet.");
         }
     }
 });
 
-
-function kekseEinsammeln() {
-    document.querySelectorAll('.keks, .half_keks').forEach(keks => {
-        const zielTellerIndex = personCount; // letzte liste im Array ist die Dose
-        tellerKekseIds[keks.dataset.tellerIndex] = tellerKekseIds[keks.dataset.tellerIndex].filter(id => id.localeCompare(keks.id) != 0);
-        tellerKekseIds[zielTellerIndex].push(keks.id);
-        keks.dataset.tellerIndex = zielTellerIndex;
-        showCookies();
-    });
-    collectionClicks += 1
-}
-
-
-// Werkzeug-Auswahl
-document.querySelectorAll('input[name="tool"]').forEach(radio => {
-    radio.addEventListener('change', () => {
+// EventListener for the Toolbox
+document.querySelectorAll("input[name='tool']").forEach(radio => {
+    radio.addEventListener("change", () => {
         currentTool = radio.value;
         if (currentTool === "move") {
-            container.style.setProperty('cursor', grabCursor, 'important');
-            document.querySelectorAll('.keks').forEach(keks => {
-                if (keks.dataset.isWhole) {
-                    keks.draggable = true;
+            circleContainer.style.cursor = grabCursor;
+            document.querySelectorAll(".cookie").forEach(cookie => {
+                if (cookie.dataset.isWhole) {
+                    cookie.draggable = true;
                 }
             });
-            document.querySelectorAll('.half_keks').forEach(keks => {
-                keks.draggable = true;
+            document.querySelectorAll(".halfCookie").forEach(cookie => {
+                cookie.draggable = true;
             });
         } else if (currentTool === "collect") {
-            kekseEinsammeln();
-            const moveRBInput = document.getElementById('moveRB').querySelector('input');
+            // When the cookies have been collected, the “move” tool should be selected.
+            collectCookies();
+            const moveRBInput = document.getElementById("moveRB").querySelector("input");
             moveRBInput.checked = true;
-            moveRBInput.dispatchEvent(new Event('change', { bubbles: true }));
+            moveRBInput.dispatchEvent(new Event("change", { bubbles: true }));
         } else {
             if (currentTool === "break") {
-                container.style.cursor = knifeCursor;
+                circleContainer.style.cursor = knifeCursor;
             } else {
-                container.style.cursor = glueCursor;
+                circleContainer.style.cursor = glueCursor;
             }
-            document.querySelectorAll('.keks').forEach(keks => {
-                keks.draggable = false;
+            document.querySelectorAll(".cookie").forEach(cookie => {
+                cookie.draggable = false;
             });
-            document.querySelectorAll('.half_keks').forEach(keks => {
-                keks.draggable = false;
+            document.querySelectorAll(".halfCookie").forEach(cookie => {
+                cookie.draggable = false;
             });
         }
     });
 });
 
-function getImageURL(variableName) {
+/**
+ * Reads the URL of the CSS variable and outputs the corresponding path.
+ *
+ * @param {String} variableName - The name of the CSS variable
+ * @returns {String} The path to the picture
+ */
+function getImageSRC(variableName) {
     return getComputedStyle(document.documentElement).getPropertyValue(variableName).replace(/url\(["']?|["']?\)/g, '');
 }
 
-
+/**
+ * Builds the WebApp user interface.
+ */
 function createScene() {
-    container.innerHTML = "";
-    tellerKekseIds = [];
+    circleContainer.innerHTML = "";
+    plateCookieIds = [];
     collectionClicks = 0;
-    gleichmaessigkeitsfehler = 0;
-    zaehlfehler = 0;
+    equalityErrors = 0;
+    countErrors = 0;
 
+    // The people are arranged in a semicircle.
     const radius = 300;
     for (let personIndex = 0; personIndex < personCount; personIndex++) {
         const angle = Math.PI * (personIndex / (personCount - 1));
@@ -205,13 +199,14 @@ function createScene() {
 
         const person = document.createElement("div");
 
-        const img = document.createElement("img");
-        img.src = getImageURL(`--person${personIndex + 1}-image`);
-        img.className = "person-img";
+        const personImg = document.createElement("img");
+        personImg.src = getImageSRC(`--person${personIndex + 1}Image`);
+        personImg.className = "personImg";
+        personImg.alt = `Person ${personIndex + 1}`
 
         const name = document.createElement("div");
         name.id = "name";
-        name.textContent = getComputedStyle(document.documentElement).getPropertyValue(`--person${personIndex + 1}-name`);
+        name.textContent = getComputedStyle(document.documentElement).getPropertyValue(`--person${personIndex + 1}Name`);
 
         person.className = "person";
         person.style.left = `${x + 360 - 60}px`;
@@ -220,66 +215,67 @@ function createScene() {
             person.style.top = `${y}px`;
         }
 
-        const teller = document.createElement("div");
-        const tellerBild = document.createElement("img");
-        const tellerImageURL = getImageURL("--plate-image");
-        tellerBild.src = tellerImageURL;
-        tellerBild.className = "tellerBild";
-        teller.className = "teller";
-        teller.id = `teller-${personIndex}`;
+        const plate = document.createElement("div");
+        const plateImage = document.createElement("img");
+        plateImage.src = getImageSRC("--plateImage");
+        plateImage.className = "plateImage";
+        plate.className = "plate";
+        plate.id = `plate-${personIndex}`;
+        plateImage.alt = `Teller ${personIndex + 1}`
 
-        tellerKekseIds[personIndex] = []
+        plateCookieIds[personIndex] = []
 
-        teller.ondrop = handleDrop;
-        teller.ondragover = (e) => e.preventDefault();
+        plate.ondrop = handleDrop;
+        plate.ondragover = (e) => e.preventDefault();
 
-        person.appendChild(img);
-        person.appendChild(teller);
+        person.appendChild(personImg);
+        person.appendChild(plate);
         person.appendChild(name);
-        teller.appendChild(tellerBild);
-        container.appendChild(person);
+        plate.appendChild(plateImage);
+        circleContainer.appendChild(person);
     }
 
-    const dose = document.createElement("div");
-    dose.className = "dose";
-    dose.id = `teller-${personCount}`;
-    container.appendChild(dose);
-    dose.ondrop = handleDrop;
-    dose.ondragover = (e) => e.preventDefault();
+    const table = document.createElement("div");
+    table.className = "table";
+    table.id = `plate-${personCount}`;
+    circleContainer.appendChild(table);
+    table.ondrop = handleDrop;
+    table.ondragover = (e) => e.preventDefault();
     if (personCount == 2) {
-        container.style.height = "200px";
-        dose.style.top = "40px";
-        if (!gridWrapper.classList.contains('twoPersonGrid')) {
-            gridWrapper.classList.add('twoPersonGrid');
+        // If there are only two people, there is no real circle arrangement.
+        circleContainer.style.height = "200px";
+        table.style.top = "40px";
+        if (!gridWrapper.classList.contains("twoPersonGrid")) {
+            gridWrapper.classList.add("twoPersonGrid");
         }
     }
     else {
-        container.style.height = "500px";
-        dose.style.top = "340px";
-        if (gridWrapper.classList.contains('twoPersonGrid')) {
-            gridWrapper.classList.remove('twoPersonGrid');
+        circleContainer.style.height = "500px";
+        table.style.top = "340px";
+        if (gridWrapper.classList.contains("twoPersonGrid")) {
+            gridWrapper.classList.remove("twoPersonGrid");
         }
     }
 
-    keksEingabe.disabled = false;
-    checkAntwortBtn.disabled = false;
-    newTaskBtn.style.display = "flex";
-    aufgabenStellung.style.display = "flex";
+    checkEqualityBtn.disabled = false;
+    cookieInput.disabled = false;
+    checkCountBtn.disabled = false;
     toolbox.style.display = "inline-block";
     configbox.style.display = "inline-block";
-    checkVerteilungBtn.style.display = "inline-block";
+    checkEqualityBtn.style.display = "inline-block";
 
-    tellerKekseIds.push([]); // fuer die Dose
+    plateCookieIds.push([]); // for the table
 
-    if (modus === "ausgleichen-verteilen") {
-        dose.style.display = "flex";
+    if (mode === "ausgleichen-verteilen") {
+        // The collection tool is only available in this mode.
+        table.style.display = "flex";
         collectRB.style.display = "flex";
-        if (!toolboxWrapper.classList.contains('anotherTool')) {
-            toolboxWrapper.classList.add('anotherTool');
+        if (!toolboxWrapper.classList.contains("anotherTool")) {
+            toolboxWrapper.classList.add("anotherTool");
         }
     }
-    if (modus === "verteilen") {
-        dose.style.display = 'flex';
+    if (mode === "verteilen") {
+        table.style.display = "flex";
         distributeKekse(true);
     } else {
         distributeKekse(false);
@@ -287,165 +283,212 @@ function createScene() {
     document.querySelectorAll("*").forEach(el => {
         el.setAttribute("draggable", "false");
     });
-    document.querySelectorAll('.keks').forEach(keks => {
-        if (keks.dataset.isWhole) {
-            keks.draggable = true;
+    document.querySelectorAll(".cookie").forEach(cookie => {
+        if (cookie.dataset.isWhole) {
+            cookie.draggable = true;
         }
     });
-    document.querySelectorAll('.half_keks').forEach(keks => {
-        keks.draggable = true;
+    document.querySelectorAll(".halfCookie").forEach(cookie => {
+        cookie.draggable = true;
     });
-    if (gridWrapper.classList.contains('checkCount')) {
-        gridWrapper.classList.remove('checkCount');
+    if (gridWrapper.classList.contains("checkCount")) {
+        gridWrapper.classList.remove("checkCount");
     }
 
-    const moveRBInput = document.getElementById('moveRB').querySelector('input');
+    personNumberButtons.forEach(button => {
+        button.disabled = true;
+    });
+
+    // The move tool should always be selected at the start.
+    const moveRBInput = document.getElementById("moveRB").querySelector("input");
     moveRBInput.checked = true;
-    moveRBInput.dispatchEvent(new Event('change', { bubbles: true }));
+    moveRBInput.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
-function distributeKekse(startOnTable) {
-    do {
-        tellerKekseIds.forEach((_, i) => tellerKekseIds[i] = []);
-        for (let i = 0; i < keksCount; i++) {
-            keksId = `keks-${i}`;
-            let tellerIndex = tellerKekseIds.length - 1;
-            if (!startOnTable) {
-                tellerIndex = Math.floor(Math.random() * personCount);
-            }
-            tellerKekseIds[tellerIndex].push(keksId);
-        }
-    } while (!checkCookieDistribution(false) || checkVictory(false, false))
+/**
+ * Add all cookies to the table.
+ */
+function collectCookies() {
+    document.querySelectorAll(".cookie, .halfCookie").forEach(cookie => {
+        const targetPlateIndex = personCount; // last list in the array is the table
+        plateCookieIds[cookie.dataset.plateIndex] = plateCookieIds[cookie.dataset.plateIndex].filter(id => id.localeCompare(cookie.id) != 0);
+        plateCookieIds[targetPlateIndex].push(cookie.id);
+        cookie.dataset.plateIndex = targetPlateIndex;
+        showCookies();
+    });
+    collectionClicks += 1
+}
 
-    for (let tellerIndex = 0; tellerIndex < personCount; tellerIndex++) {
-        const teller = document.getElementById(`teller-${tellerIndex}`);
-        for (let keksIndex = 0; keksIndex < 8; keksIndex++) {
-            const keks_wrapper = document.createElement("div");
-            keks_wrapper.className = "keks_wrapper";
-            keks_wrapper.classList.add(`number-${keksIndex}`);
+/**
+ * Distribute the cookies on the plates or place them on the table.
+ *
+ * @param {Boolean} startOnTable - Determines whether all the cookies should be on the table first
+ */
+function distributeKekse(startOnTable) {
+    // Create a new cookie distribution until no plate is overfilled and the cookies are not yet evenly distributed.
+    do {
+        plateCookieIds.forEach((_, i) => plateCookieIds[i] = []);
+        for (let i = 0; i < cookieCount; i++) {
+            cookieId = `cookie-${i}`;
+            let plateIndex = plateCookieIds.length - 1;
+            if (!startOnTable) {
+                plateIndex = Math.floor(Math.random() * personCount);
+            }
+            plateCookieIds[plateIndex].push(cookieId);
+        }
+    } while (!checkCookieDistribution(false) || checkEquality(false, false))
+
+    // Place the cookies on their plates in a circle.
+    for (let plateIndex = 0; plateIndex < personCount; plateIndex++) {
+        const plate = document.getElementById(`plate-${plateIndex}`);
+        for (let platePositionIndex = 0; platePositionIndex < MAX_COOKIES_PER_PLATE; platePositionIndex++) {
+            const cookieWrapper = document.createElement("div");
+            cookieWrapper.className = "cookieWrapper";
+            cookieWrapper.classList.add(`number-${platePositionIndex}`);
 
             const radius = 60;
             const centerX = 60;
             const centerY = 60;
-            const angle = (2 * Math.PI / 8) * keksIndex - Math.PI / 2;
-            keks_wrapper.style.left = `${centerX + (radius - 25) * Math.cos(angle) - 18}px`;
-            keks_wrapper.style.top = `${centerY + (radius - 25) * Math.sin(angle) - 18}px`;
+            const angle = (2 * Math.PI / MAX_COOKIES_PER_PLATE) * platePositionIndex - Math.PI / 2;
+            cookieWrapper.style.left = `${centerX + (radius - 25) * Math.cos(angle) - 18}px`;
+            cookieWrapper.style.top = `${centerY + (radius - 25) * Math.sin(angle) - 18}px`;
 
-            teller.appendChild(keks_wrapper);
-            if (keksIndex < tellerKekseIds[tellerIndex].length) {
-                createKeks(keksIndex, tellerIndex);
+            plate.appendChild(cookieWrapper);
+            if (platePositionIndex < plateCookieIds[plateIndex].length) {
+                createKeks(platePositionIndex, platePositionIndex, plateIndex);
             }
         }
     }
-    const dose = document.getElementById(`teller-${personCount}`);
-    for (let keksIndex = 0; keksIndex < 24; keksIndex++) {
-        const keks_wrapper = document.createElement("div");
-        keks_wrapper.className = "keks_wrapper";
-        keks_wrapper.classList.add(`number-${keksIndex}`);
 
-        keks_wrapper.style.left = `${(keksIndex % 6) * 40}px`;
-        keks_wrapper.style.top = `${Math.floor(keksIndex / 6) * 40}px`;
+    const table = document.getElementById(`plate-${personCount}`);
+    // Place the cookies on the table when they are supposed to be there.
+    for (let tablePositionIndex = 0; tablePositionIndex < MAX_COOKIES_ON_TABLE; tablePositionIndex++) {
+        const cookieWrapper = document.createElement("div");
+        cookieWrapper.className = "cookieWrapper";
+        cookieWrapper.classList.add(`number-${tablePositionIndex}`);
 
-        dose.appendChild(keks_wrapper);
-        if (keksIndex < tellerKekseIds[tellerKekseIds.length - 1].length) {
-            createKeks(keksIndex, tellerKekseIds.length - 1);
+        cookieWrapper.style.left = `${(tablePositionIndex % COOKIES_PER_ROW) * 40}px`;
+        cookieWrapper.style.top = `${Math.floor(tablePositionIndex / COOKIES_PER_ROW) * 40}px`;
+
+        table.appendChild(cookieWrapper);
+        if (tablePositionIndex < plateCookieIds[plateCookieIds.length - 1].length) {
+            createKeks(tablePositionIndex, tablePositionIndex, plateCookieIds.length - 1);
         }
     }
     showCookies();
 }
 
-function createKeks(keksIndex, tellerIndex, shouldBeHalf) {
-    const keks = document.createElement("img");
+/**
+ * Creates a cookie HTML element and adds corresponding EventListeners to it.
+ *
+ * @param {int} placePositionIndex - The total position of the cookie in the array of the plate
+ * @param {int} wapperIndex - The position of the cookie on the plate
+ * @param {int} plateIndex - The index of the plate on which the cookie is placed
+ * @param {Boolean} shouldBeHalf - Determines whether a half cookie should be created.
+ */
+function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) {
+    const cookie = document.createElement("img");
+    cookie.alt = `cookie-${cookieImageNumber}`;
     if (shouldBeHalf) {
-        keks.src = getImageURL("--cookieHalfRight-image");
-        keks.className = "half_keks";
-        tellerKekseIds[tellerIndex].splice(keksIndex, 0, `keks-${cookieImageNumber}`);
+        // Create a half cookie.
+        cookie.src = getImageSRC("--cookieHalfRightImage");
+        cookie.className = "halfCookie";
+        plateCookieIds[plateIndex].splice(placePositionIndex, 0, `cookie-${cookieImageNumber}`);
         cookieImageNumber += 1;
     } else {
-        keks.src = getImageURL("--cookie-image");
-        keks.className = "keks";
+        cookie.src = getImageSRC("--cookieImage");
+        cookie.className = "cookie";
     }
-    keks.id = tellerKekseIds[tellerIndex][keksIndex];
-    keks.draggable = true;
-    keks.dataset.tellerIndex = tellerIndex;
-    keks.dataset.isWhole = !shouldBeHalf;
+    cookie.id = plateCookieIds[plateIndex][placePositionIndex];
+    cookie.draggable = true;
+    cookie.dataset.plateIndex = plateIndex;
+    cookie.dataset.isWhole = !shouldBeHalf;
 
-    keks.addEventListener('click', (e) => {
-        if (currentTool === 'move') {
-            if (keks.classList.contains('markiert')) {
-                keks.classList.remove('markiert');
+    cookie.addEventListener("click", (e) => {
+        if (currentTool === "move") {
+            if (cookie.classList.contains("marked")) {
+                cookie.classList.remove("marked");
             } else {
-                keks.classList.add('markiert');
+                cookie.classList.add("marked");
             }
-        } else if (currentTool === 'break') {
-            if (keks.dataset.isWhole === "false") {
+        } else if (currentTool === "break") {
+            // If the cookie has not yet been broken, break the cookie in half.
+            if (cookie.dataset.isWhole === "false") {
                 alert("Ein halber Keks kann nicht noch einmal gebrochen werden!");
             } else {
-                const keksIndexNeu = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId === keks.id);
-                createKeks(keksIndexNeu + 1, keks.dataset.tellerIndex, true);
-                keks.dataset.isWhole = false;
-                keks.src = getImageURL("--cookieHalfLeft-image");
-                keks.className = "half_keks";
+                const placePositionIndexNew = plateCookieIds[cookie.dataset.plateIndex].findIndex(cookieId => cookieId === cookie.id);
+                createKeks(placePositionIndexNew + 1, wrapperIndex, cookie.dataset.plateIndex, true);
+                cookie.dataset.isWhole = false;
+                cookie.src = getImageSRC("--cookieHalfLeftImage");
+                cookie.className = "halfCookie";
                 showCookies();
             }
-        } else if (currentTool === 'merge') {
-            if (keks.dataset.isWhole === "false") {
-                const cookieWrapper = keks.parentElement;
-                const otherHalf = Array.from(cookieWrapper.children).find(cookieHalf => cookieHalf !== keks);
-                const otherHalfIndex = tellerKekseIds[keks.dataset.tellerIndex].findIndex(keksId => keksId === otherHalf.id);
-                tellerKekseIds[keks.dataset.tellerIndex].splice(otherHalfIndex, 1);
-                cookieWrapper.removeChild(otherHalf);
-                keks.dataset.isWhole = true;
-                keks.src = `img/cookie.png`;
-                keks.className = "keks";
-                keks.style.left = '0px';
-                keks.style.top = '0px';
-                showCookies();
+        } else if (currentTool === "merge") {
+            // If possible, join two cookie halves together again.
+            if (cookie.dataset.isWhole === "false") {
+                const cookieWrapper = cookie.parentElement;
+                const otherHalf = Array.from(cookieWrapper.children).find(cookieHalf => cookieHalf !== cookie);
+                if (otherHalf !== undefined) {
+                    const otherHalfIndex = plateCookieIds[cookie.dataset.plateIndex].findIndex(cookieId => cookieId === otherHalf.id);
+                    plateCookieIds[cookie.dataset.plateIndex].splice(otherHalfIndex, 1);
+                    cookieWrapper.removeChild(otherHalf);
+                    cookie.dataset.isWhole = true;
+                    cookie.src = `img/cookie.png`;
+                    cookie.className = "cookie";
+                    cookie.style.left = "0px";
+                    cookie.style.top = "0px";
+                    showCookies();
+                } else {
+                    alert("Lege erst zwei halbe Kekse nebeneinander, um sie dann zusammenzufügen!");
+                }
             }
         }
     });
 
-    // Drag Start
-    keks.addEventListener('dragstart', (e) => {
-        if (currentTool === 'move') {
+    cookie.addEventListener("dragstart", (e) => {
+        if (currentTool === "move") {
+            // Pass the moved cookie its ID and the ID of the starting plate.
             e.dataTransfer.setData("text/plain", JSON.stringify({
-                id: keks.id,
-                from: keks.dataset.tellerIndex
+                id: cookie.id,
+                from: cookie.dataset.plateIndex
             }));
         }
-
-
     });
-
-    const keks_wrapper = document.getElementById(`teller-${tellerIndex}`).querySelector(`.number-${keksIndex}`);
-    keks_wrapper.appendChild(keks);
+    const cookieWrapper = document.getElementById(`plate-${plateIndex}`).querySelector(`.number-${wrapperIndex}`);
+    cookieWrapper.appendChild(cookie);
 }
 
+/**
+ * Handle when a cookie is released.
+ *
+ * @param {DragEvent} e - The event object that is passed from the browser.
+ */
 function handleDrop(e) {
     e.preventDefault();
     const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const movingKeksId = data.id;
+    const movingCookieId = data.id;
     const startTellerIndex = data.from;
-    const zielTellerIndex = parseInt(e.currentTarget.id.split("-")[1], 10);
-    if (startTellerIndex == zielTellerIndex) return;
+    const targetPlateIndex = parseInt(e.currentTarget.id.split("-")[1], 10);
 
-    const movingKeks = document.getElementById(movingKeksId);
-    const fromTeller = document.getElementById(`teller-${startTellerIndex}`);
-    const toTeller = e.currentTarget;
+    // If the cookie is not moved to a new plate, nothing should happen.
+    if (startTellerIndex == targetPlateIndex) return;
 
-    markedCookies = document.querySelectorAll('.keks.markiert, .half_keks.markiert');
+    const movingCookie = document.getElementById(movingCookieId);
+
+    markedCookies = document.querySelectorAll(".cookie.marked, .halfCookie.marked");
     if (markedCookies.length > 1) {
+        // Move several cookies at the same time.
         for (let i = 0; i < markedCookies.length; i++) {
             currentCookie = markedCookies[i];
-            tellerKekseIds[currentCookie.dataset.tellerIndex] = tellerKekseIds[currentCookie.dataset.tellerIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
-            tellerKekseIds[zielTellerIndex].push(currentCookie.id);
+            plateCookieIds[currentCookie.dataset.plateIndex] = plateCookieIds[currentCookie.dataset.plateIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
+            plateCookieIds[targetPlateIndex].push(currentCookie.id);
             if (checkCookieDistribution(true)) {
-                currentCookie.dataset.tellerIndex = zielTellerIndex;
-                currentCookie.classList.remove('markiert');
+                currentCookie.dataset.plateIndex = targetPlateIndex;
+                currentCookie.classList.remove("marked");
                 showCookies()
             } else {
-                tellerKekseIds[zielTellerIndex] = tellerKekseIds[zielTellerIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
-                tellerKekseIds[currentCookie.dataset.tellerIndex].push(currentCookie.id);
+                plateCookieIds[targetPlateIndex] = plateCookieIds[targetPlateIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
+                plateCookieIds[currentCookie.dataset.plateIndex].push(currentCookie.id);
                 if (i == 0) {
                     alert("Der Zielteller ist schon voll!");
                 } else {
@@ -455,14 +498,15 @@ function handleDrop(e) {
             }
         }
     } else {
-        tellerKekseIds[startTellerIndex] = tellerKekseIds[startTellerIndex].filter(id => id.localeCompare(movingKeksId) != 0);
-        tellerKekseIds[zielTellerIndex].push(movingKeksId);
+        // Move just one cookie.
+        plateCookieIds[startTellerIndex] = plateCookieIds[startTellerIndex].filter(id => id.localeCompare(movingCookieId) != 0);
+        plateCookieIds[targetPlateIndex].push(movingCookieId);
         if (checkCookieDistribution(true)) {
-            movingKeks.dataset.tellerIndex = zielTellerIndex;
+            movingCookie.dataset.plateIndex = targetPlateIndex;
             showCookies()
         } else {
-            tellerKekseIds[zielTellerIndex] = tellerKekseIds[zielTellerIndex].filter(id => id.localeCompare(movingKeksId) != 0);
-            tellerKekseIds[startTellerIndex].push(movingKeksId);
+            plateCookieIds[targetPlateIndex] = plateCookieIds[targetPlateIndex].filter(id => id.localeCompare(movingCookieId) != 0);
+            plateCookieIds[startTellerIndex].push(movingCookieId);
             alert("Der Zielteller ist schon voll!");
 
         }
@@ -471,136 +515,169 @@ function handleDrop(e) {
     hideEvaluation();
 }
 
-function checkVictory(withMessage, withHalfCookies) {
+/**
+ * Check that there are the same number of cookies on all plates.
+ *
+ * @param {Boolean} withMessage - Determines whether a message is to be issued.
+ * @param {Boolean} withHalfCookies - Determines whether half cookies must be taken into account.
+ * @returns {Boolean} - Is the distribution equal?
+ */
+function checkEquality(withMessage, withHalfCookies) {
     const counts = calculateCookieCounts(withHalfCookies);
     const allEqual = counts.slice(0, -1).every(count => count == counts[0]);
+    // sum to check whether all the cookies have been distributed.
     const sum = counts.slice(0, -1).reduce((acc, value) => acc + value, 0);
-    if (allEqual && sum == keksCount) {
+    if (allEqual && sum == cookieCount) {
         if (withMessage) {
-            eingabeContainer.style.display = "block";
-            document.querySelectorAll('.keks').forEach(keks => {
-                if (keks.dataset.isWhole) {
-                    keks.draggable = false;
+            cookieNumberInputContainer.style.display = "block";
+            document.querySelectorAll(".cookie").forEach(cookie => {
+                if (cookie.dataset.isWhole) {
+                    cookie.draggable = false;
                 }
             });
-            document.querySelectorAll('.half_keks').forEach(keks => {
-                keks.draggable = false;
+            document.querySelectorAll(".halfCookie").forEach(cookie => {
+                cookie.draggable = false;
             });
-            const gridWrapper = document.getElementById("grid-wrapper");
-            if (!gridWrapper.classList.contains('checkCount')) {
-                gridWrapper.classList.add('checkCount');
+            if (!gridWrapper.classList.contains("checkCount")) {
+                gridWrapper.classList.add("checkCount");
             }
+            checkEqualityBtn.disabled = true;
         }
         return true;
     } else {
         if (withMessage) {
             if (!allEqual) {
-                let personAindex = null;
-                let personBindex = null;
+                let person1index = null;
+                let person2index = null;
 
+                // Search for two children who have a different number of cookies.
                 for (let i = 0; i < counts.length - 1; i++) {
                     for (let j = i + 1; j < counts.length - 1; j++) {
-                        if (counts[i] !== counts[j]) {
-                            personAindex = i;
-                            personBindex = j;
+                        if (counts[i] != counts[j]) {
+                            person1index = i;
+                            person2index = j;
                         }
                     }
                 }
 
                 let name1, name2;
-                let kekszahl1, kekszahl2;
+                let cookieNumber1, cookieNumber2;
 
-                name1 = namen[personAindex];
-                name2 = namen[personBindex];
+                name1 = getComputedStyle(document.documentElement).getPropertyValue(`--person${person1index + 1}Name`);
+                name2 = getComputedStyle(document.documentElement).getPropertyValue(`--person${person2index + 1}Name`);
 
-                if (counts[personAindex] === 1) kekszahl1 = "1 Keks";
-                else kekszahl1 = `${counts[personAindex]} Kekse`;
+                if (counts[person1index] == 1) cookieNumber1 = "1 Keks";
+                else cookieNumber1 = `${counts[person1index]} Kekse`;
 
-                if (counts[personBindex] === 1) kekszahl2 = "1 Keks";
-                else kekszahl2 = `${counts[personBindex]} Kekse`;
+                if (counts[person2index] == 1) cookieNumber2 = "1 Keks";
+                else cookieNumber2 = `${counts[person2index]} Kekse`;
 
-                message.textContent = `Leider falsch. Du solltest die Kekse gerecht verteilen. ${name1} hat ${kekszahl1} und ${name2} hat ${kekszahl2}. Das ist nicht gerecht. Versuche es noch einmal.`;
+                message.textContent = `${name1} hat ${cookieNumber1} und ${name2} hat ${cookieNumber2}. Das ist nicht gerecht. Versuche es noch einmal.`;
             } else {
-                message.textContent = `Leider falsch. Du solltest alle Kekse gerecht verteilen. Aktuell liegen noch Kekse auf dem Tisch. Versuche es noch einmal.`;
+                message.textContent = `Es liegen noch Kekse auf dem Tisch. Du sollst alle Kekse verteilen. Versuche es noch einmal.`;
             }
-            gleichmaessigkeitsfehler += 1;
-            message.style.display = "block";
-            message.style.color = "var(--messageWrong-font-color)";
-            message.style.border = "0.15rem solid var(--messageWrong-border-color)";
+            equalityErrors += 1;
+            messageContainer.style.display = "block";
+            messageContainer.style.color = "var(--messageWrongFontColor)";
+            messageContainer.style.border = "0.15rem solid var(--messageWrongBorderColor)";
+            newTaskBtn.style.display = "none";
         }
         return false;
     }
 }
 
+/**
+ * Sends the data to the server.
+ */
 function sendData() {
-    const name = nameEingabe.value.trim();
-
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('mode', modus);
-    formData.append('withHalf', isAdvanced);
-    formData.append('gFehler', gleichmaessigkeitsfehler);
-    formData.append('zFehler', zaehlfehler);
-    formData.append('collectionClicks', collectionClicks);
 
-    fetch('writeData.php', {
-        method: 'POST',
+    const identifier = params.get("kuerzel");
+    if (identifier) {
+        formData.append("identifier", identifier);
+    } else {
+        formData.append("identifier", "");
+    }
+    formData.append("mode", mode);
+    formData.append("withHalf", isAdvanced);
+    formData.append("equalityErrors", equalityErrors);
+    formData.append("countErrors", countErrors);
+    formData.append("collectionClicks", collectionClicks);
+
+    fetch("writeData.php", {
+        method: "POST",
         body: formData
     }).then(r => r.text())
         .then(console.log)
         .catch(console.error);
 }
 
-checkVerteilungBtn.onclick = () => {
-    checkVictory(true, true);
-};
-
-checkAntwortBtn.onclick = () => {
-    const eingabe = parseFloat(keksEingabe.value);
-    if (eingabe == kekseProPerson) {
-        message.style.display = "block";
-        message.style.color = "var(--messageRight-font-color)";
-        message.style.border = "0.15rem solid var(--messageRight-border-color)";
+/**
+ * Checks whether the entered number corresponds to the mean.
+ * 
+ * @returns {Boolean} - Is the number correct?
+ */
+function checkCount() {
+    const eingabe = parseFloat(cookieInput.value);
+    if (eingabe == cookiesPerPerson) {
+        messageContainer.style.display = "block";
+        messageContainer.style.color = "var(--messageRightFontColor)";
+        messageContainer.style.border = "0.15rem solid var(--messageRightBorderColor)";
         message.textContent = "Aufgabe gelöst!";
-        keksEingabe.disabled = true;
-        checkAntwortBtn.disabled = true;
+        newTaskBtn.style.display = "inline-block";
+
+        cookieInput.disabled = true;
+        checkCountBtn.disabled = true;
+        personNumberButtons.forEach(button => {
+            button.disabled = false;
+            button.classList.remove("inactive");
+        });
+
         sendData();
     } else {
-        message.style.display = "block";
-        message.style.color = "var(--messageWrong-font-color)";
-        message.style.border = "0.15rem solid var(--messageWrong-border-color)";
+        messageContainer.style.display = "block";
+        messageContainer.style.color = "var(--messageWrongFontColor)";
+        messageContainer.style.border = "0.15rem solid var(--messageWrongBorderColor)";
         message.textContent = "Leider falsch. Schau es dir nochmal an.";
-        zaehlfehler += 1;
+        newTaskBtn.style.display = "none";
+        countErrors += 1;
     }
 };
 
+/**
+ * Displays the new cookie distribution in the GUI.
+ */
 function showCookies() {
-    const gespeicherteKekse = [];
-    for (let keksIndex = 0; keksIndex < cookieImageNumber; keksIndex++) {
-        const keks = document.getElementById(`keks-${keksIndex}`);
-        if (keks != null) {
-            gespeicherteKekse.push(keks);     // Speichere Referenz
-            keks.remove();
+    // Save the cookie references so that they can still be accessed after removal.
+    const savedCookies = [];
+    for (let cookieIndex = 0; cookieIndex < cookieImageNumber; cookieIndex++) {
+        const cookie = document.getElementById(`cookie-${cookieIndex}`);
+        if (cookie != null) {
+            savedCookies.push(cookie);
+            cookie.remove();
         }
     }
-    for (let tellerIndex = 0; tellerIndex < tellerKekseIds.length; tellerIndex++) {
-        for (let keksIndex = 0; keksIndex < tellerKekseIds[tellerIndex].length; keksIndex++) {
-            const keks = gespeicherteKekse.find(keks => keks.id === tellerKekseIds[tellerIndex][keksIndex]);
-            for (let positionIndex = 0; positionIndex < tellerKekseIds[tellerIndex].length; positionIndex++) {
-                const keks_wrapper = document.getElementById(`teller-${tellerIndex}`).querySelector(`.number-${positionIndex}`);
-                const keks_wrapper_children = keks_wrapper.children;
-                if (keks_wrapper_children.length == 0) {
-                    if (keks.dataset.isWhole === "false") {
-                        keks.src = `img/cookie_left.png`;
-                        keks.style.left = '-4px';
+
+    for (let plateIndex = 0; plateIndex < plateCookieIds.length; plateIndex++) {
+        for (let cookieIndex = 0; cookieIndex < plateCookieIds[plateIndex].length; cookieIndex++) {
+            const cookie = savedCookies.find(cookie => cookie.id === plateCookieIds[plateIndex][cookieIndex]);
+            for (let positionIndex = 0; positionIndex < plateCookieIds[plateIndex].length; positionIndex++) {
+                const cookieWrapper = document.getElementById(`plate-${plateIndex}`).querySelector(`.number-${positionIndex}`);
+                const cookieWrapper_children = cookieWrapper.children;
+                if (cookieWrapper_children.length == 0) {
+                    // For cookie halves, the left half should be displayed first.
+                    if (cookie.dataset.isWhole === "false") {
+                        cookie.src = `img/cookie_left.png`;
+                        cookie.style.left = "0px";
+                        cookie.style.top = "-1px";
                     }
-                    keks_wrapper.appendChild(keks);
+                    cookieWrapper.appendChild(cookie);
                     break;
-                } else if (keks_wrapper_children.length == 1 && keks_wrapper_children[0].dataset.isWhole === "false" && keks.dataset.isWhole === "false") {
-                    keks.src = `img/cookie_right.png`;
-                    keks_wrapper.appendChild(keks);
-                    keks.style.left = '14px';
-                    keks.style.top = '2px';
+                } else if (cookieWrapper_children.length == 1 && cookieWrapper_children[0].dataset.isWhole === "false" && cookie.dataset.isWhole === "false") {
+                    cookie.src = `img/cookie_right.png`;
+                    cookieWrapper.appendChild(cookie);
+                    cookie.style.left = "18px";
+                    cookie.style.top = "1px";
                     break;
                 }
             }
@@ -608,23 +685,35 @@ function showCookies() {
     }
 }
 
+/**
+ * Check that the maximum number of cookies is not exceeded on all plates.
+ * 
+ * @param {Boolean} withHalfCookies - Determines whether half cookies must be taken into account.
+ * @returns {Boolean} - Is the cookie distribution valid?
+ */
 function checkCookieDistribution(withHalfCookies) {
     const counts = calculateCookieCounts(withHalfCookies);
-    if (counts.slice(0, -1).some(count => count > 8)) {
+    if (counts.slice(0, -1).some(count => count > MAX_COOKIES_PER_PLATE)) {
         return false;
     }
     return true;
 }
 
+/**
+ * Count the number of cookies on each plate.
+ * 
+ * @param {Boolean} withHalfCookies - Determines whether half cookies must be taken into account.
+ * @returns {intArray} - The number of cookies on each plate.
+ */
 function calculateCookieCounts(withHalfCookies) {
     let counts = []
     if (withHalfCookies) {
-        for (let tellerIndex = 0; tellerIndex < tellerKekseIds.length; tellerIndex++) {
+        for (let plateIndex = 0; plateIndex < plateCookieIds.length; plateIndex++) {
             sum = 0;
-            for (let keksIndex = 0; keksIndex < tellerKekseIds[tellerIndex].length; keksIndex++) {
-                const keksId = tellerKekseIds[tellerIndex][keksIndex];
-                const keks = document.getElementById(keksId);
-                if (keks.dataset.isWhole === "true") {
+            for (let cookieIndex = 0; cookieIndex < plateCookieIds[plateIndex].length; cookieIndex++) {
+                const cookieId = plateCookieIds[plateIndex][cookieIndex];
+                const cookie = document.getElementById(cookieId);
+                if (cookie.dataset.isWhole === "true") {
                     sum += 1;
                 } else {
                     sum += 0.5;
@@ -633,101 +722,122 @@ function calculateCookieCounts(withHalfCookies) {
             counts.push(sum);
         }
     } else {
-        counts = tellerKekseIds.map(teller => teller.length);
+        counts = plateCookieIds.map(plate => plate.length);
     }
     return counts;
 }
 
+/**
+ * Hides the feedback messages.
+ */
 function hideEvaluation() {
-    message.style.display = "none";
-    eingabeContainer.style.display = "none";
-    keksEingabe.value = "";
+    messageContainer.style.display = "none";
+    cookieNumberInputContainer.style.display = "none";
+    cookieInput.value = "";
 }
 
-function determineCookieMultiplikator() {
-    let minKekseMultiplikator = 0;
-    let maxKekseMultiplikator = 0;
+/**
+ * Determines the number of cookies per person based on the specified cookie range.
+ * 
+ * @returns {float} - The number of cookies per person
+ */
+function determineCookieMultiplier() {
+    let minKekseMultiplier = 0;
+    let maxKekseMultiplier = 0;
     if (isAdvanced) {
-        for (let totalCookies = minAnzahlKekse; totalCookies <= maxAnzahlKekse; totalCookies++) {
-            let perPerson = totalCookies / personCount;
+        // For the mode with half cookies
+
+        for (let totalCookies = minCookieNumber; totalCookies <= maxCookieNumber; totalCookies++) {
+            let cookiesPerPerson = totalCookies / personCount;
             if (Number.isInteger(perPerson * 2)) {
-                if (minKekseMultiplikator == 0 || perPerson < minKekseMultiplikator) minKekseMultiplikator = perPerson;
-                if (maxKekseMultiplikator == 0 || perPerson > maxKekseMultiplikator) maxKekseMultiplikator = perPerson;
+                if (minKekseMultiplier == 0 || perPerson < minKekseMultiplier) minKekseMultiplier = cookiesPerPerson;
+                if (maxKekseMultiplier == 0 || perPerson > maxKekseMultiplier) maxKekseMultiplier = cookiesPerPerson;
             }
         }
-        if (minKekseMultiplikator == 0 && maxKekseMultiplikator == 0) {
+        if (minKekseMultiplier == 0 && maxKekseMultiplier == 0) {
             if (params.has("anzahl-kekse")) {
-                alert(`Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * 7.5, 20)}] gesetzt.`);
+                alert(`Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 0.5), MAX_COOKIE_NUMBER)}] gesetzt.`);
             }
-            minKekseMultiplikator = 0.5;
-            maxKekseMultiplikator = Math.min(7.5, Math.floor(20 * 2 / personCount) / 2)
+            minKekseMultiplier = 0.5;
+            maxKekseMultiplier = Math.min(MAX_COOKIES_PER_PLATE - 0.5, Math.floor(MAX_COOKIE_NUMBER * 2 / personCount) / 2)
         }
-        if (minKekseMultiplikator == 0) {
+        if (minKekseMultiplier == 0) {
             if (params.has("anzahl-kekse")) {
                 alert(`Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 0.5} gesetzt.`);
             }
-            minKekseMultiplikator = Math.max(minKekseMultiplikator, 0.5);
-            maxKekseMultiplikator = Math.max(maxKekseMultiplikator, 0.5);
+            minKekseMultiplier = Math.max(minKekseMultiplier, 0.5);
+            maxKekseMultiplier = Math.max(maxKekseMultiplier, 0.5);
         }
-        if (maxKekseMultiplikator > 7.5) {
+        if (maxKekseMultiplier > MAX_COOKIES_PER_PLATE - 0.5) {
             if (params.has("anzahl-kekse")) {
-                alert(`Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7.5, 20)} gesetzt.`);
+                alert(`Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 0.5), MAX_COOKIE_NUMBER)} gesetzt.`);
             }
-            minKekseMultiplikator = Math.min(minKekseMultiplikator, 7.5);
-            maxKekseMultiplikator = Math.min(maxKekseMultiplikator, 7.5);
+            minKekseMultiplier = Math.min(minKekseMultiplier, MAX_COOKIES_PER_PLATE - 0.5);
+            maxKekseMultiplier = Math.min(maxKekseMultiplier, MAX_COOKIES_PER_PLATE - 0.5);
         }
-        return Math.floor(Math.random() * ((maxKekseMultiplikator - minKekseMultiplikator) * 2 + 1)) / 2 + minKekseMultiplikator;
+        return Math.floor(Math.random() * ((maxKekseMultiplier - minKekseMultiplier) * 2 + 1)) / 2 + minKekseMultiplier;
     }
-    for (let totalCookies = minAnzahlKekse; totalCookies <= maxAnzahlKekse; totalCookies++) {
+
+    // For the mode without half cookies.
+
+    for (let totalCookies = minCookieNumber; totalCookies <= maxCookieNumber; totalCookies++) {
         let perPerson = totalCookies / personCount;
         if (Number.isInteger(perPerson)) {
-            if (minKekseMultiplikator == 0 || perPerson < minKekseMultiplikator) minKekseMultiplikator = perPerson;
-            if (maxKekseMultiplikator == 0 || perPerson > maxKekseMultiplikator) maxKekseMultiplikator = perPerson;
+            if (minKekseMultiplier == 0 || perPerson < minKekseMultiplier) minKekseMultiplier = perPerson;
+            if (maxKekseMultiplier == 0 || perPerson > maxKekseMultiplier) maxKekseMultiplier = perPerson;
         }
     }
-    if (minKekseMultiplikator == 0 && maxKekseMultiplikator == 0) {
+    if (minKekseMultiplier == 0 && maxKekseMultiplier == 0) {
         if (params.has("anzahl-kekse")) {
-            alert(`Fuer die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * 7, 20)}] gesetzt.`);
+            alert(`Fuer die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 1), MAX_COOKIE_NUMBER)}] gesetzt.`);
         }
-        minKekseMultiplikator = 1;
-        maxKekseMultiplikator = Math.min(7, Math.floor(20 / personCount));
+        minKekseMultiplier = 1;
+        maxKekseMultiplier = Math.min(MAX_COOKIES_PER_PLATE - 1, Math.floor(MAX_COOKIE_NUMBER / personCount));
     }
-    if (minKekseMultiplikator == 0) {
+    if (minKekseMultiplier == 0) {
         if (params.has("anzahl-kekse")) {
             alert(`Fuer die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 1} gesetzt.`);
         }
-        minKekseMultiplikator = Math.max(minKekseMultiplikator, 1);
-        maxKekseMultiplikator = Math.max(maxKekseMultiplikator, 1);
+        minKekseMultiplier = Math.max(minKekseMultiplier, 1);
+        maxKekseMultiplier = Math.max(maxKekseMultiplier, 1);
     }
-    if (maxKekseMultiplikator > 7) {
+    if (maxKekseMultiplier > MAX_COOKIES_PER_PLATE - 1) {
         if (params.has("anzahl-kekse")) {
-            alert(`Fuer die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * 7, 20)} gesetzt.`);
+            alert(`Fuer die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 1), MAX_COOKIE_NUMBER)} gesetzt.`);
         }
-        minKekseMultiplikator = Math.min(minKekseMultiplikator, 7);
-        maxKekseMultiplikator = Math.min(maxKekseMultiplikator, 7);
+        minKekseMultiplier = Math.min(minKekseMultiplier, MAX_COOKIES_PER_PLATE - 1);
+        maxKekseMultiplier = Math.min(maxKekseMultiplier, MAX_COOKIES_PER_PLATE - 1);
     }
-    return Math.floor(Math.random() * (maxKekseMultiplikator - minKekseMultiplikator + 1)) + minKekseMultiplikator;
+    return Math.floor(Math.random() * (maxKekseMultiplier - minKekseMultiplier + 1)) + minKekseMultiplier;
 }
 
-function changePerson(geklickterButton, i) {
-    personCount = i;
+/**
+ * Changes the number of people and highlights the selection.
+ * 
+ * @param {HTMLButtonElement} geklickterButton - The clicked number button by the user.
+ * @param {int} personNumber - The selected person number by the user.
+ */
+function changePerson(clickedButton, personNumber) {
+    personCount = personNumber;
 
-    const buttons = document.querySelectorAll('.image-button');
-    buttons.forEach(button => {
-        if (button === geklickterButton) {
-            button.classList.remove('inactive');
+    personNumberButtons.forEach(button => {
+        if (button === clickedButton) {
+            button.classList.remove("inactive");
         } else {
-            button.classList.add('inactive');
+            button.classList.add("inactive");
         }
     });
     createNewTask();
 }
 
+/**
+ * Starts a new task in which the new number of cookies is determined and the entire GUI is refreshed.
+ */
 function createNewTask() {
-    const keksMultiplikator = determineCookieMultiplikator();
-    keksCount = Math.floor(personCount * keksMultiplikator);
-    kekseProPerson = keksCount / personCount
-    cookieImageNumber = keksCount;
+    const cookieMultiplier = determineCookieMultiplier();
+    cookieCount = Math.floor(personCount * cookieMultiplier);
+    cookiesPerPerson = cookieCount / personCount
+    cookieImageNumber = cookieCount;
     hideEvaluation();
     createScene();
 }

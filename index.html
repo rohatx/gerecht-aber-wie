@@ -9,63 +9,58 @@
 </head>
 
 <body>
-    <div id="grid-wrapper">
-        <h1 id="anzahlPersonen">Anzahl Personen</h1>
+    <div id="gridWrapper">
 
         <fieldset id="config" class="config">
-            <div id="config-grid-wrapper">
-                <h3 id="anzahlPersonenSubtitle">W&auml;hle die Anzahl der Personen aus!</h3>
+            <div id="configGridWrapper">
+                <h3 id="personNumberTitle">W&auml;hle die Anzahl der Personen aus!</h3>
 
-                <button class="image-button" id="two-persons" onclick="changePerson(this,2)">
+                <button class="personNumberButton" id="twoPersons" onclick="changePerson(this,2)">
                     <img alt="Auswahl 2 Personen">
                 </button>
-                <button class="image-button" id="three-persons" onclick="changePerson(this,3)">
+                <button class="personNumberButton" id="threePersons" onclick="changePerson(this,3)">
                     <img alt="Auswahl 3 Personen">
                 </button>
-                <button class="image-button" id="four-persons" onclick="changePerson(this,4)">
+                <button class="personNumberButton" id="fourPersons" onclick="changePerson(this,4)">
                     <img alt="Auswahl 4 Personen">
                 </button>
-                <button class="image-button" id="five-persons" onclick="changePerson(this,5)">
+                <button class="personNumberButton" id="fivePersons" onclick="changePerson(this,5)">
                     <img alt="Auswahl 5 Personen">
                 </button>
-                <button class="image-button" id="six-persons" onclick="changePerson(this,6)">
+                <button class="personNumberButton" id="sixPersons" onclick="changePerson(this,6)">
                     <img alt="Auswahl 6 Personen">
                 </button>
 
-                <label id="nameInputWrapper">
-                    <div id="nameTag">Dein Name:</div>
-                    <input type="text" id="nameInput">
-                </label>
-                <button class="button" id="newTaskBtn" onclick="createNewTask()">&gt; neue Aufgabe &lt;</button>
+                <h3 id="taskTitle">Verteile die Kekse gerecht an alle Personen!</h3>
+
             </div>
         </fieldset>
 
         <fieldset id="toolbox" class="toolbox">
             <legend>Toolbox</legend>
             <form id="toolboxForm">
-                <div id="toolbox-grid-wrapper">
+                <div id="toolboxGridWrapper">
                     <label id="moveRB">
                         <input type="radio" class="radio" name="tool" value="move" checked>
-                        <div class="img-wrapper" id="move-img-wrapper"><img id="moveIMG" src="img/keksSchieben.png"
-                                alt="Keks verschieben">
-                            <div>Tipp: Kurz auf Kekse klicken, um mehrere Kekse zu bewegen.</div>
+                        <div class="imgWrapper" id="moveImgWrapper"><img id="moveIMG" alt="Keks verschieben">
+                            <div>Hinweis: Klicke kurz auf die Kekse, um mehrere gleichzeitig zu bewegen.</div>
                         </div>
                     </label>
                     <label id="breakRB">
                         <input type="radio" class="radio" name="tool" value="break">
-                        <div class="img-wrapper" id="break-img-wrapper">
+                        <div class="imgWrapper" id="breakImgWrapper">
                             <img id="breakIMG" alt="Keks zerbrechen">
                         </div>
                     </label>
                     <label id="mergeRB">
                         <input type="radio" class="radio" name="tool" value="merge">
-                        <div class="img-wrapper" id="merge-img-wrapper">
+                        <div class="imgWrapper" id="mergeImgWrapper">
                             <img id="mergeIMG" alt="Keks zusammenf&uuml;gen">
                         </div>
                     </label>
                     <label id="collectRB">
                         <input type="radio" class="radio" name="tool" value="collect">
-                        <div class="img-wrapper" id="collect-img-wrapper">
+                        <div class="imgWrapper" id="collectImgWrapper">
                             <img id="collectIMG" alt="Kekse einsammeln">
                         </div>
                     </label>
@@ -74,22 +69,24 @@
         </fieldset>
 
 
-        <h1 id="aufgabenstellung">Verteile die Kekse gerecht an alle Personen!</h1>
+        <h1 id="headline">Gerecht, aber wie?</h1>
 
-        <div id="circle-container">
+        <div id="circleContainer">
         </div>
 
-        <button class="button" id="checkVerteilungBtn">&gt; Verteilung Pr&uuml;fen &lt;</button>
+        <button class="button" id="checkEqualityBtn" onclick="checkEquality(true, true)">Verteilung
+            Pr&uuml;fen</button>
 
-        <div id="message"></div>
-        <div id="eingabeContainer">
+        <div id="messageContainer">
+            <div id="message"></div>
+            <button class="button" id="newTaskBtn" onclick="createNewTask()">neue Aufgabe</button>
+        </div>
+        <div id="cookieNumberInputContainer">
             Richtig! Jede Person hat jetzt die gleiche Anzahl an Keksen. Wie viele Kekse hat jeder?
-            <input type="number" id="keksEingabe" min="0">
-            <button class="button" id="checkAntwortBtn">&gt; Anzahl pr&uuml;fen &lt;</button>
+            <input type="number" id="cookieInput" min="0">
+            <button class="button" id="checkCountBtn" onclick="checkCount()">Anzahl pr&uuml;fen</button>
 
         </div>
-
-
     </div>
 
 

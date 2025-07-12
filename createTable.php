@@ -1,27 +1,55 @@
 <?php
-$csvDatei = 'stats.csv';
+// Get the identifier from the URL
+$identifier = isset($_GET["kuerzel"]) ? trim($_GET["kuerzel"]) : null;
 
-if (!file_exists($csvDatei)) {
-    echo "CSV-Datei nicht gefunden.";
+// Open File
+$csvfile = "stats.csv";
+if (!file_exists($csvfile)) {
+    echo "CSV-file nicht gefunden.";
     exit;
 }
 
-$zeilen = [];
-if (($handle = fopen($csvDatei, 'r')) !== false) {
-    $ersteZeile = true;
+// Read File
+$identifierData = null;
+$sums = null;
+if (($handle = fopen($csvfile, "r")) !== false) {
+    $firstRow = true;
     while (($daten = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
-        // Entferne UTF-8 BOM aus der ersten Zelle (nur bei der ersten Zeile notwendig)
+        // Remove UTF-8 BOM from the first cell.
         if (isset($daten[0])) {
             $daten[0] = preg_replace('/^\xEF\xBB\xBF/', '', $daten[0]);
         }
-        if ($ersteZeile) {
-            // Ueberspringe die CSV-Kopfzeile
-            $ersteZeile = false;
+
+        if ($firstRow) {
+            $sums = array_fill(0, count($daten)-1, 0);
+            $firstRow = false;
             continue;
         }
-        $zeilen[] = $daten;
+
+        if ($identifier) {
+            if (trim($daten[0]) === $identifier) {
+                $identifierData = array_slice($daten, 1);
+                break;
+            }
+        } else {
+            // If no identifier is specified, the values should be totaled.
+            for ($i = 1; $i < count($daten); $i++) { // column = 0: identifier
+                $sums[$i-1] += $daten[$i];
+            }
+        }
     }
     fclose($handle);
+}
+
+$dataToWrite = null;
+if ($identifier){
+    if ($identifierData === null) {
+        echo "Keine Daten für '$identifier' gefunden.";
+        exit;
+    }
+    $dataToWrite = $identifierData;
+} else {
+    $dataToWrite = $sums;
 }
 ?>
 
@@ -44,20 +72,18 @@ if (($handle = fopen($csvDatei, 'r')) !== false) {
         th {
             background-color: #eee;
         }
-        td:nth-child(2),
-        th:nth-child(2),
-        td:nth-child(5),
-        th:nth-child(5),
-        td:nth-child(8),
-        th:nth-child(8),
-        td:nth-child(11),
-        th:nth-child(11),
-        td:nth-child(14),
-        th:nth-child(14),
-        td:nth-child(17),
-        th:nth-child(17),
-        td:nth-child(21),
-        th:nth-child(21) {
+        td:nth-child(4),
+        th:nth-child(4),
+        td:nth-child(7),
+        th:nth-child(7),
+        td:nth-child(10),
+        th:nth-child(10),
+        td:nth-child(13),
+        th:nth-child(13),
+        td:nth-child(16),
+        th:nth-child(16),
+        td:nth-child(20),
+        th:nth-child(20) {
             border-left: 3px solid #000;
         }
         tr:nth-child(even) {
@@ -70,8 +96,6 @@ if (($handle = fopen($csvDatei, 'r')) !== false) {
 <table>
     <thead>
         <tr>
-            <th>Name</th>
-
             <th>insgesamt bearbeitete Aufgaben</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
@@ -104,13 +128,11 @@ if (($handle = fopen($csvDatei, 'r')) !== false) {
         </tr>
     </head>
     <tbody>
-        <?php foreach ($zeilen as $i => $zeile): ?>
-            <tr>
-                <?php foreach ($zeile as $zelle): ?>
-                    <td><?= htmlspecialchars($zelle) ?></td>
-                <?php endforeach; ?>
-            </tr>
-        <?php endforeach; ?>
+        <tr>
+            <?php foreach ($dataToWrite as $wert): ?>
+                <td><?php echo htmlspecialchars($wert); ?></td>
+            <?php endforeach; ?>
+        </tr>
     </tbody>
 </table>
 

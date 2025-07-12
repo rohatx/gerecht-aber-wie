@@ -11,10 +11,15 @@ Die Seite kann dann durch öffnen von index.html gestartet werden.
     
     Keksanzahl-Intervall einstellen: anzahl-kekse=minKeksanzahl,maxKeksanzahl
 
+    Die Statistiken unter einem bestimmten Kürzel (z.B. "abc") speichern: kuerzel=abc
+
     Beispiel URL:
-    ...?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16
+    ...?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16&kuerzel=abc
 
-**Statistiken ansehen**
+**Statistiken filtern und ansehen**
 
-    Der URL Folgendes anfügen:
+    Für summierte Statistiken der URL Folgendes anfügen:
     ...createTable.php
+
+    Für gefilterte Statistiken nach Kürzel (z.B. "abc") der URL Folgendes anfügen:
+    ...createTable.php?kuerzel=abc

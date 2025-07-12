@@ -1,94 +1,110 @@
 * {
   box-sizing: border-box;
+  outline: 1px solid rgba(255, 0, 0, 0.3);
 }
 
 body {
   font-family: sans-serif;
   text-align: center;
-  background-image: var(--background-image);
+  background-image: var(--backgroundImage);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: fixed;
 }
 
-#grid-wrapper {
+#gridWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1rem;
   grid-template-areas:
-    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    '. headline headline headline'
     'config table table table'
     'toolbox table table table'
-    'toolbox checkVerteilungBtn ergebnis ergebnis'
+    'toolbox checkEqualityBtn resultMessage resultMessage'
     'toolbox . . .'
 }
 
-body.isAdvanced #grid-wrapper {
+body.isAdvanced #gridWrapper {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    'config ueberschrift ueberschrift ueberschrift'
+    '. headline headline headline'
+    'config table table table'
     'toolbox table table table'
-    'toolbox checkVerteilungBtn ergebnis ergebnis'
+    'toolbox checkEqualityBtn resultMessage resultMessage'
     'toolbox . . .'
 }
 
-#grid-wrapper.twoPersonGrid {
+#gridWrapper.twoPersonGrid {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    '. headline headline headline'
     'config table table table'
-    'config checkVerteilungBtn ergebnis ergebnis'
+    'config checkEqualityBtn resultMessage resultMessage'
     'config . . .'
     'toolbox . . .'
 }
 
-#grid-wrapper.checkCount {
+#gridWrapper.checkCount {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    '. headline headline headline'
     'config table table table'
     'toolbox table table table'
-    'toolbox checkVerteilungBtn antwortEingabe ergebnis'
+    'toolbox checkEqualityBtn countInput resultMessage'
     'toolbox . . .';
 }
 
-body.isAdvanced #grid-wrapper.checkCount {
+body.isAdvanced #gridWrapper.checkCount {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    'config ueberschrift ueberschrift ueberschrift'
+    '. headline headline headline'
+    'config table table table'
     'toolbox table table table'
-    'toolbox checkVerteilungBtn antwortEingabe ergebnis'
+    'toolbox checkEqualityBtn countInput resultMessage'
     'toolbox . . .'
 }
 
-#grid-wrapper.checkCount.twoPersonGrid {
+#gridWrapper.checkCount.twoPersonGrid {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    'personenAnzahlLabel ueberschrift ueberschrift ueberschrift'
+    '. headline headline headline'
     'config table table table'
-    'config checkVerteilungBtn antwortEingabe ergebnis'
+    'config checkEqualityBtn countInput resultMessage'
     'config . . .'
     'toolbox . . .'
 }
 
-#config-grid-wrapper {
+#configGridWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
     'untertitelLabel untertitelLabel untertitelLabel'
     'twoPersons threePersons fourPersons'
     'fivePersons sixPersons .'
-    'nameInputWrapper newTaskBtn newTaskBtn';
+    'taskLabel taskLabel taskLabel';
 }
 
-body.isAdvanced #config-grid-wrapper {
-  grid-template-columns: 1fr 1fr;
+#configGridWrappert {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  border: 1px solid blue;
+  background: rgba(0, 0, 255, 0.1);
+  width: 100%;
   grid-template-areas:
-    'nameInputWrapper  newTaskBtn';
+    'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
+    'twoPersons twoPersons threePersons threePersons fourPersons fourPersons'
+    'fivePersons fivePersons fivePersons sixPersons sixPersons sixPersons'
+    'taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel';
 }
 
-#toolbox-grid-wrapper {
+body.isAdvanced #configGridWrapper {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    'nameInputWrapper';
+}
+
+#toolboxGridWrapper {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -97,7 +113,7 @@ body.isAdvanced #config-grid-wrapper {
     "mergeRB";
 }
 
-#toolbox-grid-wrapper.anotherTool {
+#toolboxGridWrapper.anotherTool {
   grid-template-columns: 1fr;
   grid-template-areas:
     "moveRB"
@@ -106,9 +122,9 @@ body.isAdvanced #config-grid-wrapper {
     "collectRB";
 }
 
-.dose {
+.table {
   display: none;
-  background-image: var(--table-image);
+  background-image: var(--tableImage);
   background-size: 100%;
   position: absolute;
   width: 240px;
@@ -117,7 +133,7 @@ body.isAdvanced #config-grid-wrapper {
   left: 240px;
 }
 
-#circle-container {
+#circleContainer {
   position: relative;
   width: 720px;
   height: 500px;
@@ -133,83 +149,91 @@ body.isAdvanced #config-grid-wrapper {
   margin-left: 5.5rem;
   margin-top: 2.5rem;
   padding: 0.5rem;
-  color: var(--childname-font-color);
+  color: var(--childnameFontColor);
   font-size: 1rem;
   font-weight: 600;
-  background-color: var(--childname-background);
+  background-color: var(--childnameBackground);
   border-radius: 0.5rem;
-  box-shadow: 0 0.15rem 0.3rem var(--shadow-color);
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
 }
 
-.teller {
+.plate {
   width: 120px;
   height: 120px;
   top: 80px;
   position: absolute;
 }
 
-.tellerBild {
+.plateImage {
   width: 120px;
   height: 120px;
 }
 
-.keks_wrapper {
+.cookieWrapper {
   position: absolute;
 }
 
-.keks {
+.cookie {
   width: 36px;
   height: 36px;
   position: absolute;
 }
 
-.half_keks {
+.halfCookie {
   width: 18px;
   height: 36px;
   position: absolute;
 }
 
-.keks.markiert,
-.half_keks.markiert {
-  border: 2px solid var(--cookie-mark);
+.cookie.marked,
+.halfCookie.marked {
+  border: 2px solid var(--cookieMark);
   border-radius: 20px;
 }
 
-.person-img {
+.personImg {
   width: 80px;
   left: 20px;
   position: absolute;
 }
 
-.image-button {
-  border: none;
+.personNumberButton {
   background: none;
+  border: none;
   margin: 0.5rem;
   transition: transform 0.3s, filter 0.3s;
   cursor: pointer;
 }
 
-#two-persons {
+.personNumberButton img {
+  background: var(--buttonBackground);
+}
+
+.personNumberButton:disabled {
+  cursor: default;
+}
+
+#twoPersons {
   grid-area: twoPersons;
 }
 
-#three-persons {
+#threePersons {
   grid-area: threePersons;
 }
 
-#four-persons {
+#fourPersons {
   grid-area: fourPersons;
 }
 
-#five-persons {
+#fivePersons {
   grid-area: fivePersons;
 }
 
-#six-persons {
+#sixPersons {
   grid-area: sixPersons;
 }
 
-.image-button img {
+.personNumberButton img {
   width: 6rem;
   height: auto;
   transition: transform 0.3s, filter 0.3s;
@@ -222,11 +246,10 @@ body.isAdvanced #config-grid-wrapper {
 }
 
 h1 {
-  display: none;
-  color: var(--headline-font-color);
+  color: var(--headlineFontColor);
   font-size: 2rem;
   font-weight: 800;
-  background-color: var(--headline-background);
+  background-color: var(--headlineBackground);
   padding: 0.5rem;
   border-radius: 0.5rem;
   margin: 0;
@@ -234,39 +257,46 @@ h1 {
   box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.2);
   align-items: center;
   justify-content: center;
-  grid-area: ueberschrift;
+  grid-area: headline;
 }
 
-h1#anzahlPersonen {
-  grid-area: personenAnzahlLabel;
-}
-
-h1#aufgabenstellung {
-  grid-area: ueberschrift;
+h1#headline {
+  grid-area: headline;
 }
 
 h3 {
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 0.25rem;
+  margin: 0rem;
+  width: 100%;
   grid-area: untertitelLabel;
 }
 
-#eingabeContainer {
+h3#personNumberTitle {
+  margin-bottom: 0.25rem;
+  grid-area: untertitelLabel;
+}
+
+h3#taskTitle {
+  margin-top: 0.25rem;
+  grid-area: taskLabel;
+}
+
+#cookieNumberInputContainer {
   margin: 0 auto;
   display: none;
   padding: 0.5rem;
-  background-color: var(--segment-background);
-  border: 0.15rem solid var(--segment-border-color);
+  background-color: var(--segmentBackground);
+  border: 0.15rem solid var(--segmentBorderColor);
   border-radius: 0.5rem;
   box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.2);
   width: fit-content;
   text-align: center;
   font-size: 1.2rem;
   font-weight: 500;
-  color: var(--segment-font-color);
+  color: var(--segmentFontColor);
   animation: fadeIn 0.6s ease;
-  grid-area: antwortEingabe;
+  grid-area: countInput;
 }
 
 #nameInputWrapper {
@@ -286,7 +316,7 @@ input[type="text"] {
   padding: 0.25rem;
   font-size: 1rem;
   border-radius: 0.5rem;
-  border: 0.07rem solid var(--input-border-color);
+  border: 0.07rem solid var(--inputBorderColor);
   margin: 0 0.25rem;
 }
 
@@ -299,42 +329,45 @@ input[type="text"] {
 }
 
 #newTaskBtn {
-  margin: auto;
   display: none;
+  margin-top: 0.5rem;
   font-weight: 600;
-  grid-area: newTaskBtn;
 }
 
-#checkVerteilungBtn {
+#checkEqualityBtn {
   margin: 0 auto;
   display: none;
   font-weight: 600;
-  grid-area: checkVerteilungBtn;
+  grid-area: checkEqualityBtn;
 }
 
 .button {
-  background: var(--button-background);
-  color: var(--button-font-color);
-  padding: 0.5rem;
+  background: var(--buttonBackground);
+  color: var(--buttonFontColor);
+  padding: 0.7rem;
   font-size: 1rem;
   justify-content: center;
   align-items: center;
-  border: 0.4rem solid var(--button-border-color);
   border-radius: 0.5rem;
   cursor: pointer;
   white-space: nowrap;
   height: fit-content;
   width: fit-content;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 0.15rem 0.3rem var(--shadow-color);
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
 }
 
-#checkAntwortBtn {
+.button:disabled {
+  background: grey;
+  cursor: default;
+}
+
+#checkCountBtn {
   margin-top: 0.5rem;
   font-weight: 600;
 }
 
-.button:hover {
+.button:not(:disabled):hover {
   transform: scale(1.05);
   text-decoration: underline;
 }
@@ -352,30 +385,30 @@ input[type="text"] {
 }
 
 
-#message {
+#messageContainer {
   margin: 0 auto;
   padding: 0.5rem;
-  background: var(--segment-background);
+  background: var(--segmentBackground);
   border-radius: 0.5rem;
   font-size: 1.2rem;
   font-weight: 600;
   width: fit-content;
   height: fit-content;
-  box-shadow: 0 0.15rem 0.3rem var(--shadow-color);
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
   text-align: center;
   display: none;
   animation: fadeIn 0.6s ease;
-  grid-area: ergebnis;
+  grid-area: resultMessage;
 }
 
 
 .toolbox,
 .config {
-  color: var(--segment-font-color);
-  background: var(--segment-background);
-  border: 0.15rem solid var(--segment-border-color);
+  color: var(--segmentFontColor);
+  background: var(--segmentBackground);
+  border: 0.15rem solid var(--segmentBorderColor);
   border-radius: 0.5rem;
-  box-shadow: 0 0.15rem 0.3rem var(--shadow-color);
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
   padding: 0.5rem;
   margin: 0;
   animation: fadeIn 0.6s ease;
@@ -388,7 +421,7 @@ input[type="text"] {
   grid-area: toolbox;
 }
 
-#toolbox-grid-wrapper {
+#toolboxGridWrapper {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -397,7 +430,7 @@ input[type="text"] {
     "mergeRB";
 }
 
-#toolbox-grid-wrapper.anotherTool {
+#toolboxGridWrapper.anotherTool {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -414,7 +447,7 @@ input[type="text"] {
 .toolbox legend {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--segment-font-color);
+  color: var(--segmentFontColor);
   margin-bottom: 0.4rem;
 }
 
@@ -424,7 +457,7 @@ input[type="text"] {
   cursor: pointer;
 }
 
-.img-wrapper {
+.imgWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,7 +467,7 @@ input[type="text"] {
   grid-area: moveRB;
 }
 
-#move-img-wrapper {
+#moveImgWrapper {
   display: inline-block;
   width: 12rem;
   height: auto;
@@ -449,7 +482,7 @@ input[type="text"] {
   grid-area: breakRB;
 }
 
-#break-img-wrapper {
+#breakImgWrapper {
   width: 8rem;
   height: auto;
 }
@@ -463,7 +496,7 @@ input[type="text"] {
   grid-area: mergeRB;
 }
 
-#break-img-wrapper {
+#breakImgWrapper {
   width: 8rem;
   height: auto;
 }
@@ -478,7 +511,7 @@ input[type="text"] {
   display: none;
 }
 
-#collect-img-wrapper {
+#collectImgWrapper {
   width: 14rem;
   height: auto;
 }
@@ -490,63 +523,56 @@ input[type="text"] {
 
 /* Radio Buttons */
 .toolbox input[type="radio"] {
-  accent-color: var(--radio-color);
+  accent-color: var(--radioColor);
+  transform: scale(1.7);
   margin-right: 0.5rem;
   cursor: pointer;
 }
 
 @media (max-width: 1200px) {
 
-  #grid-wrapper,
-  body.isAdvanced #grid-wrapper,
-  #grid-wrapper.twoPersonGrid {
+  #gridWrapper,
+  body.isAdvanced #gridWrapper,
+  #gridWrapper.twoPersonGrid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
-      'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel'
+      'headline headline headline'
       'config config config'
       'toolbox toolbox toolbox'
-      'ueberschrift ueberschrift ueberschrift'
       'table table table'
-      'checkVerteilungBtn ergebnis ergebnis';
+      'checkEqualityBtn resultMessage resultMessage';
   }
 
-  #grid-wrapper.checkCount,
-  body.isAdvanced #grid-wrapper.checkCount,
-  #grid-wrapper.checkCount.twoPersonGrid {
+  #gridWrapper.checkCount,
+  body.isAdvanced #gridWrapper.checkCount,
+  #gridWrapper.checkCount.twoPersonGrid {
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
-      'personenAnzahlLabel personenAnzahlLabel personenAnzahlLabel'
+      'headline headline headline'
       'config config config'
       'toolbox toolbox toolbox'
-      'ueberschrift ueberschrift ueberschrift'
       'table table table'
-      'checkVerteilungBtn antwortEingabe ergebnis';
+      'checkEqualityBtn countInput resultMessage';
   }
 
-  #config-grid-wrapper {
+  #configGridWrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:
       'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
       'twoPersons threePersons fourPersons fivePersons sixPersons'
-      'nameInputWrapper  newTaskBtn . . .';
+      'taskLabel taskLabel taskLabel taskLabel taskLabel';
   }
 
-  body.isAdvanced #config-grid-wrapper {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      'nameInputWrapper  newTaskBtn';
-  }
-
-  #toolbox-grid-wrapper {
+  #toolboxGridWrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
       "moveRB breakRB mergeRB";
   }
 
-  #toolbox-grid-wrapper.anotherTool {
+  #toolboxGridWrapper.anotherTool {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas:
       "moveRB breakRB mergeRB collectRB";

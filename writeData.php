@@ -1,19 +1,17 @@
 <?php
-header('Content-Type: text/plain; charset=utf-8');
+header("Content-Type: text/plain; charset=utf-8");
 
-// CSV-Datei
-$csvDatei = 'stats.csv';
+$csvFile = "stats.csv";
 
-// POST-Daten auslesen
-$name = $_POST['name'] ?? '';
-$mode = $_POST['mode'] ?? '';
-$withHalf = filter_var($_POST['withHalf'] ?? 'false', FILTER_VALIDATE_BOOLEAN);
-$gFehler = floatval($_POST['gFehler'] ?? 0);
-$zFehler = floatval($_POST['zFehler'] ?? 0);
-$collectionClicks = floatval($_POST['collectionClicks'] ?? 0);
+// Read POST-Data
+$identifier = $_POST["identifier"] ?? "";
+$mode = $_POST["mode"] ?? "";
+$withHalf = filter_var($_POST["withHalf"] ?? "false", FILTER_VALIDATE_BOOLEAN);
+$equalityErrors = floatval($_POST["equalityErrors"] ?? 0);
+$countErrors = floatval($_POST["countErrors"] ?? 0);
+$collectionClicks = floatval($_POST["collectionClicks"] ?? 0);
 
-// Mapping der Spaltennamen → Index in der CSV
-$spalten = [
+$columns = [
     "gesamt" => ["bearbeitete-aufgaben-insgesamt", "gleichmaessigkeitsfehler-insgesamt", "zaehlfehler-insgesamt"],
     "ausgleichen" => ["bearbeitete-ausgleich-aufgaben", "gleichmaessigkeitsfehler-ausgleichen", "zaehlfehler-ausgleichen"],
     "ausgleichen_halb" => ["bearbeitete-ausgleich-aufgaben-mit-halben-keksen", "gleichmaessigkeitsfehler-ausgleichen-mit-haelften", "zaehlfehler-ausgleichen-mit-haelften"],
@@ -24,14 +22,14 @@ $spalten = [
 ];
 
 // CSV einlesen
-$daten = [];
-$kopf = [];
-$zeileGefunden = false;
+$data = [];
+$head = [];
+$rowFound = false;
 
-if (($handle = fopen($csvDatei, 'r')) !== false) {
-    $kopf = fgetcsv($handle, 0, ",", '"', "\\"); // Erste Zeile: Header
+if (($handle = fopen($csvFile, "r")) !== false) {
+    $head = fgetcsv($handle, 0, ",", '"', "\\"); // First row: Header
     while (($row = fgetcsv($handle, 0, ",", '"', "\\")) !== false) {
-        $daten[] = $row;
+        $data[] = $row;
     }
     fclose($handle);
 }
@@ -40,58 +38,58 @@ if ($withHalf) {
     $mode = $mode . "_halb";
 }
 
-// Spalten-Indizes ermitteln
-$indexGesamtAnzahl = array_search($spalten["gesamt"][0], $kopf);
-$indexGesamtGFehler = array_search($spalten["gesamt"][1], $kopf);
-$indexGesamtZFehler = array_search($spalten["gesamt"][2], $kopf);
-$indexModusAnzahl = array_search($spalten[$mode][0], $kopf);
-$indexModusGFehler = array_search($spalten[$mode][1], $kopf);
-$indexModusZFehler = array_search($spalten[$mode][2], $kopf);
-$indexCollectionCount = array_search("haeufigkeit-des-kekse-einsammelns", $kopf);
-$indexCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften", $kopf);
+// Determine the column-indices.
+$indexTotalCount = array_search($columns["gesamt"][0], $head);
+$indexTotalEqualityErrors = array_search($columns["gesamt"][1], $head);
+$indexTotalCountErrors = array_search($columns["gesamt"][2], $head);
+$indexModeCount = array_search($columns[$mode][0], $head);
+$indexModeEqualityErrors = array_search($columns[$mode][1], $head);
+$indexModeCountErrors = array_search($columns[$mode][2], $head);
+$indexCollectionCount = array_search("haeufigkeit-des-kekse-einsammelns", $head);
+$indexCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften", $head);
 
-// Bestehenden Namen suchen
-foreach ($daten as &$row) {
-    if ($row[0] === $name) {
-        $row[$indexGesamtAnzahl]++;
-        $row[$indexGesamtGFehler] += $gFehler;
-        $row[$indexGesamtZFehler] += $zFehler;
-        $row[$indexModusAnzahl]++;
-        $row[$indexModusGFehler] += $gFehler;
-        $row[$indexModusZFehler] += $zFehler;
+// Search for the right row with identifier.
+foreach ($data as &$row) {
+    if ($row[0] === $identifier) {
+        $row[$indexTotalCount]++;
+        $row[$indexTotalEqualityErrors] += $equalityErrors;
+        $row[$indexTotalCountErrors] += $countErrors;
+        $row[$indexModeCount]++;
+        $row[$indexModeEqualityErrors] += $equalityErrors;
+        $row[$indexModeCountErrors] += $countErrors;
         if ($withHalf) {
             $row[$indexCollectionCountWithHalf] += $collectionClicks;
         } else {
             $row[$indexCollectionCount] += $collectionClicks;
         }
-        $zeileGefunden = true;
+        $rowFound = true;
         break;
     }
 }
-unset($row); // Referenz aufheben
+unset($row);
 
-// Neuer Name: Zeile hinzufügen
-if (!$zeileGefunden) {
-    $neu = array_fill(0, count($kopf), 0);
-    $neu[0] = $name;
-    $neu[$indexGesamtAnzahl] = 1;
-    $neu[$indexGesamtGFehler] = $gFehler;
-    $neu[$indexGesamtZFehler] = $zFehler;
-    $neu[$indexModusAnzahl] = 1;
-    $neu[$indexModusGFehler] = $gFehler;
-    $neu[$indexModusZFehler] = $zFehler;
+// New identifier: Add a row.
+if (!$rowFound) {
+    $new = array_fill(0, count($head), 0);
+    $new[0] = $identifier;
+    $new[$indexTotalCount] = 1;
+    $new[$indexTotalEqualityErrors] = $equalityErrors;
+    $new[$indexTotalCountErrors] = $countErrors;
+    $new[$indexModeCount] = 1;
+    $new[$indexModeEqualityErrors] = $equalityErrors;
+    $new[$indexModeCountErrors] = $countErrors;
     if ($withHalf) {
-        $neu[$indexCollectionCountWithHalf] = $collectionClicks;
+        $new[$indexCollectionCountWithHalf] = $collectionClicks;
     } else {
-        $neu[$indexCollectionCount] = $collectionClicks;
+        $new[$indexCollectionCount] = $collectionClicks;
     }
-    $daten[] = $neu;
+    $data[] = $new;
 }
 
-// CSV neu schreiben
-if (($handle = fopen($csvDatei, 'w')) !== false) {
-    fputcsv($handle, $kopf, ",", '"', "\\");
-    foreach ($daten as $row) {
+// Rewrite CSV
+if (($handle = fopen($csvFile, "w")) !== false) {
+    fputcsv($handle, $head, ",", '"', "\\");
+    foreach ($data as $row) {
         fputcsv($handle, $row, ",", '"', "\\");
     }
     fclose($handle);
