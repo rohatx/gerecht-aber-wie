@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GerechtAberWie</title>
+    <title>Gerecht, aber wie?</title>
     <link rel="stylesheet" href="customizableData.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -74,18 +74,15 @@
         <div id="circleContainer">
         </div>
 
-        <button class="button" id="checkEqualityBtn" onclick="checkEquality(true, true)">Verteilung
-            Pr&uuml;fen</button>
+        <div id="cookieNumberInputContainer">
+            Wie viele Kekse hat jeder?
+            <input type="number" id="cookieInput" min="0">
+            <button class="button" id="checkBtn" onclick="checkSolution()">Pr&uuml;fen</button>
 
+        </div>
         <div id="messageContainer">
             <div id="message"></div>
             <button class="button" id="newTaskBtn" onclick="createNewTask()">neue Aufgabe</button>
-        </div>
-        <div id="cookieNumberInputContainer">
-            Richtig! Jede Person hat jetzt die gleiche Anzahl an Keksen. Wie viele Kekse hat jeder?
-            <input type="number" id="cookieInput" min="0">
-            <button class="button" id="checkCountBtn" onclick="checkCount()">Anzahl pr&uuml;fen</button>
-
         </div>
     </div>
 

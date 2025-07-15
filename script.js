@@ -4,13 +4,15 @@ const message = document.getElementById("message");
 const newTaskBtn = document.getElementById("newTaskBtn");;
 const cookieNumberInputContainer = document.getElementById("cookieNumberInputContainer");
 const cookieInput = document.getElementById("cookieInput");
-const checkCountBtn = document.getElementById("checkCountBtn");
+const checkBtn = document.getElementById("checkBtn");
 const gridWrapper = document.getElementById("gridWrapper");
 const toolbox = document.getElementById("toolbox");
 const toolboxWrapper = document.getElementById("toolboxGridWrapper");
+const moveRB = document.getElementById("moveRB");
+const breakRB = document.getElementById("breakRB");
+const mergeRB = document.getElementById("mergeRB");
 const collectRB = document.getElementById("collectRB");
 const configbox = document.getElementById("config");
-const checkEqualityBtn = document.getElementById("checkEqualityBtn");
 const personNumberButtons = document.querySelectorAll(".personNumberButton");
 
 const params = new URLSearchParams(window.location.search);
@@ -32,15 +34,17 @@ let maxCookieNumber = 20;
 
 let cookiesPerPerson = 0;
 
-const COOKIES_PER_ROW = 4;
+const COOKIES_PER_ROW = 6;
 const PERSON_COUNT_ADVANCED_MODE = 4;
 const MAX_COOKIE_NUMBER = 20;
 const MAX_COOKIES_PER_PLATE = 8;
 const MAX_COOKIES_ON_TABLE = 24;
 
 let plateCookieIds;
+let allCookiesOnTable = false;
 
 let currentTool = "move";
+let firstCollectionClickNeeded = false;
 let cookieImageNumber = cookieCount;
 
 window.addEventListener("load", () => {
@@ -97,8 +101,8 @@ window.addEventListener("load", () => {
         }
     }
 
-    if (params.has("mode")) {
-        modeInput = params.get("mode");
+    if (params.has("modus")) {
+        modeInput = params.get("modus");
         if (modeInput === "ausgleichen" || modeInput === "verteilen" || modeInput === "ausgleichen-verteilen") {
             mode = modeInput;
         } else {
@@ -143,17 +147,45 @@ document.querySelectorAll("input[name='tool']").forEach(radio => {
             document.querySelectorAll(".cookie").forEach(cookie => {
                 if (cookie.dataset.isWhole) {
                     cookie.draggable = true;
+                    cookie.removeEventListener("dragstart", suppressDragg);
                 }
             });
             document.querySelectorAll(".halfCookie").forEach(cookie => {
                 cookie.draggable = true;
+                cookie.removeEventListener("dragstart", suppressDragg);
             });
         } else if (currentTool === "collect") {
-            // When the cookies have been collected, the “move” tool should be selected.
             collectCookies();
-            const moveRBInput = document.getElementById("moveRB").querySelector("input");
+
+            // After the first collection in distribution mode, everything should be activated.
+            if (firstCollectionClickNeeded) {
+                document.querySelectorAll(".cookie").forEach(cookie => {
+                    cookie.draggable = true;
+                    cookie.removeEventListener("dragstart", suppressDragg);
+                });
+                moveRB.querySelector("img").style.filter = "grayscale(0%)";
+                moveRB.querySelector("input").disabled = false;
+                moveRB.style.cursor = "pointer";
+                breakRB.querySelector("img").style.filter = "grayscale(0%)";
+                breakRB.querySelector("input").disabled = false;
+                breakRB.style.cursor = "pointer";
+                mergeRB.querySelector("img").style.filter = "grayscale(0%)";
+                mergeRB.querySelector("input").disabled = false;
+                mergeRB.style.cursor = "pointer";
+
+                firstCollectionClickNeeded = false;
+            }
+
+            // When the cookies have been collected, the “move” tool should be selected.
+            const moveRBInput = moveRB.querySelector("input");
             moveRBInput.checked = true;
             moveRBInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+            // As long as all the cookies are on the table, the collection function should be deactivated.
+            allCookiesOnTable = true;
+            collectRB.querySelector("img").style.filter = "grayscale(100%)";
+            collectRB.querySelector("input").disabled = true;
+            collectRB.style.cursor = "default";
         } else {
             if (currentTool === "break") {
                 circleContainer.style.cursor = knifeCursor;
@@ -162,9 +194,11 @@ document.querySelectorAll("input[name='tool']").forEach(radio => {
             }
             document.querySelectorAll(".cookie").forEach(cookie => {
                 cookie.draggable = false;
+                cookie.addEventListener("dragstart", suppressDragg);
             });
             document.querySelectorAll(".halfCookie").forEach(cookie => {
                 cookie.draggable = false;
+                cookie.addEventListener("dragstart", suppressDragg);
             });
         }
     });
@@ -205,7 +239,7 @@ function createScene() {
         personImg.alt = `Person ${personIndex + 1}`
 
         const name = document.createElement("div");
-        name.id = "name";
+        name.className = "name";
         name.textContent = getComputedStyle(document.documentElement).getPropertyValue(`--person${personIndex + 1}Name`);
 
         person.className = "person";
@@ -256,53 +290,61 @@ function createScene() {
             gridWrapper.classList.remove("twoPersonGrid");
         }
     }
-
-    checkEqualityBtn.disabled = false;
+    cookieNumberInputContainer.style.display = "flex";
     cookieInput.disabled = false;
-    checkCountBtn.disabled = false;
+    checkBtn.disabled = false;
     toolbox.style.display = "inline-block";
     configbox.style.display = "inline-block";
-    checkEqualityBtn.style.display = "inline-block";
 
     plateCookieIds.push([]); // for the table
 
-    if (mode === "ausgleichen-verteilen") {
-        // The collection tool is only available in this mode.
+    if (mode === "verteilen" || mode === "ausgleichen-verteilen") {
+        // The collection tool is only available in this modes.
         table.style.display = "flex";
         collectRB.style.display = "flex";
         if (!toolboxWrapper.classList.contains("anotherTool")) {
             toolboxWrapper.classList.add("anotherTool");
         }
     }
+
+    distributeKekse(false);
+    let shouldBeDraggable = true;
     if (mode === "verteilen") {
-        table.style.display = "flex";
-        distributeKekse(true);
+        // In this mode, the cookies should be collected first before further actions can be carried out.
+        shouldBeDraggable = false;
+
+        moveRB.querySelector("img").style.filter = "grayscale(100%)";
+        moveRB.querySelector("input").disabled = true;
+        moveRB.style.cursor = "default";
+        breakRB.querySelector("img").style.filter = "grayscale(100%)";
+        breakRB.querySelector("input").disabled = true;
+        breakRB.style.cursor = "default";
+        mergeRB.querySelector("img").style.filter = "grayscale(100%)";
+        mergeRB.querySelector("input").disabled = true;
+        mergeRB.style.cursor = "default";
+        firstCollectionClickNeeded = true;
     } else {
-        distributeKekse(false);
+        // The move tool should always be selected at the start. (except in distribute mode "verteilen")
+        const moveRBInput = document.getElementById("moveRB").querySelector("input");
+        moveRBInput.checked = true;
+        moveRBInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
-    document.querySelectorAll("*").forEach(el => {
-        el.setAttribute("draggable", "false");
+    document.querySelectorAll("img").forEach(el => {
+        el.draggable = false;
+        el.addEventListener("dragstart", suppressDragg);
     });
     document.querySelectorAll(".cookie").forEach(cookie => {
         if (cookie.dataset.isWhole) {
-            cookie.draggable = true;
+            cookie.draggable = shouldBeDraggable;
+        }
+        if (shouldBeDraggable) {
+            cookie.removeEventListener("dragstart", suppressDragg);
         }
     });
-    document.querySelectorAll(".halfCookie").forEach(cookie => {
-        cookie.draggable = true;
-    });
-    if (gridWrapper.classList.contains("checkCount")) {
-        gridWrapper.classList.remove("checkCount");
-    }
 
     personNumberButtons.forEach(button => {
         button.disabled = true;
     });
-
-    // The move tool should always be selected at the start.
-    const moveRBInput = document.getElementById("moveRB").querySelector("input");
-    moveRBInput.checked = true;
-    moveRBInput.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 /**
@@ -393,6 +435,9 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
         // Create a half cookie.
         cookie.src = getImageSRC("--cookieHalfRightImage");
         cookie.className = "halfCookie";
+        // If a half cookie is created, the break tool is active, which is why it should not be able to be dragged.
+        cookie.draggable = false;
+        cookie.addEventListener("dragstart", suppressDragg);
         plateCookieIds[plateIndex].splice(placePositionIndex, 0, `cookie-${cookieImageNumber}`);
         cookieImageNumber += 1;
     } else {
@@ -400,7 +445,6 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
         cookie.className = "cookie";
     }
     cookie.id = plateCookieIds[plateIndex][placePositionIndex];
-    cookie.draggable = true;
     cookie.dataset.plateIndex = plateIndex;
     cookie.dataset.isWhole = !shouldBeHalf;
 
@@ -459,6 +503,15 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
 }
 
 /**
+ * Prevents an element from being dragged.
+ *
+ * @param {DragEvent} e - The event object that is passed from the browser.
+ */
+function suppressDragg(e) {
+    e.preventDefault();
+}
+
+/**
  * Handle when a cookie is released.
  *
  * @param {DragEvent} e - The event object that is passed from the browser.
@@ -512,36 +565,50 @@ function handleDrop(e) {
         }
     }
 
+    allCookiesOnTable = true;
+    for (let plateIndex = 0; plateIndex < personCount; plateIndex++) {
+        if (plateCookieIds[plateIndex].length > 0) {
+            // In this case, a cookie has been moved to a plate, which should activate the collection tool.
+            allCookiesOnTable = false;
+            collectRB.querySelector("img").style.filter = "grayscale(0%)";
+            collectRB.querySelector("input").disabled = false;
+            collectRB.style.cursor = "pointer";
+            break;
+        }
+    }
+    if (allCookiesOnTable) {
+        collectRB.querySelector("img").style.filter = "grayscale(100%)";
+        collectRB.querySelector("input").disabled = true;
+        collectRB.style.cursor = "default";
+    }
+
     hideEvaluation();
 }
 
 /**
- * Check that there are the same number of cookies on all plates.
+ * Check that there are the same number of cookies on all plates and all cookies are distributed.
  *
- * @param {Boolean} withMessage - Determines whether a message is to be issued.
  * @param {Boolean} withHalfCookies - Determines whether half cookies must be taken into account.
+ * @param {Boolean} withMessage - Determines whether a message is to be issued.
  * @returns {Boolean} - Is the distribution equal?
  */
-function checkEquality(withMessage, withHalfCookies) {
+function checkEquality(withHalfCookies, withMessage) {
     const counts = calculateCookieCounts(withHalfCookies);
     const allEqual = counts.slice(0, -1).every(count => count == counts[0]);
     // sum to check whether all the cookies have been distributed.
     const sum = counts.slice(0, -1).reduce((acc, value) => acc + value, 0);
     if (allEqual && sum == cookieCount) {
         if (withMessage) {
-            cookieNumberInputContainer.style.display = "block";
             document.querySelectorAll(".cookie").forEach(cookie => {
                 if (cookie.dataset.isWhole) {
                     cookie.draggable = false;
+                    cookie.addEventListener("dragstart", suppressDragg);
                 }
             });
             document.querySelectorAll(".halfCookie").forEach(cookie => {
                 cookie.draggable = false;
+                cookie.addEventListener("dragstart", suppressDragg);
             });
-            if (!gridWrapper.classList.contains("checkCount")) {
-                gridWrapper.classList.add("checkCount");
-            }
-            checkEqualityBtn.disabled = true;
         }
         return true;
     } else {
@@ -576,11 +643,9 @@ function checkEquality(withMessage, withHalfCookies) {
             } else {
                 message.textContent = `Es liegen noch Kekse auf dem Tisch. Du sollst alle Kekse verteilen. Versuche es noch einmal.`;
             }
-            equalityErrors += 1;
-            messageContainer.style.display = "block";
             messageContainer.style.color = "var(--messageWrongFontColor)";
             messageContainer.style.border = "0.15rem solid var(--messageWrongBorderColor)";
-            newTaskBtn.style.display = "none";
+            equalityErrors += 1;
         }
         return false;
     }
@@ -613,35 +678,39 @@ function sendData() {
 }
 
 /**
- * Checks whether the entered number corresponds to the mean.
- * 
- * @returns {Boolean} - Is the number correct?
+ * Checks whether the given solution (distribution, cookie number) is correct and shows a corresponding message.
  */
-function checkCount() {
-    const eingabe = parseFloat(cookieInput.value);
-    if (eingabe == cookiesPerPerson) {
-        messageContainer.style.display = "block";
-        messageContainer.style.color = "var(--messageRightFontColor)";
-        messageContainer.style.border = "0.15rem solid var(--messageRightBorderColor)";
-        message.textContent = "Aufgabe gelöst!";
-        newTaskBtn.style.display = "inline-block";
+function checkSolution() {
+    if (checkEquality(true, true)) {
+        const eingabe = parseFloat(cookieInput.value);
+        if (eingabe == cookiesPerPerson) {
+            messageContainer.style.color = "var(--messageRightFontColor)";
+            messageContainer.style.border = "0.15rem solid var(--messageRightBorderColor)";
+            if (cookiesPerPerson == 1) {
+                message.textContent = `Richtig! Du hast die Kekse gerecht verteilt und jede Person hat ${cookiesPerPerson} Keks.`;
+            } else {
+                message.textContent = `Richtig! Du hast die Kekse gerecht verteilt und jede Person hat ${cookiesPerPerson} Kekse.`;
+            }
+            newTaskBtn.style.display = "inline-block";
 
-        cookieInput.disabled = true;
-        checkCountBtn.disabled = true;
-        personNumberButtons.forEach(button => {
-            button.disabled = false;
-            button.classList.remove("inactive");
-        });
+            cookieInput.disabled = true;
+            checkBtn.disabled = true;
+            personNumberButtons.forEach(button => {
+                button.disabled = false;
+                button.classList.remove("inactive");
+            });
 
-        sendData();
-    } else {
-        messageContainer.style.display = "block";
-        messageContainer.style.color = "var(--messageWrongFontColor)";
-        messageContainer.style.border = "0.15rem solid var(--messageWrongBorderColor)";
-        message.textContent = "Leider falsch. Schau es dir nochmal an.";
-        newTaskBtn.style.display = "none";
-        countErrors += 1;
+            sendData();
+        } else {
+            messageContainer.style.color = "var(--messageWrongFontColor)";
+            messageContainer.style.border = "0.15rem solid var(--messageWrongBorderColor)";
+            message.textContent = "Deine Lösung ist teilweise richtig. Du hast die Kekse gerecht verteilt. Überprüfe, wie viele Kekse pro Kind verteilt wurden und ändere deine Eingabe.";
+            newTaskBtn.style.display = "none";
+            countErrors += 1;
+        }
     }
+
+    messageContainer.style.display = "block";
 };
 
 /**
@@ -732,7 +801,6 @@ function calculateCookieCounts(withHalfCookies) {
  */
 function hideEvaluation() {
     messageContainer.style.display = "none";
-    cookieNumberInputContainer.style.display = "none";
     cookieInput.value = "";
 }
 
@@ -749,9 +817,9 @@ function determineCookieMultiplier() {
 
         for (let totalCookies = minCookieNumber; totalCookies <= maxCookieNumber; totalCookies++) {
             let cookiesPerPerson = totalCookies / personCount;
-            if (Number.isInteger(perPerson * 2)) {
-                if (minKekseMultiplier == 0 || perPerson < minKekseMultiplier) minKekseMultiplier = cookiesPerPerson;
-                if (maxKekseMultiplier == 0 || perPerson > maxKekseMultiplier) maxKekseMultiplier = cookiesPerPerson;
+            if (Number.isInteger(cookiesPerPerson * 2)) {
+                if (minKekseMultiplier == 0 || cookiesPerPerson < minKekseMultiplier) minKekseMultiplier = cookiesPerPerson;
+                if (maxKekseMultiplier == 0 || cookiesPerPerson > maxKekseMultiplier) maxKekseMultiplier = cookiesPerPerson;
             }
         }
         if (minKekseMultiplier == 0 && maxKekseMultiplier == 0) {
@@ -781,10 +849,10 @@ function determineCookieMultiplier() {
     // For the mode without half cookies.
 
     for (let totalCookies = minCookieNumber; totalCookies <= maxCookieNumber; totalCookies++) {
-        let perPerson = totalCookies / personCount;
-        if (Number.isInteger(perPerson)) {
-            if (minKekseMultiplier == 0 || perPerson < minKekseMultiplier) minKekseMultiplier = perPerson;
-            if (maxKekseMultiplier == 0 || perPerson > maxKekseMultiplier) maxKekseMultiplier = perPerson;
+        let cookiesPerPerson = totalCookies / personCount;
+        if (Number.isInteger(cookiesPerPerson)) {
+            if (minKekseMultiplier == 0 || cookiesPerPerson < minKekseMultiplier) minKekseMultiplier = cookiesPerPerson;
+            if (maxKekseMultiplier == 0 || cookiesPerPerson > maxKekseMultiplier) maxKekseMultiplier = cookiesPerPerson;
         }
     }
     if (minKekseMultiplier == 0 && maxKekseMultiplier == 0) {

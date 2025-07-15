@@ -45,8 +45,15 @@ $indexTotalCountErrors = array_search($columns["gesamt"][2], $head);
 $indexModeCount = array_search($columns[$mode][0], $head);
 $indexModeEqualityErrors = array_search($columns[$mode][1], $head);
 $indexModeCountErrors = array_search($columns[$mode][2], $head);
-$indexCollectionCount = array_search("haeufigkeit-des-kekse-einsammelns", $head);
-$indexCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften", $head);
+$indexDistributeCollectionCount = array_search("haeufigkeit-des-kekse-einsammelns-verteilen", $head);
+$indexDistributeCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften-verteilen", $head);
+$indexEqualizeDistributeCollectionCount = array_search("haeufigkeit-des-kekse-einsammelns-ausgleichen-verteilen", $head);
+$indexEqualizeDistributeCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften-ausgleichen-verteilen", $head);
+echo $indexDistributeCollectionCount;
+echo $indexDistributeCollectionCountWithHalf;
+echo $indexEqualizeDistributeCollectionCount;
+echo $indexEqualizeDistributeCollectionCountWithHalf;
+echo $mode;
 
 // Search for the right row with identifier.
 foreach ($data as &$row) {
@@ -58,9 +65,21 @@ foreach ($data as &$row) {
         $row[$indexModeEqualityErrors] += $equalityErrors;
         $row[$indexModeCountErrors] += $countErrors;
         if ($withHalf) {
-            $row[$indexCollectionCountWithHalf] += $collectionClicks;
+            if ($mode === "verteilen_halb"){
+                $row[$indexDistributeCollectionCountWithHalf] += $collectionClicks;
+                echo "Test1";
+            } else {
+                $row[$indexEqualizeDistributeCollectionCountWithHalf] += $collectionClicks;
+                echo "Test2";
+            }
         } else {
-            $row[$indexCollectionCount] += $collectionClicks;
+            if ($mode === "verteilen"){
+                $row[$indexDistributeCollectionCount] += $collectionClicks;
+                echo "Test3";
+            } else {
+                $row[$indexEqualizeDistributeCollectionCount] += $collectionClicks;
+                echo "Test4";
+            }
         }
         $rowFound = true;
         break;
@@ -79,9 +98,17 @@ if (!$rowFound) {
     $new[$indexModeEqualityErrors] = $equalityErrors;
     $new[$indexModeCountErrors] = $countErrors;
     if ($withHalf) {
-        $new[$indexCollectionCountWithHalf] = $collectionClicks;
+        if ($mode === "verteilen_halb"){
+            $new[$indexDistributeCollectionCountWithHalf] = $collectionClicks;
+        } else {
+            $new[$indexEqualizeDistributeCollectionCountWithHalf] = $collectionClicks;
+        }
     } else {
-        $new[$indexCollectionCount] = $collectionClicks;
+        if ($mode === "verteilen"){
+            $new[$indexDistributeCollectionCount] = $collectionClicks;
+        } else {
+            $new[$indexEqualizeDistributeCollectionCount] = $collectionClicks;
+        }
     }
     $data[] = $new;
 }

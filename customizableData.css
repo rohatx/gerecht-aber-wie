@@ -19,19 +19,19 @@
 
     --shadowColor: #00000033;
     --headlineFontColor: #ffffff;
-    --headlineBackground: #9e020293;
+    --headlineBackground: #9e0202ab;
     --segmentFontColor: #333333;
     --segmentBackground: #ffffffef;
     --segmentBorderColor: #cccccc;
     --inputBorderColor: #aaaaaa;
     --childnameFontColor: #ffffff;
-    --childnameBackground: #75757593;
+    --childnameBackground: #303030CC;
     --buttonFontColor: #ffffff;
     --buttonBackground: #006000;
-    --messageRightFontColor: #2e8b57;
-    --messageRightBorderColor: #3cb371;
-    --messageWrongFontColor: #ff0000;
-    --messageWrongBorderColor: #c70c0c;
+    --messageRightFontColor: #21633E;
+    --messageRightBorderColor: #21633E;
+    --messageWrongFontColor: #B30000;
+    --messageWrongBorderColor: #B30000;
     --cookieMark: #ff0000;
     --radioColor: #4f46e5;
 

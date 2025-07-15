@@ -14,64 +14,34 @@ body {
 
 #gridWrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
   grid-template-areas:
-    '. headline headline headline'
-    'config table table table'
-    'toolbox table table table'
-    'toolbox checkEqualityBtn resultMessage resultMessage'
-    'toolbox . . .'
+    '. headline headline'
+    'config table table'
+    'toolbox table table'
+    'toolbox countInput resultMessage'
+    'toolbox . .'
 }
 
 body.isAdvanced #gridWrapper {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
-    '. headline headline headline'
-    'config table table table'
-    'toolbox table table table'
-    'toolbox checkEqualityBtn resultMessage resultMessage'
-    'toolbox . . .'
+    '. headline headline'
+    'config table table'
+    'toolbox table table'
+    'toolbox countInput resultMessage'
+    'toolbox . .'
 }
 
 #gridWrapper.twoPersonGrid {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
-    '. headline headline headline'
-    'config table table table'
-    'config checkEqualityBtn resultMessage resultMessage'
-    'config . . .'
-    'toolbox . . .'
-}
-
-#gridWrapper.checkCount {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-areas:
-    '. headline headline headline'
-    'config table table table'
-    'toolbox table table table'
-    'toolbox checkEqualityBtn countInput resultMessage'
-    'toolbox . . .';
-}
-
-body.isAdvanced #gridWrapper.checkCount {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-areas:
-    '. headline headline headline'
-    'config table table table'
-    'toolbox table table table'
-    'toolbox checkEqualityBtn countInput resultMessage'
-    'toolbox . . .'
-}
-
-#gridWrapper.checkCount.twoPersonGrid {
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-areas:
-    '. headline headline headline'
-    'config table table table'
-    'config checkEqualityBtn countInput resultMessage'
-    'config . . .'
-    'toolbox . . .'
+    '. headline headline'
+    'config table table'
+    'config countInput resultMessage'
+    'config . .'
+    'toolbox . .'
 }
 
 #configGridWrapper {
@@ -100,7 +70,7 @@ body.isAdvanced #gridWrapper.checkCount {
 body.isAdvanced #configGridWrapper {
   grid-template-columns: 1fr;
   grid-template-areas:
-    'nameInputWrapper';
+    'taskLabel';
 }
 
 #toolboxGridWrapper {
@@ -144,7 +114,7 @@ body.isAdvanced #configGridWrapper {
   position: absolute;
 }
 
-#name {
+.name {
   margin-left: 5.5rem;
   margin-top: 2.5rem;
   padding: 0.5rem;
@@ -268,7 +238,6 @@ h3 {
   font-weight: 600;
   margin: 0rem;
   width: 100%;
-  grid-area: untertitelLabel;
 }
 
 h3#personNumberTitle {
@@ -282,8 +251,8 @@ h3#taskTitle {
 }
 
 #cookieNumberInputContainer {
-  margin: 0 auto;
   display: none;
+  margin: 0 auto;
   padding: 0.5rem;
   background-color: var(--segmentBackground);
   border: 0.15rem solid var(--segmentBorderColor);
@@ -291,23 +260,12 @@ h3#taskTitle {
   box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.2);
   width: fit-content;
   text-align: center;
+  align-items: center;
   font-size: 1.2rem;
   font-weight: 500;
   color: var(--segmentFontColor);
   animation: fadeIn 0.6s ease;
   grid-area: countInput;
-}
-
-#nameInputWrapper {
-  margin: auto;
-  height: fit-content;
-  width: fit-content;
-  grid-area: nameInputWrapper;
-}
-
-#nameTag {
-  font-size: 1rem;
-  font-weight: 600;
 }
 
 input[type="number"],
@@ -333,13 +291,6 @@ input[type="text"] {
   font-weight: 600;
 }
 
-#checkEqualityBtn {
-  margin: 0 auto;
-  display: none;
-  font-weight: 600;
-  grid-area: checkEqualityBtn;
-}
-
 .button {
   background: var(--buttonBackground);
   color: var(--buttonFontColor);
@@ -361,7 +312,7 @@ input[type="text"] {
   cursor: default;
 }
 
-#checkCountBtn {
+#checkBtn {
   margin-top: 0.5rem;
   font-weight: 600;
 }
@@ -520,7 +471,6 @@ input[type="text"] {
   height: auto;
 }
 
-/* Radio Buttons */
 .toolbox input[type="radio"] {
   accent-color: var(--radioColor);
   transform: scale(1.7);
@@ -534,25 +484,13 @@ input[type="text"] {
   body.isAdvanced #gridWrapper,
   #gridWrapper.twoPersonGrid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-areas:
-      'headline headline headline'
-      'config config config'
-      'toolbox toolbox toolbox'
-      'table table table'
-      'checkEqualityBtn resultMessage resultMessage';
-  }
-
-  #gridWrapper.checkCount,
-  body.isAdvanced #gridWrapper.checkCount,
-  #gridWrapper.checkCount.twoPersonGrid {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-      'headline headline headline'
-      'config config config'
-      'toolbox toolbox toolbox'
-      'table table table'
-      'checkEqualityBtn countInput resultMessage';
+      'headline headline'
+      'config config'
+      'toolbox toolbox'
+      'table table'
+      'countInput resultMessage';
   }
 
   #configGridWrapper {

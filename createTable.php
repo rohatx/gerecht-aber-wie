@@ -78,12 +78,12 @@ if ($identifier){
         th:nth-child(7),
         td:nth-child(10),
         th:nth-child(10),
-        td:nth-child(13),
-        th:nth-child(13),
-        td:nth-child(16),
-        th:nth-child(16),
-        td:nth-child(20),
-        th:nth-child(20) {
+        td:nth-child(14),
+        th:nth-child(14),
+        td:nth-child(18),
+        th:nth-child(18),
+        td:nth-child(22),
+        th:nth-child(22) {
             border-left: 3px solid #000;
         }
         tr:nth-child(even) {
@@ -109,10 +109,12 @@ if ($identifier){
             <th>Fehler beim Z&auml;hlen</th>
 
             <th>bearbeitete Verteil-Aufgaben</th>
+            <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
 
             <th>bearbeitete Verteil-Aufgaben mit halben Keksen</th>
+            <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
 
