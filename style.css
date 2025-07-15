@@ -93,13 +93,16 @@ body.isAdvanced #configGridWrapper {
 
 .table {
   display: none;
-  background-image: var(--tableImage);
-  background-size: 100%;
   position: absolute;
   width: 240px;
   height: 160px;
   top: 340px;
   left: 240px;
+}
+
+.tableImg {
+  width: 240px;
+  height: 160px;
 }
 
 #circleContainer {
@@ -133,7 +136,7 @@ body.isAdvanced #configGridWrapper {
   position: absolute;
 }
 
-.plateImage {
+.plateImg {
   width: 120px;
   height: 120px;
 }
@@ -176,6 +179,10 @@ body.isAdvanced #configGridWrapper {
 
 .personNumberButton img {
   background: var(--buttonBackground);
+  width: 6rem;
+  height: auto;
+  transition: transform 0.3s, filter 0.3s;
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
 }
 
 .personNumberButton:disabled {
@@ -200,12 +207,6 @@ body.isAdvanced #configGridWrapper {
 
 #sixPersons {
   grid-area: sixPersons;
-}
-
-.personNumberButton img {
-  width: 6rem;
-  height: auto;
-  transition: transform 0.3s, filter 0.3s;
 }
 
 .inactive img {
@@ -313,7 +314,6 @@ input[type="text"] {
 }
 
 #checkBtn {
-  margin-top: 0.5rem;
   font-weight: 600;
 }
 

@@ -15,11 +15,43 @@ const collectRB = document.getElementById("collectRB");
 const configbox = document.getElementById("config");
 const personNumberButtons = document.querySelectorAll(".personNumberButton");
 
+const imageURLs = {
+    tableImage: getImageSRC("--tableImage"),
+    plateImage: getImageSRC("--plateImage"),
+    cookieImage: getImageSRC("--cookieImage"),
+    cookieHalfLeftImage: getImageSRC("--cookieHalfLeftImage"),
+    cookieHalfRightImage: getImageSRC("--cookieHalfRightImage"),
+    twoPersonsImage: getImageSRC("--twoPersonsImage"),
+    threePersonsImage: getImageSRC("--threePersonsImage"),
+    fourPersonsImage: getImageSRC("--fourPersonsImage"),
+    fivePersonsImage: getImageSRC("--fivePersonsImage"),
+    sixPersonsImage: getImageSRC("--sixPersonsImage"),
+    person1Image: getImageSRC("--person1Image"),
+    person2Image: getImageSRC("--person2Image"),
+    person3Image: getImageSRC("--person3Image"),
+    person4Image: getImageSRC("--person4Image"),
+    person5Image: getImageSRC("--person5Image"),
+    person6Image: getImageSRC("--person6Image"),
+    moveImage: getImageSRC("--moveImage"),
+    breakImage: getImageSRC("--breakImage"),
+    mergeImage: getImageSRC("--mergeImage"),
+    collectImage: getImageSRC("--collectImage"),
+    breakCursorImage: getImageSRC("--breakCursorImage"),
+    mergeCursorImage: getImageSRC("--mergeCursorImage")
+};
+
+// Preload Images
+Object.values(imageURLs).forEach(url => {
+    const img = new Image();
+    img.src = url;
+});
+
+
 const params = new URLSearchParams(window.location.search);
 
 const grabCursor = "grab";
-const knifeCursor = `${getComputedStyle(document.documentElement).getPropertyValue("--breakCursorImage")} 12 12, auto`;
-const glueCursor = `${getComputedStyle(document.documentElement).getPropertyValue("--mergeCursorImage")} 16 12, auto`;
+const knifeCursor = `url(${imageURLs["breakCursorImage"]}) 12 12, auto`;
+const glueCursor = `url(${imageURLs["mergeCursorImage"]}) 16 12, auto`;
 
 let collectionClicks = 0;
 let equalityErrors = 0;
@@ -50,24 +82,24 @@ let cookieImageNumber = cookieCount;
 window.addEventListener("load", () => {
     // load images
     const twoPersonsImage = document.getElementById("twoPersons").querySelector("img");
-    twoPersonsImage.src = getImageSRC("--twoPersonsImage");
+    twoPersonsImage.src = imageURLs["twoPersonsImage"];
     const threePersonsImage = document.getElementById("threePersons").querySelector("img");
-    threePersonsImage.src = getImageSRC("--threePersonsImage");
+    threePersonsImage.src = imageURLs["threePersonsImage"];
     const fourPersonsImage = document.getElementById("fourPersons").querySelector("img");
-    fourPersonsImage.src = getImageSRC("--fourPersonsImage");
+    fourPersonsImage.src = imageURLs["fourPersonsImage"];
     const fivePersonsImage = document.getElementById("fivePersons").querySelector("img");
-    fivePersonsImage.src = getImageSRC("--fivePersonsImage");
+    fivePersonsImage.src = imageURLs["fivePersonsImage"];
     const sixPersonsImage = document.getElementById("sixPersons").querySelector("img");
-    sixPersonsImage.src = getImageSRC("--sixPersonsImage");
+    sixPersonsImage.src = imageURLs["sixPersonsImage"];
 
     const moveIMG = document.getElementById("moveIMG");
-    moveIMG.src = getImageSRC("--moveImage");
+    moveIMG.src = imageURLs["moveImage"];
     const breakIMG = document.getElementById("breakIMG");
-    breakIMG.src = getImageSRC("--breakImage");
+    breakIMG.src = imageURLs["breakImage"];
     const mergeIMG = document.getElementById("mergeIMG");
-    mergeIMG.src = getImageSRC("--mergeImage");
+    mergeIMG.src = imageURLs["mergeImage"];
     const collectIMG = document.getElementById("collectIMG");
-    collectIMG.src = getImageSRC("--collectImage");
+    collectIMG.src = imageURLs["collectImage"];
 
     document.getElementById("toolboxForm").reset();
 
@@ -233,10 +265,10 @@ function createScene() {
 
         const person = document.createElement("div");
 
-        const personImg = document.createElement("img");
-        personImg.src = getImageSRC(`--person${personIndex + 1}Image`);
-        personImg.className = "personImg";
-        personImg.alt = `Person ${personIndex + 1}`
+        const personImage = document.createElement("img");
+        personImage.src = imageURLs[`person${personIndex + 1}Image`];
+        personImage.className = "personImg";
+        personImage.alt = `Person ${personIndex + 1}`
 
         const name = document.createElement("div");
         name.className = "name";
@@ -251,18 +283,18 @@ function createScene() {
 
         const plate = document.createElement("div");
         const plateImage = document.createElement("img");
-        plateImage.src = getImageSRC("--plateImage");
-        plateImage.className = "plateImage";
+        plateImage.src = imageURLs["plateImage"];
+        plateImage.alt = `Teller ${personIndex + 1}`;
+        plateImage.className = "plateImg";
         plate.className = "plate";
         plate.id = `plate-${personIndex}`;
-        plateImage.alt = `Teller ${personIndex + 1}`
 
         plateCookieIds[personIndex] = []
 
         plate.ondrop = handleDrop;
         plate.ondragover = (e) => e.preventDefault();
 
-        person.appendChild(personImg);
+        person.appendChild(personImage);
         person.appendChild(plate);
         person.appendChild(name);
         plate.appendChild(plateImage);
@@ -270,11 +302,17 @@ function createScene() {
     }
 
     const table = document.createElement("div");
+    const tableImage = document.createElement("img");
+    tableImage.src = imageURLs["tableImage"];
+    tableImage.alt = "Tisch";
+    tableImage.className = "tableImg";
     table.className = "table";
     table.id = `plate-${personCount}`;
+    table.appendChild(tableImage);
     circleContainer.appendChild(table);
     table.ondrop = handleDrop;
     table.ondragover = (e) => e.preventDefault();
+
     if (personCount == 2) {
         // If there are only two people, there is no real circle arrangement.
         circleContainer.style.height = "200px";
@@ -433,7 +471,7 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
     cookie.alt = `cookie-${cookieImageNumber}`;
     if (shouldBeHalf) {
         // Create a half cookie.
-        cookie.src = getImageSRC("--cookieHalfRightImage");
+        cookie.src = imageURLs["cookieHalfRightImage"];
         cookie.className = "halfCookie";
         // If a half cookie is created, the break tool is active, which is why it should not be able to be dragged.
         cookie.draggable = false;
@@ -441,7 +479,7 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
         plateCookieIds[plateIndex].splice(placePositionIndex, 0, `cookie-${cookieImageNumber}`);
         cookieImageNumber += 1;
     } else {
-        cookie.src = getImageSRC("--cookieImage");
+        cookie.src = imageURLs["cookieImage"];
         cookie.className = "cookie";
     }
     cookie.id = plateCookieIds[plateIndex][placePositionIndex];
@@ -463,7 +501,7 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
                 const placePositionIndexNew = plateCookieIds[cookie.dataset.plateIndex].findIndex(cookieId => cookieId === cookie.id);
                 createKeks(placePositionIndexNew + 1, wrapperIndex, cookie.dataset.plateIndex, true);
                 cookie.dataset.isWhole = false;
-                cookie.src = getImageSRC("--cookieHalfLeftImage");
+                cookie.src = imageURLs["cookieHalfLeftImage"];
                 cookie.className = "halfCookie";
                 showCookies();
             }
@@ -477,7 +515,7 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
                     plateCookieIds[cookie.dataset.plateIndex].splice(otherHalfIndex, 1);
                     cookieWrapper.removeChild(otherHalf);
                     cookie.dataset.isWhole = true;
-                    cookie.src = `img/cookie.png`;
+                    cookie.src = imageURLs["cookieImage"];
                     cookie.className = "cookie";
                     cookie.style.left = "0px";
                     cookie.style.top = "0px";
@@ -736,14 +774,14 @@ function showCookies() {
                 if (cookieWrapper_children.length == 0) {
                     // For cookie halves, the left half should be displayed first.
                     if (cookie.dataset.isWhole === "false") {
-                        cookie.src = `img/cookie_left.png`;
+                        cookie.src = imageURLs["cookieHalfLeftImage"];
                         cookie.style.left = "0px";
                         cookie.style.top = "-1px";
                     }
                     cookieWrapper.appendChild(cookie);
                     break;
                 } else if (cookieWrapper_children.length == 1 && cookieWrapper_children[0].dataset.isWhole === "false" && cookie.dataset.isWhole === "false") {
-                    cookie.src = `img/cookie_right.png`;
+                    cookie.src = imageURLs["cookieHalfRightImage"];
                     cookieWrapper.appendChild(cookie);
                     cookie.style.left = "18px";
                     cookie.style.top = "1px";
