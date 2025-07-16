@@ -46,25 +46,12 @@ body.isAdvanced #gridWrapper {
 
 #configGridWrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-areas:
-    'untertitelLabel untertitelLabel untertitelLabel'
-    'twoPersons threePersons fourPersons'
-    'fivePersons sixPersons .'
-    'taskLabel taskLabel taskLabel';
-}
-
-#configGridWrappert {
-  display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  border: 1px solid blue;
-  background: rgba(0, 0, 255, 0.1);
-  width: 100%;
   grid-template-areas:
     'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
     'twoPersons twoPersons threePersons threePersons fourPersons fourPersons'
-    'fivePersons fivePersons fivePersons sixPersons sixPersons sixPersons'
-    'taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel';
+    '. fivePersons fivePersons sixPersons sixPersons .'
+    'taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel ';
 }
 
 body.isAdvanced #configGridWrapper {

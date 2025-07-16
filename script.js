@@ -683,6 +683,7 @@ function checkEquality(withHalfCookies, withMessage) {
             }
             messageContainer.style.color = "var(--messageWrongFontColor)";
             messageContainer.style.border = "0.15rem solid var(--messageWrongBorderColor)";
+            newTaskBtn.style.display = "none";
             equalityErrors += 1;
         }
         return false;
