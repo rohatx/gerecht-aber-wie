@@ -15,6 +15,10 @@ const collectRB = document.getElementById("collectRB");
 const configbox = document.getElementById("config");
 const personNumberButtons = document.querySelectorAll(".personNumberButton");
 
+
+const params = new URLSearchParams(window.location.search);
+
+
 const imageURLs = {
     tableImage: getImageSRC("--tableImage"),
     plateImage: getImageSRC("--plateImage"),
@@ -46,8 +50,6 @@ Object.values(imageURLs).forEach(url => {
     img.src = url;
 });
 
-
-const params = new URLSearchParams(window.location.search);
 
 const grabCursor = "grab";
 const knifeCursor = `url(${imageURLs["breakCursorImage"]}) 12 12, auto`;
