@@ -26,4 +26,4 @@ Die Seite kann dann durch öffnen von index.html gestartet werden.
 
 ## Lizenz
 
-    Dieses Projekt steht unter der [MIT-Lizenz](./LICENSE).
+    Dieses Projekt steht unter der MIT-Lizenz.
