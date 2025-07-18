@@ -8,15 +8,18 @@ const checkBtn = document.getElementById("checkBtn");
 const gridWrapper = document.getElementById("gridWrapper");
 const toolbox = document.getElementById("toolbox");
 const toolboxWrapper = document.getElementById("toolboxGridWrapper");
+const configWrapper = document.getElementById("configGridWrapper");
+const taskTitle = document.getElementById("taskTitle");
+const taskTitleDistribution = document.getElementById("taskTitleDistribution");
 const moveRB = document.getElementById("moveRB");
 const breakRB = document.getElementById("breakRB");
 const mergeRB = document.getElementById("mergeRB");
 const collectRB = document.getElementById("collectRB");
 const configbox = document.getElementById("config");
 const personNumberButtons = document.querySelectorAll(".personNumberButton");
-
-
-const params = new URLSearchParams(window.location.search);
+const customAlert = document.getElementById("customAlert");
+const alertMessage = document.getElementById("alertMessage");
+const overlay = document.getElementById("overlay");
 
 
 const imageURLs = {
@@ -51,6 +54,8 @@ Object.values(imageURLs).forEach(url => {
 });
 
 
+const params = new URLSearchParams(window.location.search);
+
 const grabCursor = "grab";
 const knifeCursor = `url(${imageURLs["breakCursorImage"]}) 12 12, auto`;
 const glueCursor = `url(${imageURLs["mergeCursorImage"]}) 16 12, auto`;
@@ -78,7 +83,7 @@ let plateCookieIds;
 let allCookiesOnTable = false;
 
 let currentTool = "move";
-let firstCollectionClickNeeded = false;
+let firstCollectionNeeded = false;
 let cookieImageNumber = cookieCount;
 
 window.addEventListener("load", () => {
@@ -128,10 +133,14 @@ window.addEventListener("load", () => {
                 minCookieNumber = min;
                 maxCookieNumber = max;
             } else {
-                alert(`Der Parameter \"anzahl-kekse\" enthält mindestens einen ungültigen Wert: Bitte ein gültiges Intervall *min,max* von ganzen Keksen angeben, wobei 1 ≤ min ≤ max ≤ ${MAX_COOKIE_NUMBER}. Es wird nun mit dem Intervall [1,${MAX_COOKIE_NUMBER}] gearbeitet.`);
+                showAlert(`<p>Der GET-Parameter \"anzahl-kekse\" enthält mindestens einen ungültigen Wert.</p>
+                    <p>Bitte ein gültiges Intervall <i>min</i>,<i>max</i> von ganzen Keksen angeben, wobei 1 ≤ <i>min</i> ≤ <i>max</i> ≤ ${MAX_COOKIE_NUMBER}.</p>
+                    <p>Es wird nun mit dem Intervall [1,${MAX_COOKIE_NUMBER}] gearbeitet.</p>`);
             }
         } else {
-            alert(`Der Parameter \"anzahl-kekse\" enthält einen ungültigen Wert. Bitte zwei Zahlen wie *3,8* durch Komma getrennt angeben. Es wird nun mit dem Intervall [1,${MAX_COOKIE_NUMBER}] gearbeitet.`);
+            showAlert(`<p>Der Parameter \"anzahl-kekse\" enthält einen ungültigen Wert.</p>
+                <p>Bitte zwei Zahlen durch ein Komma getrennt angeben (z. B. 3,8).</p>
+                <p>Es wird nun mit dem Intervall [1,${MAX_COOKIE_NUMBER}] gearbeitet.</p>`);
         }
     }
 
@@ -140,11 +149,13 @@ window.addEventListener("load", () => {
         if (modeInput === "ausgleichen" || modeInput === "verteilen" || modeInput === "ausgleichen-verteilen") {
             mode = modeInput;
         } else {
-            alert("Der Parameter \"mode\" enthält einen ungültigen Wert: Bitte zwischen *ausgleichen*, *verteilen* und *ausgleichen-verteilen* wählen. Es wird nun mit *ausgleichen* gearbeitet.");
+            showAlert(`<p>Der GET-Parameter \"modus\" enthält einen ungültigen Wert.</p>
+                <p>Bitte zwischen \"ausgleichen\", \"verteilen\" und \"ausgleichen-verteilen\" wählen.</p>
+                <p>Es wird nun in dem Modus \"ausgleichen\" gearbeitet.</p>`);
         }
     }
 
-    withHalfCookies = params.get("mit-halben-keksen");
+    let withHalfCookies = params.get("mit-halben-keksen");
     if (withHalfCookies === "true") {
         isAdvanced = true;
         document.body.classList.add("isAdvanced");
@@ -160,14 +171,16 @@ window.addEventListener("load", () => {
         createNewTask();
     } else {
         const personNumberHeadline = document.getElementById("personNumberTitle");
-        personNumberHeadline.style.display = "block";
+        personNumberHeadline.style.display = "flex";
 
         personNumberButtons.forEach(button => {
             button.style.display = "inline-block";
         });
 
         if (withHalfCookies !== "false" && withHalfCookies != null) {
-            alert("Der Parameter \"mit-halben-keksen\" enthält einen ungültigen Wert. Bitte entweder *true* oder *false* angeben. Es wird nun mit ganzen Keksen gearbeitet.");
+            showAlert(`<p>Der Parameter \"mit-halben-keksen\" enthält einen ungültigen Wert.</p>
+                <p>Bitte entweder \"true\" oder \"false\" angeben.</p>
+                <p>Es wird nun nur mit ganzen Keksen gearbeitet.</p>`);
         }
     }
 });
@@ -192,7 +205,7 @@ document.querySelectorAll("input[name='tool']").forEach(radio => {
             collectCookies();
 
             // After the first collection in distribution mode, everything should be activated.
-            if (firstCollectionClickNeeded) {
+            if (firstCollectionNeeded) {
                 document.querySelectorAll(".cookie").forEach(cookie => {
                     cookie.draggable = true;
                     cookie.removeEventListener("dragstart", suppressDragg);
@@ -207,7 +220,7 @@ document.querySelectorAll("input[name='tool']").forEach(radio => {
                 mergeRB.querySelector("input").disabled = false;
                 mergeRB.style.cursor = "pointer";
 
-                firstCollectionClickNeeded = false;
+                firstCollectionNeeded = false;
             }
 
             // When the cookies have been collected, the “move” tool should be selected.
@@ -246,6 +259,25 @@ document.querySelectorAll("input[name='tool']").forEach(radio => {
  */
 function getImageSRC(variableName) {
     return getComputedStyle(document.documentElement).getPropertyValue(variableName).replace(/url\(["']?|["']?\)/g, '');
+}
+
+/**
+ * Displays a pop-up information message.
+ * 
+ * @param {String} message - The message text that is displayed.
+ */
+function showAlert(message) {
+    alertMessage.innerHTML = message;
+    overlay.style.display = "block";
+    customAlert.style.display = "block";
+}
+
+/**
+ * Hides the pop-up information message.
+ */
+function hideCustomAlert() {
+    overlay.style.display = "none";
+    customAlert.style.display = "none";
 }
 
 /**
@@ -333,6 +365,7 @@ function createScene() {
     cookieNumberInputContainer.style.display = "flex";
     cookieInput.disabled = false;
     checkBtn.disabled = false;
+    taskTitle.style.display = "inline-block";
     toolbox.style.display = "inline-block";
     configbox.style.display = "inline-block";
 
@@ -342,44 +375,43 @@ function createScene() {
         // The collection tool is only available in this modes.
         table.style.display = "flex";
         collectRB.style.display = "flex";
-        if (!toolboxWrapper.classList.contains("anotherTool")) {
-            toolboxWrapper.classList.add("anotherTool");
+        if (!toolboxWrapper.classList.contains("withCollectionTool")) {
+            toolboxWrapper.classList.add("withCollectionTool");
         }
     }
 
-    distributeKekse(false);
-    let shouldBeDraggable = true;
+    if (isAdvanced) {
+        // The break and merge tool should only be available in half cookie mode.
+        breakRB.style.display = "flex";
+        mergeRB.style.display = "flex";
+    }
+
+    distributeCookies(false);
     if (mode === "verteilen") {
         // In this mode, the cookies should be collected first before further actions can be carried out.
-        shouldBeDraggable = false;
 
-        moveRB.querySelector("img").style.filter = "grayscale(100%)";
-        moveRB.querySelector("input").disabled = true;
-        moveRB.style.cursor = "default";
         breakRB.querySelector("img").style.filter = "grayscale(100%)";
         breakRB.querySelector("input").disabled = true;
         breakRB.style.cursor = "default";
         mergeRB.querySelector("img").style.filter = "grayscale(100%)";
         mergeRB.querySelector("input").disabled = true;
         mergeRB.style.cursor = "default";
-        firstCollectionClickNeeded = true;
+        firstCollectionNeeded = true;
+
+        if (!configWrapper.classList.contains("distribution")) {
+            configWrapper.classList.add("distribution");
+        }
+        taskTitleDistribution.style.display = "flex";
     } else {
         // The move tool should always be selected at the start. (except in distribute mode "verteilen")
         const moveRBInput = document.getElementById("moveRB").querySelector("input");
         moveRBInput.checked = true;
         moveRBInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
-    document.querySelectorAll("img").forEach(el => {
+
+    document.querySelectorAll("img:not(.cookie)").forEach(el => {
         el.draggable = false;
         el.addEventListener("dragstart", suppressDragg);
-    });
-    document.querySelectorAll(".cookie").forEach(cookie => {
-        if (cookie.dataset.isWhole) {
-            cookie.draggable = shouldBeDraggable;
-        }
-        if (shouldBeDraggable) {
-            cookie.removeEventListener("dragstart", suppressDragg);
-        }
     });
 
     personNumberButtons.forEach(button => {
@@ -406,8 +438,9 @@ function collectCookies() {
  *
  * @param {Boolean} startOnTable - Determines whether all the cookies should be on the table first
  */
-function distributeKekse(startOnTable) {
-    // Create a new cookie distribution until no plate is overfilled and the cookies are not yet evenly distributed.
+function distributeCookies(startOnTable) {
+    // Create a new cookie distribution until no plate is overfilled
+    // and the cookies are not yet evenly distributed.
     do {
         plateCookieIds.forEach((_, i) => plateCookieIds[i] = []);
         for (let i = 0; i < cookieCount; i++) {
@@ -437,7 +470,7 @@ function distributeKekse(startOnTable) {
 
             plate.appendChild(cookieWrapper);
             if (platePositionIndex < plateCookieIds[plateIndex].length) {
-                createKeks(platePositionIndex, platePositionIndex, plateIndex);
+                createCookie(platePositionIndex, platePositionIndex, plateIndex);
             }
         }
     }
@@ -454,7 +487,7 @@ function distributeKekse(startOnTable) {
 
         table.appendChild(cookieWrapper);
         if (tablePositionIndex < plateCookieIds[plateCookieIds.length - 1].length) {
-            createKeks(tablePositionIndex, tablePositionIndex, plateCookieIds.length - 1);
+            createCookie(tablePositionIndex, tablePositionIndex, plateCookieIds.length - 1);
         }
     }
     showCookies();
@@ -463,12 +496,12 @@ function distributeKekse(startOnTable) {
 /**
  * Creates a cookie HTML element and adds corresponding EventListeners to it.
  *
- * @param {int} placePositionIndex - The total position of the cookie in the array of the plate
+ * @param {int} platePositionIndex - The total position of the cookie in the array of the plate
  * @param {int} wapperIndex - The position of the cookie on the plate
  * @param {int} plateIndex - The index of the plate on which the cookie is placed
  * @param {Boolean} shouldBeHalf - Determines whether a half cookie should be created.
  */
-function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) {
+function createCookie(platePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) {
     const cookie = document.createElement("img");
     cookie.alt = `cookie-${cookieImageNumber}`;
     if (shouldBeHalf) {
@@ -478,13 +511,13 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
         // If a half cookie is created, the break tool is active, which is why it should not be able to be dragged.
         cookie.draggable = false;
         cookie.addEventListener("dragstart", suppressDragg);
-        plateCookieIds[plateIndex].splice(placePositionIndex, 0, `cookie-${cookieImageNumber}`);
+        plateCookieIds[plateIndex].splice(platePositionIndex, 0, `cookie-${cookieImageNumber}`);
         cookieImageNumber += 1;
     } else {
         cookie.src = imageURLs["cookieImage"];
         cookie.className = "cookie";
     }
-    cookie.id = plateCookieIds[plateIndex][placePositionIndex];
+    cookie.id = plateCookieIds[plateIndex][platePositionIndex];
     cookie.dataset.plateIndex = plateIndex;
     cookie.dataset.isWhole = !shouldBeHalf;
 
@@ -498,10 +531,15 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
         } else if (currentTool === "break") {
             // If the cookie has not yet been broken, break the cookie in half.
             if (cookie.dataset.isWhole === "false") {
-                alert("Ein halber Keks kann nicht noch einmal gebrochen werden!");
+                showAlert("<p>Ein halber Keks kann nicht noch einmal gebrochen werden.</p>");
             } else {
-                const placePositionIndexNew = plateCookieIds[cookie.dataset.plateIndex].findIndex(cookieId => cookieId === cookie.id);
-                createKeks(placePositionIndexNew + 1, wrapperIndex, cookie.dataset.plateIndex, true);
+                const platePositionIndexNew = plateCookieIds[
+                    cookie.dataset.plateIndex]
+                    .findIndex(cookieId => cookieId === cookie.id);
+
+                createCookie(platePositionIndexNew + 1, wrapperIndex,
+                    cookie.dataset.plateIndex, true);
+
                 cookie.dataset.isWhole = false;
                 cookie.src = imageURLs["cookieHalfLeftImage"];
                 cookie.className = "halfCookie";
@@ -511,10 +549,16 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
             // If possible, join two cookie halves together again.
             if (cookie.dataset.isWhole === "false") {
                 const cookieWrapper = cookie.parentElement;
-                const otherHalf = Array.from(cookieWrapper.children).find(cookieHalf => cookieHalf !== cookie);
+                const otherHalf = Array.from(cookieWrapper.children)
+                    .find(cookieHalf => cookieHalf !== cookie);
+
                 if (otherHalf !== undefined) {
-                    const otherHalfIndex = plateCookieIds[cookie.dataset.plateIndex].findIndex(cookieId => cookieId === otherHalf.id);
-                    plateCookieIds[cookie.dataset.plateIndex].splice(otherHalfIndex, 1);
+                    const otherHalfIndex = plateCookieIds[cookie.dataset.plateIndex]
+                        .findIndex(cookieId => cookieId === otherHalf.id);
+
+                    plateCookieIds[cookie.dataset.plateIndex]
+                        .splice(otherHalfIndex, 1);
+
                     cookieWrapper.removeChild(otherHalf);
                     cookie.dataset.isWhole = true;
                     cookie.src = imageURLs["cookieImage"];
@@ -523,7 +567,8 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
                     cookie.style.top = "0px";
                     showCookies();
                 } else {
-                    alert("Lege erst zwei halbe Kekse nebeneinander, um sie dann zusammenzufügen!");
+                    showAlert(`<p>Lege erst zwei halbe Kekse nebeneinander,
+                        um sie dann zusammenzufügen.</p>`);
                 }
             }
         }
@@ -538,7 +583,8 @@ function createKeks(placePositionIndex, wrapperIndex, plateIndex, shouldBeHalf) 
             }));
         }
     });
-    const cookieWrapper = document.getElementById(`plate-${plateIndex}`).querySelector(`.number-${wrapperIndex}`);
+    const cookieWrapper = document.getElementById(`plate-${plateIndex}`)
+        .querySelector(`.number-${wrapperIndex}`);
     cookieWrapper.appendChild(cookie);
 }
 
@@ -566,6 +612,12 @@ function handleDrop(e) {
     // If the cookie is not moved to a new plate, nothing should happen.
     if (startTellerIndex == targetPlateIndex) return;
 
+    if (firstCollectionNeeded && targetPlateIndex != personCount) {
+        // If the cookies are to be collected first, they must not yet be moved to other plates.
+        showAlert("<p>Du sollst zuerst alle Kekse auf den Tisch legen.</p>")
+        return;
+    }
+
     const movingCookie = document.getElementById(movingCookieId);
 
     markedCookies = document.querySelectorAll(".cookie.marked, .halfCookie.marked");
@@ -583,9 +635,9 @@ function handleDrop(e) {
                 plateCookieIds[targetPlateIndex] = plateCookieIds[targetPlateIndex].filter(id => id.localeCompare(currentCookie.id) != 0);
                 plateCookieIds[currentCookie.dataset.plateIndex].push(currentCookie.id);
                 if (i == 0) {
-                    alert("Der Zielteller ist schon voll!");
+                    showAlert("<p>Der Zielteller ist schon voll.</p>");
                 } else {
-                    alert("Es können nicht alle Kekse auf diesen Teller verschoben werden");
+                    showAlert("<p>Es können nicht alle Kekse auf diesen Teller verschoben werden.</p>");
                 }
                 return;
             }
@@ -600,7 +652,7 @@ function handleDrop(e) {
         } else {
             plateCookieIds[targetPlateIndex] = plateCookieIds[targetPlateIndex].filter(id => id.localeCompare(movingCookieId) != 0);
             plateCookieIds[startTellerIndex].push(movingCookieId);
-            alert("Der Zielteller ist schon voll!");
+            showAlert("<p>Der Zielteller ist schon voll.</p>");
 
         }
     }
@@ -620,6 +672,10 @@ function handleDrop(e) {
         collectRB.querySelector("img").style.filter = "grayscale(100%)";
         collectRB.querySelector("input").disabled = true;
         collectRB.style.cursor = "default";
+
+        if (firstCollectionNeeded) {
+            firstCollectionNeeded = false;
+        }
     }
 
     hideEvaluation();
@@ -851,40 +907,43 @@ function hideEvaluation() {
  * @returns {float} - The number of cookies per person
  */
 function determineCookieMultiplier() {
-    let minKekseMultiplier = 0;
-    let maxKekseMultiplier = 0;
+    let minCookieMultiplier = 0;
+    let maxCookieMultiplier = 0;
     if (isAdvanced) {
         // For the mode with half cookies
 
         for (let totalCookies = minCookieNumber; totalCookies <= maxCookieNumber; totalCookies++) {
             let cookiesPerPerson = totalCookies / personCount;
             if (Number.isInteger(cookiesPerPerson * 2)) {
-                if (minKekseMultiplier == 0 || cookiesPerPerson < minKekseMultiplier) minKekseMultiplier = cookiesPerPerson;
-                if (maxKekseMultiplier == 0 || cookiesPerPerson > maxKekseMultiplier) maxKekseMultiplier = cookiesPerPerson;
+                if (minCookieMultiplier == 0 || cookiesPerPerson < minCookieMultiplier) minCookieMultiplier = cookiesPerPerson;
+                if (maxCookieMultiplier == 0 || cookiesPerPerson > maxCookieMultiplier) maxCookieMultiplier = cookiesPerPerson;
             }
         }
-        if (minKekseMultiplier == 0 && maxKekseMultiplier == 0) {
+        if (minCookieMultiplier == 0 && maxCookieMultiplier == 0) {
             if (params.has("anzahl-kekse")) {
-                alert(`Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 0.5), MAX_COOKIE_NUMBER)}] gesetzt.`);
+                showAlert(`<p>Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden.</p>
+                    <p>Das Intervall wird auf [${personCount * 0.5}, ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 0.5), MAX_COOKIE_NUMBER)}] gesetzt.</p>`);
             }
-            minKekseMultiplier = 0.5;
-            maxKekseMultiplier = Math.min(MAX_COOKIES_PER_PLATE - 0.5, Math.floor(MAX_COOKIE_NUMBER * 2 / personCount) / 2)
+            minCookieMultiplier = 0.5;
+            maxCookieMultiplier = Math.min(MAX_COOKIES_PER_PLATE - 0.5, Math.floor(MAX_COOKIE_NUMBER * 2 / personCount) / 2)
         }
-        if (minKekseMultiplier == 0) {
+        if (minCookieMultiplier == 0) {
             if (params.has("anzahl-kekse")) {
-                alert(`Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 0.5} gesetzt.`);
+                showAlert(`<p>Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben.</p>
+                    <p>Die minimale Anzahl wird auf ${personCount * 0.5} gesetzt.</p>`);
             }
-            minKekseMultiplier = Math.max(minKekseMultiplier, 0.5);
-            maxKekseMultiplier = Math.max(maxKekseMultiplier, 0.5);
+            minCookieMultiplier = Math.max(minCookieMultiplier, 0.5);
+            maxCookieMultiplier = Math.max(maxCookieMultiplier, 0.5);
         }
-        if (maxKekseMultiplier > MAX_COOKIES_PER_PLATE - 0.5) {
+        if (maxCookieMultiplier > MAX_COOKIES_PER_PLATE - 0.5) {
             if (params.has("anzahl-kekse")) {
-                alert(`Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 0.5), MAX_COOKIE_NUMBER)} gesetzt.`);
+                showAlert(`<p>Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben.</p>
+                    <p>Die maximale Anzahl wird auf ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 0.5), MAX_COOKIE_NUMBER)} gesetzt.</p>`);
             }
-            minKekseMultiplier = Math.min(minKekseMultiplier, MAX_COOKIES_PER_PLATE - 0.5);
-            maxKekseMultiplier = Math.min(maxKekseMultiplier, MAX_COOKIES_PER_PLATE - 0.5);
+            minCookieMultiplier = Math.min(minCookieMultiplier, MAX_COOKIES_PER_PLATE - 0.5);
+            maxCookieMultiplier = Math.min(maxCookieMultiplier, MAX_COOKIES_PER_PLATE - 0.5);
         }
-        return Math.floor(Math.random() * ((maxKekseMultiplier - minKekseMultiplier) * 2 + 1)) / 2 + minKekseMultiplier;
+        return Math.floor(Math.random() * ((maxCookieMultiplier - minCookieMultiplier) * 2 + 1)) / 2 + minCookieMultiplier;
     }
 
     // For the mode without half cookies.
@@ -892,32 +951,35 @@ function determineCookieMultiplier() {
     for (let totalCookies = minCookieNumber; totalCookies <= maxCookieNumber; totalCookies++) {
         let cookiesPerPerson = totalCookies / personCount;
         if (Number.isInteger(cookiesPerPerson)) {
-            if (minKekseMultiplier == 0 || cookiesPerPerson < minKekseMultiplier) minKekseMultiplier = cookiesPerPerson;
-            if (maxKekseMultiplier == 0 || cookiesPerPerson > maxKekseMultiplier) maxKekseMultiplier = cookiesPerPerson;
+            if (minCookieMultiplier == 0 || cookiesPerPerson < minCookieMultiplier) minCookieMultiplier = cookiesPerPerson;
+            if (maxCookieMultiplier == 0 || cookiesPerPerson > maxCookieMultiplier) maxCookieMultiplier = cookiesPerPerson;
         }
     }
-    if (minKekseMultiplier == 0 && maxKekseMultiplier == 0) {
+    if (minCookieMultiplier == 0 && maxCookieMultiplier == 0) {
         if (params.has("anzahl-kekse")) {
-            alert(`Fuer die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden. Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 1), MAX_COOKIE_NUMBER)}] gesetzt.`);
+            showAlert(`<p>Für die vorhandene Personenzahl ist keine passende Keksanzahl in dem Intervall vorhanden.</p>
+                <p>Das Intervall wird auf [${personCount * 1}, ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 1), MAX_COOKIE_NUMBER)}] gesetzt.</p>`);
         }
-        minKekseMultiplier = 1;
-        maxKekseMultiplier = Math.min(MAX_COOKIES_PER_PLATE - 1, Math.floor(MAX_COOKIE_NUMBER / personCount));
+        minCookieMultiplier = 1;
+        maxCookieMultiplier = Math.min(MAX_COOKIES_PER_PLATE - 1, Math.floor(MAX_COOKIE_NUMBER / personCount));
     }
-    if (minKekseMultiplier == 0) {
+    if (minCookieMultiplier == 0) {
         if (params.has("anzahl-kekse")) {
-            alert(`Fuer die vorhandene Personenzahl sind zu wenig Kekse vorgegeben. Die minimale Anzahl wird auf ${personCount * 1} gesetzt.`);
+            showAlert(`<p>Für die vorhandene Personenzahl sind zu wenig Kekse vorgegeben.</p>
+                <p>Die minimale Anzahl wird auf ${personCount * 1} gesetzt.</p>`);
         }
-        minKekseMultiplier = Math.max(minKekseMultiplier, 1);
-        maxKekseMultiplier = Math.max(maxKekseMultiplier, 1);
+        minCookieMultiplier = Math.max(minCookieMultiplier, 1);
+        maxCookieMultiplier = Math.max(maxCookieMultiplier, 1);
     }
-    if (maxKekseMultiplier > MAX_COOKIES_PER_PLATE - 1) {
+    if (maxCookieMultiplier > MAX_COOKIES_PER_PLATE - 1) {
         if (params.has("anzahl-kekse")) {
-            alert(`Fuer die vorhandene Personenzahl sind zu viele Kekse vorgegeben. Die maximale Anzahl wird auf ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 1), MAX_COOKIE_NUMBER)} gesetzt.`);
+            showAlert(`<p>Für die vorhandene Personenzahl sind zu viele Kekse vorgegeben.</p>
+                <p>Die maximale Anzahl wird auf ${Math.min(personCount * (MAX_COOKIES_PER_PLATE - 1), MAX_COOKIE_NUMBER)} gesetzt.</p>`);
         }
-        minKekseMultiplier = Math.min(minKekseMultiplier, MAX_COOKIES_PER_PLATE - 1);
-        maxKekseMultiplier = Math.min(maxKekseMultiplier, MAX_COOKIES_PER_PLATE - 1);
+        minCookieMultiplier = Math.min(minCookieMultiplier, MAX_COOKIES_PER_PLATE - 1);
+        maxCookieMultiplier = Math.min(maxCookieMultiplier, MAX_COOKIES_PER_PLATE - 1);
     }
-    return Math.floor(Math.random() * (maxKekseMultiplier - minKekseMultiplier + 1)) + minKekseMultiplier;
+    return Math.floor(Math.random() * (maxCookieMultiplier - minCookieMultiplier + 1)) + minCookieMultiplier;
 }
 
 /**

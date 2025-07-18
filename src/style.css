@@ -12,55 +12,110 @@ body {
   background-attachment: fixed;
 }
 
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+#customAlert {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+#okBtn {
+  transition: none;
+}
+
 #gridWrapper {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
   grid-template-areas:
-    '. headline headline'
-    'config table table'
-    'toolbox table table'
-    'toolbox countInput resultMessage'
-    'toolbox . .'
+    ". headline headline"
+    "config table table"
+    "toolbox table table"
+    "toolbox countInput resultMessage"
+    "toolbox . ."
 }
 
 body.isAdvanced #gridWrapper {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
-    '. headline headline'
-    'config table table'
-    'toolbox table table'
-    'toolbox countInput resultMessage'
-    'toolbox . .'
+    ". headline headline"
+    "config table table"
+    "toolbox table table"
+    "toolbox countInput resultMessage"
+    "toolbox . ."
 }
 
 #gridWrapper.twoPersonGrid {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
-    '. headline headline'
-    'config table table'
-    'config countInput resultMessage'
-    'config . .'
-    'toolbox . .'
+    ". headline headline"
+    "config table table"
+    "config countInput resultMessage"
+    "config . ."
+    "toolbox . ."
 }
 
 #configGridWrapper {
   display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas:
-    'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
-    'twoPersons twoPersons threePersons threePersons fourPersons fourPersons'
-    '. fivePersons fivePersons sixPersons sixPersons .'
-    'taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel ';
+    "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
+    "twoPersons twoPersons threePersons threePersons fourPersons fourPersons"
+    ". fivePersons fivePersons sixPersons sixPersons ."
+    "taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel";
+}
+
+#configGridWrapper.distribution {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
+    "twoPersons twoPersons threePersons threePersons fourPersons fourPersons"
+    ". fivePersons fivePersons sixPersons sixPersons ."
+    "taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel"
+    "taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution";
 }
 
 body.isAdvanced #configGridWrapper {
   grid-template-columns: 1fr;
   grid-template-areas:
-    'taskLabel';
+    "taskLabel";
+}
+
+body.isAdvanced #configGridWrapper.distribution {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "taskLabel"
+    "taskLabelDistribution";
 }
 
 #toolboxGridWrapper {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB";
+}
+
+body.isAdvanced #toolboxGridWrapper {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
@@ -69,7 +124,14 @@ body.isAdvanced #configGridWrapper {
     "mergeRB";
 }
 
-#toolboxGridWrapper.anotherTool {
+#toolboxGridWrapper.withCollectionTool {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "collectRB";
+}
+
+body.isAdvanced #toolboxGridWrapper.withCollectionTool {
   grid-template-columns: 1fr;
   grid-template-areas:
     "moveRB"
@@ -165,7 +227,7 @@ body.isAdvanced #configGridWrapper {
 }
 
 .personNumberButton img {
-  background: var(--buttonBackground);
+  background-color: var(--buttonBackground);
   width: 6rem;
   height: auto;
   transition: transform 0.3s, filter 0.3s;
@@ -222,10 +284,11 @@ h1#headline {
 }
 
 h3 {
+  display: flex;
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0rem;
-  width: 100%;
+  width: fit-content;
 }
 
 h3#personNumberTitle {
@@ -234,8 +297,15 @@ h3#personNumberTitle {
 }
 
 h3#taskTitle {
+  display: none;
   margin-top: 0.25rem;
   grid-area: taskLabel;
+}
+
+h3#taskTitleDistribution {
+  display: none;
+  margin-top: 0.25rem;
+  grid-area: taskLabelDistribution;
 }
 
 #cookieNumberInputContainer {
@@ -280,7 +350,7 @@ input[type="text"] {
 }
 
 .button {
-  background: var(--buttonBackground);
+  background-color: var(--buttonBackground);
   color: var(--buttonFontColor);
   padding: 0.7rem;
   font-size: 1rem;
@@ -288,7 +358,6 @@ input[type="text"] {
   align-items: center;
   border-radius: 0.5rem;
   cursor: pointer;
-  white-space: nowrap;
   height: fit-content;
   width: fit-content;
   transition: background-color 0.3s ease, transform 0.2s ease;
@@ -296,7 +365,7 @@ input[type="text"] {
 }
 
 .button:disabled {
-  background: grey;
+  background-color: grey;
   cursor: default;
 }
 
@@ -325,7 +394,7 @@ input[type="text"] {
 #messageContainer {
   margin: 0 auto;
   padding: 0.5rem;
-  background: var(--segmentBackground);
+  background-color: var(--segmentBackground);
   border-radius: 0.5rem;
   font-size: 1.2rem;
   font-weight: 600;
@@ -339,57 +408,46 @@ input[type="text"] {
 }
 
 
-.toolbox,
-.config {
+#toolbox,
+#config,
+#customAlert {
   color: var(--segmentFontColor);
-  background: var(--segmentBackground);
+  background-color: var(--segmentBackground);
   border: 0.15rem solid var(--segmentBorderColor);
   border-radius: 0.5rem;
   box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
   padding: 0.5rem;
   margin: 0;
-  animation: fadeIn 0.6s ease;
-  width: 100%;
-  height: auto;
 }
 
-.toolbox {
+#toolbox {
   display: none;
+  width: 100%;
+  height: auto;
+  animation: fadeIn 0.6s ease;
   grid-area: toolbox;
 }
 
-#toolboxGridWrapper {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "moveRB"
-    "breakRB"
-    "mergeRB";
+#toolboxForm {
+  width: 100%;
+  height: 100%;
 }
 
-#toolboxGridWrapper.anotherTool {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "moveRB"
-    "breakRB"
-    "mergeRB"
-    "collectRB";
-}
-
-.config {
+#config {
+  width: 100%;
+  height: auto;
+  animation: fadeIn 0.6s ease;
   grid-area: config;
 }
 
-.toolbox legend {
+#toolbox legend {
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--segmentFontColor);
   margin-bottom: 0.4rem;
 }
 
-.toolbox label {
-  display: flex;
+#toolbox label {
   margin-bottom: 0.4rem;
   cursor: pointer;
 }
@@ -402,6 +460,7 @@ input[type="text"] {
 
 #moveRB {
   grid-area: moveRB;
+  display: flex;
 }
 
 #moveImgWrapper {
@@ -417,6 +476,7 @@ input[type="text"] {
 
 #breakRB {
   grid-area: breakRB;
+  display: none;
 }
 
 #breakImgWrapper {
@@ -431,6 +491,7 @@ input[type="text"] {
 
 #mergeRB {
   grid-area: mergeRB;
+  display: none;
 }
 
 #breakImgWrapper {
@@ -458,7 +519,7 @@ input[type="text"] {
   height: auto;
 }
 
-.toolbox input[type="radio"] {
+#toolbox input[type="radio"] {
   accent-color: var(--radioColor);
   transform: scale(1.7);
   margin-right: 0.5rem;
@@ -473,30 +534,58 @@ input[type="text"] {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
-      'headline headline'
-      'config config'
-      'toolbox toolbox'
-      'table table'
-      'countInput resultMessage';
+      "headline headline"
+      "config config"
+      "toolbox toolbox"
+      "table table"
+      "countInput resultMessage";
   }
 
   #configGridWrapper {
     display: grid;
+    width: 100%;
+    height: 100%;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:
-      'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
-      'twoPersons threePersons fourPersons fivePersons sixPersons'
-      'taskLabel taskLabel taskLabel taskLabel taskLabel';
+      "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
+      "twoPersons threePersons fourPersons fivePersons sixPersons"
+      "taskLabel taskLabel taskLabel taskLabel taskLabel";
   }
 
-  #toolboxGridWrapper {
+  #configGridWrapper.distribution {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
+      "twoPersons threePersons fourPersons fivePersons sixPersons"
+      "taskLabel taskLabel taskLabel taskLabel taskLabel"
+      "taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution";
+  }
+
+  body.isAdvanced #toolboxGridWrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
       "moveRB breakRB mergeRB";
   }
 
-  #toolboxGridWrapper.anotherTool {
+  #toolboxGridWrapper {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    justify-items: center;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "moveRB";
+  }
+
+  #toolboxGridWrapper.withCollectionTool {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "moveRB collectRB";
+  }
+
+  body.isAdvanced #toolboxGridWrapper.withCollectionTool {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas:
       "moveRB breakRB mergeRB collectRB";
