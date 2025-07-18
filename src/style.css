@@ -1,0 +1,504 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background-image: var(--backgroundImage);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+}
+
+#gridWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  grid-template-areas:
+    '. headline headline'
+    'config table table'
+    'toolbox table table'
+    'toolbox countInput resultMessage'
+    'toolbox . .'
+}
+
+body.isAdvanced #gridWrapper {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    '. headline headline'
+    'config table table'
+    'toolbox table table'
+    'toolbox countInput resultMessage'
+    'toolbox . .'
+}
+
+#gridWrapper.twoPersonGrid {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    '. headline headline'
+    'config table table'
+    'config countInput resultMessage'
+    'config . .'
+    'toolbox . .'
+}
+
+#configGridWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
+    'twoPersons twoPersons threePersons threePersons fourPersons fourPersons'
+    '. fivePersons fivePersons sixPersons sixPersons .'
+    'taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel ';
+}
+
+body.isAdvanced #configGridWrapper {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    'taskLabel';
+}
+
+#toolboxGridWrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB";
+}
+
+#toolboxGridWrapper.anotherTool {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB"
+    "collectRB";
+}
+
+.table {
+  display: none;
+  position: absolute;
+  width: 240px;
+  height: 160px;
+  top: 340px;
+  left: 240px;
+}
+
+.tableImg {
+  width: 240px;
+  height: 160px;
+}
+
+#circleContainer {
+  position: relative;
+  width: 720px;
+  height: 500px;
+  margin: 0px auto;
+  grid-area: table;
+}
+
+.person {
+  position: absolute;
+}
+
+.name {
+  margin-left: 5.5rem;
+  margin-top: 2.5rem;
+  padding: 0.5rem;
+  color: var(--childnameFontColor);
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--childnameBackground);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
+}
+
+.plate {
+  width: 120px;
+  height: 120px;
+  top: 80px;
+  position: absolute;
+}
+
+.plateImg {
+  width: 120px;
+  height: 120px;
+}
+
+.cookieWrapper {
+  position: absolute;
+}
+
+.cookie {
+  width: 36px;
+  height: 36px;
+  position: absolute;
+}
+
+.halfCookie {
+  width: 18px;
+  height: 36px;
+  position: absolute;
+}
+
+.cookie.marked,
+.halfCookie.marked {
+  border: 2px solid var(--cookieMark);
+  border-radius: 20px;
+}
+
+.personImg {
+  width: 80px;
+  left: 20px;
+  position: absolute;
+}
+
+.personNumberButton {
+  background: none;
+  border: none;
+  margin: 0.5rem;
+  transition: transform 0.3s, filter 0.3s;
+  cursor: pointer;
+}
+
+.personNumberButton img {
+  background: var(--buttonBackground);
+  width: 6rem;
+  height: auto;
+  transition: transform 0.3s, filter 0.3s;
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
+}
+
+.personNumberButton:disabled {
+  cursor: default;
+}
+
+#twoPersons {
+  grid-area: twoPersons;
+}
+
+#threePersons {
+  grid-area: threePersons;
+}
+
+#fourPersons {
+  grid-area: fourPersons;
+}
+
+#fivePersons {
+  grid-area: fivePersons;
+}
+
+#sixPersons {
+  grid-area: sixPersons;
+}
+
+.inactive img {
+  filter: grayscale(100%);
+  transform: scale(0.75);
+  opacity: 0.7;
+}
+
+h1 {
+  color: var(--headlineFontColor);
+  font-size: 2rem;
+  font-weight: 800;
+  background-color: var(--headlineBackground);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin: 0;
+  width: 100%;
+  box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.2);
+  align-items: center;
+  justify-content: center;
+  grid-area: headline;
+}
+
+h1#headline {
+  grid-area: headline;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0rem;
+  width: 100%;
+}
+
+h3#personNumberTitle {
+  margin-bottom: 0.25rem;
+  grid-area: untertitelLabel;
+}
+
+h3#taskTitle {
+  margin-top: 0.25rem;
+  grid-area: taskLabel;
+}
+
+#cookieNumberInputContainer {
+  display: none;
+  margin: 0 auto;
+  padding: 0.5rem;
+  background-color: var(--segmentBackground);
+  border: 0.15rem solid var(--segmentBorderColor);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 0.3rem rgba(0, 0, 0, 0.2);
+  width: fit-content;
+  text-align: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--segmentFontColor);
+  animation: fadeIn 0.6s ease;
+  grid-area: countInput;
+}
+
+input[type="number"],
+input[type="text"] {
+  padding: 0.25rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  border: 0.07rem solid var(--inputBorderColor);
+  margin: 0 0.25rem;
+}
+
+input[type="number"] {
+  width: 4rem;
+}
+
+input[type="text"] {
+  width: 6rem;
+}
+
+#newTaskBtn {
+  display: none;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.button {
+  background: var(--buttonBackground);
+  color: var(--buttonFontColor);
+  padding: 0.7rem;
+  font-size: 1rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+  height: fit-content;
+  width: fit-content;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
+}
+
+.button:disabled {
+  background: grey;
+  cursor: default;
+}
+
+#checkBtn {
+  font-weight: 600;
+}
+
+.button:not(:disabled):hover {
+  transform: scale(1.05);
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+#messageContainer {
+  margin: 0 auto;
+  padding: 0.5rem;
+  background: var(--segmentBackground);
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  width: fit-content;
+  height: fit-content;
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
+  text-align: center;
+  display: none;
+  animation: fadeIn 0.6s ease;
+  grid-area: resultMessage;
+}
+
+
+.toolbox,
+.config {
+  color: var(--segmentFontColor);
+  background: var(--segmentBackground);
+  border: 0.15rem solid var(--segmentBorderColor);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 0.3rem var(--shadowColor);
+  padding: 0.5rem;
+  margin: 0;
+  animation: fadeIn 0.6s ease;
+  width: 100%;
+  height: auto;
+}
+
+.toolbox {
+  display: none;
+  grid-area: toolbox;
+}
+
+#toolboxGridWrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB";
+}
+
+#toolboxGridWrapper.anotherTool {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "moveRB"
+    "breakRB"
+    "mergeRB"
+    "collectRB";
+}
+
+.config {
+  grid-area: config;
+}
+
+.toolbox legend {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--segmentFontColor);
+  margin-bottom: 0.4rem;
+}
+
+.toolbox label {
+  display: flex;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+}
+
+.imgWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#moveRB {
+  grid-area: moveRB;
+}
+
+#moveImgWrapper {
+  display: inline-block;
+  width: 12rem;
+  height: auto;
+}
+
+#moveIMG {
+  width: 12rem;
+  height: auto;
+}
+
+#breakRB {
+  grid-area: breakRB;
+}
+
+#breakImgWrapper {
+  width: 8rem;
+  height: auto;
+}
+
+#breakIMG {
+  width: 8rem;
+  height: auto;
+}
+
+#mergeRB {
+  grid-area: mergeRB;
+}
+
+#breakImgWrapper {
+  width: 8rem;
+  height: auto;
+}
+
+#mergeIMG {
+  width: 8rem;
+  height: auto;
+}
+
+#collectRB {
+  grid-area: collectRB;
+  display: none;
+}
+
+#collectImgWrapper {
+  width: 14rem;
+  height: auto;
+}
+
+#collectIMG {
+  width: 14rem;
+  height: auto;
+}
+
+.toolbox input[type="radio"] {
+  accent-color: var(--radioColor);
+  transform: scale(1.7);
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+
+  #gridWrapper,
+  body.isAdvanced #gridWrapper,
+  #gridWrapper.twoPersonGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'headline headline'
+      'config config'
+      'toolbox toolbox'
+      'table table'
+      'countInput resultMessage';
+  }
+
+  #configGridWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      'untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel'
+      'twoPersons threePersons fourPersons fivePersons sixPersons'
+      'taskLabel taskLabel taskLabel taskLabel taskLabel';
+  }
+
+  #toolboxGridWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      "moveRB breakRB mergeRB";
+  }
+
+  #toolboxGridWrapper.anotherTool {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      "moveRB breakRB mergeRB collectRB";
+  }
+}
