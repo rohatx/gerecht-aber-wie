@@ -1,14 +1,14 @@
-stages:
-  - build
-  - deploy
-
 build:
   stage: build
+  tags:
+    - deploy
   script:
     - docker build -t webapp2:latest .
 
 deploy:
   stage: deploy
+  tags:
+    - deploy
   script:
     - docker stop webapp2 || true
     - docker rm webapp2 || true
