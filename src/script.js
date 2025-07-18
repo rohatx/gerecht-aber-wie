@@ -21,6 +21,7 @@ const customAlert = document.getElementById("customAlert");
 const alertMessage = document.getElementById("alertMessage");
 const overlay = document.getElementById("overlay");
 
+const params = new URLSearchParams(window.location.search);
 
 const imageURLs = {
     tableImage: getImageSRC("--tableImage"),
@@ -53,8 +54,13 @@ Object.values(imageURLs).forEach(url => {
     img.src = url;
 });
 
+const COOKIES_PER_ROW = 6;
+const PERSON_COUNT_ADVANCED_MODE = 4;
+const MAX_COOKIE_NUMBER = 20;
+const MAX_COOKIES_PER_PLATE = 8;
+const MAX_COOKIES_ON_TABLE = 24;
 
-const params = new URLSearchParams(window.location.search);
+let currentActiveButton = null;
 
 const grabCursor = "grab";
 const knifeCursor = `url(${imageURLs["breakCursorImage"]}) 12 12, auto`;
@@ -63,28 +69,22 @@ const glueCursor = `url(${imageURLs["mergeCursorImage"]}) 16 12, auto`;
 let collectionClicks = 0;
 let equalityErrors = 0;
 let countErrors = 0;
-let isAdvanced = false;
+
 let mode = "ausgleichen";
+let isAdvanced = false;
 
 let personCount = 0;
 let cookieCount = 0;
+let cookiesPerPerson = 0;
 let minCookieNumber = 1;
 let maxCookieNumber = 20;
-
-let cookiesPerPerson = 0;
-
-const COOKIES_PER_ROW = 6;
-const PERSON_COUNT_ADVANCED_MODE = 4;
-const MAX_COOKIE_NUMBER = 20;
-const MAX_COOKIES_PER_PLATE = 8;
-const MAX_COOKIES_ON_TABLE = 24;
+let cookieImageNumber = cookieCount;
 
 let plateCookieIds;
 let allCookiesOnTable = false;
 
 let currentTool = "move";
 let firstCollectionNeeded = false;
-let cookieImageNumber = cookieCount;
 
 window.addEventListener("load", () => {
     // load images
@@ -416,6 +416,11 @@ function createScene() {
 
     personNumberButtons.forEach(button => {
         button.disabled = true;
+        if (button === currentActiveButton) {
+            button.classList.remove("inactive");
+        } else {
+            button.classList.add("inactive");
+        }
     });
 }
 
@@ -983,21 +988,14 @@ function determineCookieMultiplier() {
 }
 
 /**
- * Changes the number of people and highlights the selection.
+ * Changes the number of people.
  * 
- * @param {HTMLButtonElement} geklickterButton - The clicked number button by the user.
+ * @param {HTMLButtonElement} clickedButton - The clicked number button by the user.
  * @param {int} personNumber - The selected person number by the user.
  */
 function changePerson(clickedButton, personNumber) {
     personCount = personNumber;
-
-    personNumberButtons.forEach(button => {
-        if (button === clickedButton) {
-            button.classList.remove("inactive");
-        } else {
-            button.classList.add("inactive");
-        }
-    });
+    currentActiveButton = clickedButton;
     createNewTask();
 }
 

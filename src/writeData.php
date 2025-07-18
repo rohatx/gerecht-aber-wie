@@ -49,11 +49,6 @@ $indexDistributeCollectionCount = array_search("haeufigkeit-des-kekse-einsammeln
 $indexDistributeCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften-verteilen", $head);
 $indexEqualizeDistributeCollectionCount = array_search("haeufigkeit-des-kekse-einsammelns-ausgleichen-verteilen", $head);
 $indexEqualizeDistributeCollectionCountWithHalf = array_search("haeufigkeit-des-kekse-einsammelns-mit-haelften-ausgleichen-verteilen", $head);
-echo $indexDistributeCollectionCount;
-echo $indexDistributeCollectionCountWithHalf;
-echo $indexEqualizeDistributeCollectionCount;
-echo $indexEqualizeDistributeCollectionCountWithHalf;
-echo $mode;
 
 // Search for the right row with identifier.
 foreach ($data as &$row) {
@@ -67,18 +62,14 @@ foreach ($data as &$row) {
         if ($withHalf) {
             if ($mode === "verteilen_halb"){
                 $row[$indexDistributeCollectionCountWithHalf] += $collectionClicks;
-                echo "Test1";
             } else {
                 $row[$indexEqualizeDistributeCollectionCountWithHalf] += $collectionClicks;
-                echo "Test2";
             }
         } else {
             if ($mode === "verteilen"){
                 $row[$indexDistributeCollectionCount] += $collectionClicks;
-                echo "Test3";
             } else {
                 $row[$indexEqualizeDistributeCollectionCount] += $collectionClicks;
-                echo "Test4";
             }
         }
         $rowFound = true;
