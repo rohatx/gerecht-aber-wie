@@ -23,3 +23,7 @@ Die Seite kann dann durch öffnen von index.html gestartet werden.
 
     Für gefilterte Statistiken nach Kürzel (z.B. "abc") der URL Folgendes anfügen:
     ...createTable.php?kuerzel=abc
+
+## Lizenz
+
+    Dieses Projekt steht unter der [MIT-Lizenz](./LICENSE).
