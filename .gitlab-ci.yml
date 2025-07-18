@@ -1,17 +1,15 @@
 stages:
+  - build
   - deploy
+
+build:
+  stage: build
+  script:
+    - docker build -t webapp2:latest .
 
 deploy:
   stage: deploy
-  only:
-    - main
   script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H vmits1575.vm.ruhr-uni-bochum.de >> ~/.ssh/known_hosts
-    - ssh sose25_g2@vmits1575.vm.ruhr-uni-bochum.de "
-        cd ~/webapp2 &&
-        git pull &&
-        docker compose up --build -d
-      "
+    - docker stop webapp2 || true
+    - docker rm webapp2 || true
+    - docker run -d --name webapp2 -p 80:80 webapp2:latest
