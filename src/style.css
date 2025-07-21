@@ -42,30 +42,30 @@ body {
   gap: 1rem;
   grid-template-areas:
     ". headline headline"
-    "config table table"
-    "toolbox table table"
+    "config cookieAction cookieAction"
+    "toolbox cookieAction cookieAction"
     "toolbox countInput resultMessage"
-    "toolbox . ."
+    "toolbox . .";
 }
 
 body.isAdvanced #gridWrapper {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
     ". headline headline"
-    "config table table"
-    "toolbox table table"
+    "config cookieAction cookieAction"
+    "toolbox cookieAction cookieAction"
     "toolbox countInput resultMessage"
-    "toolbox . ."
+    "toolbox . .";
 }
 
 #gridWrapper.twoPersonGrid {
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
     ". headline headline"
-    "config table table"
+    "config cookieAction cookieAction"
     "config countInput resultMessage"
     "config . ."
-    "toolbox . ."
+    "toolbox . .";
 }
 
 #configGridWrapper {
@@ -81,28 +81,10 @@ body.isAdvanced #gridWrapper {
     "taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel";
 }
 
-#configGridWrapper.distribution {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-areas:
-    "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
-    "twoPersons twoPersons threePersons threePersons fourPersons fourPersons"
-    ". fivePersons fivePersons sixPersons sixPersons ."
-    "taskLabel taskLabel taskLabel taskLabel taskLabel taskLabel"
-    "taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution";
-}
-
 body.isAdvanced #configGridWrapper {
   grid-template-columns: 1fr;
   grid-template-areas:
     "taskLabel";
-}
-
-body.isAdvanced #configGridWrapper.distribution {
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "taskLabel"
-    "taskLabelDistribution";
 }
 
 #toolboxGridWrapper {
@@ -159,7 +141,7 @@ body.isAdvanced #toolboxGridWrapper.withCollectionTool {
   width: 720px;
   height: 500px;
   margin: 0px auto;
-  grid-area: table;
+  grid-area: cookieAction;
 }
 
 .person {
@@ -300,12 +282,6 @@ h3#taskTitle {
   display: none;
   margin-top: 0.25rem;
   grid-area: taskLabel;
-}
-
-h3#taskTitleDistribution {
-  display: none;
-  margin-top: 0.25rem;
-  grid-area: taskLabelDistribution;
 }
 
 #cookieNumberInputContainer {
@@ -537,7 +513,7 @@ input[type="text"] {
       "headline headline"
       "config config"
       "toolbox toolbox"
-      "table table"
+      "cookieAction cookieAction"
       "countInput resultMessage";
   }
 
@@ -550,16 +526,6 @@ input[type="text"] {
       "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
       "twoPersons threePersons fourPersons fivePersons sixPersons"
       "taskLabel taskLabel taskLabel taskLabel taskLabel";
-  }
-
-  #configGridWrapper.distribution {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-areas:
-      "untertitelLabel untertitelLabel untertitelLabel untertitelLabel untertitelLabel"
-      "twoPersons threePersons fourPersons fivePersons sixPersons"
-      "taskLabel taskLabel taskLabel taskLabel taskLabel"
-      "taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution taskLabelDistribution";
   }
 
   body.isAdvanced #toolboxGridWrapper {
