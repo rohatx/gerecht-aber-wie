@@ -9,7 +9,7 @@ Die Seite kann dann durch öffnen von index.html gestartet werden.
     Modus 2: Kekse verteilen: modus=verteilen
     MOdus 3: Kekse ausgleichen mit beliebig oft einsammeln: modus=ausgleichen-verteilen
     
-    Keksanzahl-Intervall einstellen: anzahl-kekse=minKeksanzahl,maxKeksanzahl
+    Keksanzahl-Intervall einstellen: anzahl-kekse=*minKeksanzahl*,*maxKeksanzahl*
 
     Die Statistiken unter einem bestimmten Kürzel (z.B. "abc") speichern: kuerzel=abc
 
