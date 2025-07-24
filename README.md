@@ -1,28 +1,31 @@
 Um die Seite anzusehen, müssen alle Datein in einen Ordner heruntergeladen werden.
 Die Seite kann dann durch öffnen von index.html gestartet werden.
 
-**Einstellungen per URL vornehmen** 
+### Einstellungen per URL vornehmen
 
-Wenn mit halben Keksen gearbeitet werden soll: mit-halben-keksen=true (sonst =false oder weglassen)
+Wenn mit halben Keksen gearbeitet werden soll: `mit-halben-keksen=true` (sonst `mit-halben-keksen=false` oder weglassen)
 
-Modus 1: Kekse ausgleichen: modus=ausgleichen
-Modus 2: Kekse verteilen: modus=verteilen
-MOdus 3: Kekse ausgleichen mit beliebig oft einsammeln: modus=ausgleichen-verteilen
+- Modus 1: Kekse ausgleichen: `modus=ausgleichen`
+- Modus 2: Kekse verteilen: `modus=verteilen`
+- Modus 3: Kekse ausgleichen mit beliebig oft einsammeln: `modus=ausgleichen-verteilen`
     
-Keksanzahl-Intervall einstellen: anzahl-kekse=*minKeksanzahl*,*maxKeksanzahl*
+Keksanzahl-Intervall einstellen: `anzahl-kekse=*minKeksanzahl*,*maxKeksanzahl*`
 
-Die Statistiken unter einem bestimmten Kürzel (z.B. "abc") speichern: kuerzel=abc
+Die Statistiken unter einem bestimmten Kürzel (z.B. "abc") speichern: `kuerzel=abc`
 
 Beispiel URL:
-...?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16&kuerzel=abc
+    
+    ...?mit-halben-keksen=true&modus=ausgleichen&anzahl-kekse=4,16&kuerzel=abc
 
-**Statistiken filtern und ansehen**
+### Statistiken filtern und ansehen
 
 Für summierte Statistiken der URL Folgendes anfügen:
-...createTable.php
+    
+    ...createTable.php
 
 Für gefilterte Statistiken nach Kürzel (z.B. "abc") der URL Folgendes anfügen:
-...createTable.php?kuerzel=abc
+    
+    ...createTable.php?kuerzel=abc
 
 ## Lizenz
 
