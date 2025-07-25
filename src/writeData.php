@@ -59,17 +59,19 @@ foreach ($data as &$row) {
         $row[$indexModeCount]++;
         $row[$indexModeEqualityErrors] += $equalityErrors;
         $row[$indexModeCountErrors] += $countErrors;
-        if ($withHalf) {
-            if ($mode === "verteilen_halb"){
-                $row[$indexDistributeCollectionCountWithHalf] += $collectionClicks;
-            } else {
-                $row[$indexEqualizeDistributeCollectionCountWithHalf] += $collectionClicks;
-            }
-        } else {
+        if ($mode === "verteilen" || $mode === "verteilen_halb") {
             if ($mode === "verteilen"){
                 $row[$indexDistributeCollectionCount] += $collectionClicks;
             } else {
+                $row[$indexDistributeCollectionCountWithHalf] += $collectionClicks;
+            }
+        } else if ($mode === "ausgleichen-verteilen" ||
+            $mode === "ausgleichen-verteilen_halb") {
+            if ($mode === "ausgleichen-verteilen") {
                 $row[$indexEqualizeDistributeCollectionCount] += $collectionClicks;
+            } else {
+                $row[$indexEqualizeDistributeCollectionCountWithHalf] +=
+                    $collectionClicks;
             }
         }
         $rowFound = true;
@@ -88,19 +90,21 @@ if (!$rowFound) {
     $new[$indexModeCount] = 1;
     $new[$indexModeEqualityErrors] = $equalityErrors;
     $new[$indexModeCountErrors] = $countErrors;
-    if ($withHalf) {
-        if ($mode === "verteilen_halb"){
-            $new[$indexDistributeCollectionCountWithHalf] = $collectionClicks;
-        } else {
-            $new[$indexEqualizeDistributeCollectionCountWithHalf] = $collectionClicks;
+    if ($mode === "verteilen" || $mode === "verteilen_halb") {
+            if ($mode === "verteilen"){
+                $new[$indexDistributeCollectionCount] = $collectionClicks;
+            } else {
+                $new[$indexDistributeCollectionCountWithHalf] = $collectionClicks;
+            }
+        } else if ($mode === "ausgleichen-verteilen" ||
+            $mode === "ausgleichen-verteilen_halb") {
+            if ($mode === "ausgleichen-verteilen") {
+                $new[$indexEqualizeDistributeCollectionCount] = $collectionClicks;
+            } else {
+                $new[$indexEqualizeDistributeCollectionCountWithHalf] =
+                    $collectionClicks;
+            }
         }
-    } else {
-        if ($mode === "verteilen"){
-            $new[$indexDistributeCollectionCount] = $collectionClicks;
-        } else {
-            $new[$indexEqualizeDistributeCollectionCount] = $collectionClicks;
-        }
-    }
     $data[] = $new;
 }
 
@@ -111,7 +115,7 @@ if (($handle = fopen($csvFile, "w")) !== false) {
         fputcsv($handle, $row, ",", '"', "\\");
     }
     fclose($handle);
-    echo "OK";
+    echo "Daten erfolgreich gespeichert.";
 } else {
     http_response_code(500);
     echo "Fehler beim Schreiben der Datei.";

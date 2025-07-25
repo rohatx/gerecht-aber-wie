@@ -58,72 +58,68 @@ if ($identifier){
 <head>
     <meta charset="UTF-8">
     <title>Statistik-Tabelle</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-family: sans-serif;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #eee;
-        }
-        td:nth-child(4),
-        th:nth-child(4),
-        td:nth-child(7),
-        th:nth-child(7),
-        td:nth-child(10),
-        th:nth-child(10),
-        td:nth-child(14),
-        th:nth-child(14),
-        td:nth-child(18),
-        th:nth-child(18),
-        td:nth-child(22),
-        th:nth-child(22) {
-            border-left: 3px solid #000;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-    </style>
+    <link rel="stylesheet" href="customizableData.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
-<table>
+<body id="tableBody">
+
+<table id="tableAll">
     <thead>
         <tr>
-            <th>insgesamt bearbeitete Aufgaben</th>
+            <th colspan="3">insgesamt</th>
+        </tr>
+        <tr>
+            <th>bearbeitete Aufgaben</th>
+            <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
+            <th>Fehler beim Z&auml;hlen</th>
+        </tr>
+    </head>
+    <tbody>
+        <tr>
+            <?php foreach (array_slice($dataToWrite, 0, 3) as $wert): ?>
+                <td><?php echo htmlspecialchars($wert); ?></td>
+            <?php endforeach; ?>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tableEqualize">
+    <thead>
+        <tr>
+            <th colspan="6">Modus Ausgleichen</th>
+        </tr>
+        <tr>
+            <th>bearbeitete Aufgaben</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
 
-            <th>bearbeitete Ausgleich-Aufgaben</th>
+            <th>bearbeitete Aufgaben mit halben Keksen</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
+        </tr>
+    </head>
+    <tbody>
+        <tr>
+            <?php foreach (array_slice($dataToWrite, 3, 6) as $wert): ?>
+                <td><?php echo htmlspecialchars($wert); ?></td>
+            <?php endforeach; ?>
+        </tr>
+    </tbody>
+</table>
 
-            <th>bearbeitete Ausgleich-Aufgaben mit halben Keksen</th>
-            <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
-            <th>Fehler beim Z&auml;hlen</th>
-
-            <th>bearbeitete Verteil-Aufgaben</th>
+<table id="tableDistribute">
+    <thead>
+        <tr>
+            <th colspan="8">Modus Verteilen</th>
+        </tr>
+        <tr>
+            <th>bearbeitete Aufgaben</th>
             <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
 
-            <th>bearbeitete Verteil-Aufgaben mit halben Keksen</th>
-            <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
-            <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
-            <th>Fehler beim Z&auml;hlen</th>
-
-            <th>bearbeitete Ausgleich/Verteil-Aufgaben</th>
-            <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
-            <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
-            <th>Fehler beim Z&auml;hlen</th>
-
-            <th>bearbeitete Ausgleich/Verteil-Aufgaben mit halben Keksen</th>
+            <th>bearbeitete Aufgaben mit halben Keksen</th>
             <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
             <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
             <th>Fehler beim Z&auml;hlen</th>
@@ -131,7 +127,33 @@ if ($identifier){
     </head>
     <tbody>
         <tr>
-            <?php foreach ($dataToWrite as $wert): ?>
+            <?php foreach (array_slice($dataToWrite, 9, 8) as $wert): ?>
+                <td><?php echo htmlspecialchars($wert); ?></td>
+            <?php endforeach; ?>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tableEqualizeDistribute">
+    <thead>
+        <tr>
+            <th colspan="8">Modus Ausgleichen / Verteilen</th>
+        </tr>
+        <tr>
+            <th>bearbeitete Aufgaben</th>
+            <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
+            <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
+            <th>Fehler beim Z&auml;hlen</th>
+
+            <th>bearbeitete Aufgaben mit halben Keksen</th>
+            <th>H&auml;ufigkeit des Kekse-Einsammelns</th>
+            <th>Fehler bei der Gleichm&auml;&szlig;igkeit</th>
+            <th>Fehler beim Z&auml;hlen</th>
+        </tr>
+    </head>
+    <tbody>
+        <tr>
+            <?php foreach (array_slice($dataToWrite, 17, 8) as $wert): ?>
                 <td><?php echo htmlspecialchars($wert); ?></td>
             <?php endforeach; ?>
         </tr>

@@ -34,6 +34,13 @@
     --messageWrongBorderColor: #B30000;
     --cookieMark: #ff0000;
     --radioColor: #4f46e5;
+    --tableFontColor: #000000;
+    --tableStrongBorderColor: #000000;
+    --tableBorderColor: #cccccc;
+    --tableHeadlineBackground: #eeeeee;
+    --tableOddBackground: #ffffff;
+    --tableEvenBackground: #f9f9f9;
+
 
     --person1Image: url("img/person1.png");
     --person2Image: url("img/person2.png");

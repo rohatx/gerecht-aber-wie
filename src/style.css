@@ -2,7 +2,53 @@
   box-sizing: border-box;
 }
 
-body {
+#tableBody {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  grid-template-areas:
+    "tableAll"
+    "tableEqualize"
+    "tableDistribute"
+    "tableEqualizeDistribute";
+  font-family: sans-serif;
+  color: var(--tableFontColor);
+}
+
+#tableEqualize td:nth-child(4),
+#tableEqualize th:nth-child(4),
+#tableDistribute td:nth-child(5),
+#tableDistribute th:nth-child(5),
+#tableEqualizeDistribute td:nth-child(5),
+#tableEqualizeDistribute th:nth-child(5) {
+  border-left: 3px solid var(--tableStrongBorderColor);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid var(--tableBorderColor);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+th {
+  background-color: var(--tableHeadlineBackground);
+}
+
+tr:nth-child(even) {
+  background-color: var(--tableEvenBackground);
+}
+
+tr:nth-child(odd) {
+  background-color: var(--tableOddBackground);
+}
+
+#appBody {
   font-family: sans-serif;
   text-align: center;
   background-image: var(--backgroundImage);
@@ -23,8 +69,8 @@ body {
   z-index: 999;
 }
 
-#customAlert {
-  display: none;
+.customAlert {
+  display: block;
   position: fixed;
   top: 20%;
   left: 50%;
@@ -32,7 +78,7 @@ body {
   z-index: 1000;
 }
 
-#okBtn {
+.okBtn {
   transition: none;
 }
 
@@ -386,7 +432,7 @@ input[type="text"] {
 
 #toolbox,
 #config,
-#customAlert {
+.customAlert {
   color: var(--segmentFontColor);
   background-color: var(--segmentBackground);
   border: 0.15rem solid var(--segmentBorderColor);
